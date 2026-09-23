@@ -794,7 +794,7 @@ body{background:var(--bg);color:var(--text)}
 .field input,.field select,.ai-input input,input,select,textarea{background:var(--surface-2);color:var(--text);border-color:var(--line)}
 input::placeholder,textarea::placeholder{color:var(--dim)}
 .tab{background:var(--surface-2);border-color:var(--line);color:var(--muted)}
-.tab.on{background:linear-gradient(135deg,var(--accent),#1E4FD8);color:#fff;border-color:transparent}
+.tab.on{background:linear-gradient(135deg,#2F6BFF,#1E4FD8);color:#fff;border-color:transparent}
 .btn-ghost{background:var(--surface-2)}
 .btn-ghost:hover{background:#232C38}
 table.data th{color:var(--dim);border-bottom-color:var(--line)}
@@ -826,6 +826,94 @@ img{opacity:.96}
 .mt-acct{background:linear-gradient(150deg,#1A2331,#141A23)}
 .acct-pick tr:hover td{background:rgba(47,107,255,.07)}
 .toast{background:#0A0E14;border:1px solid var(--line)}
+
+/* ---- Кошелёк и счета ---- */
+.wl-promo{display:flex;align-items:center;gap:18px;background:linear-gradient(120deg,#151C27,#121821 60%,#101722);
+  border:1px solid var(--line);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.wl-promo::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(420px 180px at 85% 20%,rgba(47,107,255,.16),transparent 70%)}
+.wl-promo-ic{width:56px;height:56px;flex:none}
+.wl-promo-ic svg{width:100%;height:100%}
+.wl-promo-tx{flex:1;min-width:0;position:relative;z-index:1}
+.wl-promo-tx b{display:block;font-family:"Sora",sans-serif;font-size:19px;letter-spacing:-.01em}
+.wl-promo-tx span{display:block;color:var(--muted);font-size:13.5px;margin-top:4px}
+.wl-promo-btn{position:relative;z-index:1;white-space:nowrap}
+.wl-promo-btn svg{width:18px;height:18px}
+.wl-dots{display:flex;gap:7px;justify-content:center;margin:14px 0 18px}
+.wl-dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.wl-dots i.on{background:var(--accent)}
+.wl-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px}
+.wl-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.wl-card-head h3{font-size:19px;letter-spacing:-.01em}
+.wl-card-head h3 .num{color:var(--dim);font-size:14px;margin-left:8px;font-weight:500}
+.wl-link{background:none;border:0;color:var(--text);font-size:13.5px;font-weight:600;cursor:pointer;padding:4px}
+.wl-link:hover{color:var(--accent)}
+.wl-card-body{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.wl-brand{width:104px;height:62px;border-radius:8px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(140deg,#243349,#16202E);border:1px solid var(--line);
+  font-family:"Sora",sans-serif;font-weight:700;font-size:17px;color:#CFE0FF;letter-spacing:-.02em}
+.wl-bal{flex:1;min-width:160px}
+.wl-bal span{display:block;color:var(--muted);font-size:13px}
+.wl-bal b{font-size:26px;letter-spacing:-.02em}
+.wl-acts{display:flex;gap:10px;flex-wrap:wrap}
+.wl-acts .btn{gap:8px}
+.wl-acts svg{width:18px;height:18px}
+.wl-tabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.wl-tabs button{background:none;border:0;padding:10px 2px 12px;color:var(--muted);font-size:14.5px;font-weight:600;
+  cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.wl-tabs button.on{color:var(--text);border-bottom-color:var(--accent)}
+.wl-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:20px 0 6px;border-bottom:1px solid var(--line-soft)}
+.wl-row:last-of-type{border-bottom:0}
+.wl-row-id{min-width:190px}
+.wl-row-id b{font-size:15.5px}
+.wl-row-id small{color:var(--dim);font-size:12.5px;margin-left:8px}
+.wl-badges{display:flex;gap:8px;margin-top:8px}
+.wl-chip{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:5px;border:1px solid var(--line);color:var(--muted)}
+.wl-chip.ok{border-color:rgba(34,197,94,.45);color:#5BD98A;background:rgba(34,197,94,.1)}
+.wl-col{min-width:120px}
+.wl-col span{display:block;color:var(--muted);font-size:12.5px;margin-bottom:4px}
+.wl-col b{font-size:17px}
+.wl-row-acts{margin-left:auto;display:flex;gap:10px;align-items:center}
+.wl-gear{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);
+  display:grid;place-items:center;color:var(--muted);cursor:pointer}
+.wl-gear svg{width:18px;height:18px}
+.wl-note{background:rgba(245,165,36,.09);border:1px solid rgba(245,165,36,.28);border-radius:10px;
+  padding:12px 14px;margin:14px 0 4px;font-size:13.5px}
+.wl-note b{display:block;color:#F5C87A;margin-bottom:3px}
+.wl-note span{color:var(--muted)}
+@media(max-width:820px){
+  .wl-promo{flex-direction:column;align-items:flex-start}
+  .wl-row-acts{margin-left:0;width:100%}
+}
+
+/* ---- боковое меню кабинета в стиле референса ---- */
+#side{padding-top:18px}
+#side button{gap:13px;font-size:14px;padding:13px 18px;border-radius:10px;color:var(--muted)}
+#side button svg{width:20px;height:20px;flex:none}
+#side button.on{background:var(--surface-2);color:var(--text)}
+#side button.on svg{color:var(--accent)}
+.side-new{font-style:normal;color:#F04438;font-size:11px;font-weight:700;margin-left:6px;letter-spacing:.02em}
+.side-hint{position:relative;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+  margin:4px 14px 14px;padding:13px 14px;color:var(--muted);font-size:13px;line-height:1.45}
+.side-hint span{margin-right:6px}
+.side-hint-x{position:absolute!important;right:4px;top:2px;background:none!important;border:0;color:var(--dim);
+  font-size:17px;padding:2px 6px!important;width:auto}
+.side-group small{margin-left:auto;font-size:15px;color:var(--dim)}
+.side-sub{display:flex;flex-direction:column;gap:2px;padding:0 10px 10px}
+.side-sub button{font-size:13px;padding:9px 18px;color:var(--muted)}
+.side-app{padding:16px 14px;border-top:1px solid var(--line);margin-top:8px}
+.side-app-links{display:flex;gap:8px;margin-bottom:10px}
+.side-app-links span{flex:1;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;
+  padding:7px;color:var(--muted)}
+.side-app-links svg{width:20px;height:20px}
+.side-app-qr{border:1px solid var(--line);border-radius:8px;padding:12px}
+.side-app-qr p{font-size:11.5px;color:var(--dim);text-align:center;line-height:1.3;margin:0 0 10px}
+.qr{aspect-ratio:1;border-radius:4px;background:url('data:image/svg+xml;utf8,<svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="21" height="21" fill="%23E8ECF3"/><g fill="%230D1117"><rect x="0" y="0" width="1" height="1"/><rect x="0" y="1" width="1" height="1"/><rect x="0" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="1" y="0" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="2" y="0" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="3" y="0" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="4" y="0" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="14" y="0" width="1" height="1"/><rect x="14" y="1" width="1" height="1"/><rect x="14" y="2" width="1" height="1"/><rect x="14" y="3" width="1" height="1"/><rect x="14" y="4" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/><rect x="14" y="6" width="1" height="1"/><rect x="15" y="0" width="1" height="1"/><rect x="15" y="6" width="1" height="1"/><rect x="16" y="0" width="1" height="1"/><rect x="16" y="2" width="1" height="1"/><rect x="16" y="3" width="1" height="1"/><rect x="16" y="4" width="1" height="1"/><rect x="16" y="6" width="1" height="1"/><rect x="17" y="0" width="1" height="1"/><rect x="17" y="2" width="1" height="1"/><rect x="17" y="3" width="1" height="1"/><rect x="17" y="4" width="1" height="1"/><rect x="17" y="6" width="1" height="1"/><rect x="18" y="0" width="1" height="1"/><rect x="18" y="2" width="1" height="1"/><rect x="18" y="3" width="1" height="1"/><rect x="18" y="4" width="1" height="1"/><rect x="18" y="6" width="1" height="1"/><rect x="19" y="0" width="1" height="1"/><rect x="19" y="6" width="1" height="1"/><rect x="20" y="0" width="1" height="1"/><rect x="20" y="1" width="1" height="1"/><rect x="20" y="2" width="1" height="1"/><rect x="20" y="3" width="1" height="1"/><rect x="20" y="4" width="1" height="1"/><rect x="20" y="5" width="1" height="1"/><rect x="20" y="6" width="1" height="1"/><rect x="0" y="14" width="1" height="1"/><rect x="0" y="15" width="1" height="1"/><rect x="0" y="16" width="1" height="1"/><rect x="0" y="17" width="1" height="1"/><rect x="0" y="18" width="1" height="1"/><rect x="0" y="19" width="1" height="1"/><rect x="0" y="20" width="1" height="1"/><rect x="1" y="14" width="1" height="1"/><rect x="1" y="20" width="1" height="1"/><rect x="2" y="14" width="1" height="1"/><rect x="2" y="16" width="1" height="1"/><rect x="2" y="17" width="1" height="1"/><rect x="2" y="18" width="1" height="1"/><rect x="2" y="20" width="1" height="1"/><rect x="3" y="14" width="1" height="1"/><rect x="3" y="16" width="1" height="1"/><rect x="3" y="17" width="1" height="1"/><rect x="3" y="18" width="1" height="1"/><rect x="3" y="20" width="1" height="1"/><rect x="4" y="14" width="1" height="1"/><rect x="4" y="16" width="1" height="1"/><rect x="4" y="17" width="1" height="1"/><rect x="4" y="18" width="1" height="1"/><rect x="4" y="20" width="1" height="1"/><rect x="5" y="14" width="1" height="1"/><rect x="5" y="20" width="1" height="1"/><rect x="6" y="14" width="1" height="1"/><rect x="6" y="15" width="1" height="1"/><rect x="6" y="16" width="1" height="1"/><rect x="6" y="17" width="1" height="1"/><rect x="6" y="18" width="1" height="1"/><rect x="6" y="19" width="1" height="1"/><rect x="6" y="20" width="1" height="1"/><rect x="0" y="8" width="1" height="1"/><rect x="0" y="9" width="1" height="1"/><rect x="0" y="11" width="1" height="1"/><rect x="1" y="8" width="1" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="1" y="11" width="1" height="1"/><rect x="1" y="12" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="2" y="9" width="1" height="1"/><rect x="2" y="10" width="1" height="1"/><rect x="2" y="12" width="1" height="1"/><rect x="3" y="8" width="1" height="1"/><rect x="3" y="12" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="5" y="9" width="1" height="1"/><rect x="5" y="11" width="1" height="1"/><rect x="6" y="9" width="1" height="1"/><rect x="6" y="11" width="1" height="1"/><rect x="6" y="12" width="1" height="1"/><rect x="7" y="8" width="1" height="1"/><rect x="7" y="10" width="1" height="1"/><rect x="7" y="11" width="1" height="1"/><rect x="8" y="1" width="1" height="1"/><rect x="8" y="4" width="1" height="1"/><rect x="8" y="9" width="1" height="1"/><rect x="8" y="11" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="8" y="14" width="1" height="1"/><rect x="8" y="16" width="1" height="1"/><rect x="9" y="0" width="1" height="1"/><rect x="9" y="9" width="1" height="1"/><rect x="9" y="14" width="1" height="1"/><rect x="9" y="15" width="1" height="1"/><rect x="9" y="17" width="1" height="1"/><rect x="9" y="19" width="1" height="1"/><rect x="9" y="20" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/><rect x="10" y="2" width="1" height="1"/><rect x="10" y="3" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="10" y="7" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="10" y="13" width="1" height="1"/><rect x="10" y="14" width="1" height="1"/><rect x="10" y="17" width="1" height="1"/><rect x="10" y="18" width="1" height="1"/><rect x="10" y="19" width="1" height="1"/><rect x="10" y="20" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="11" y="3" width="1" height="1"/><rect x="11" y="4" width="1" height="1"/><rect x="11" y="5" width="1" height="1"/><rect x="11" y="12" width="1" height="1"/><rect x="11" y="17" width="1" height="1"/><rect x="11" y="18" width="1" height="1"/><rect x="11" y="19" width="1" height="1"/><rect x="12" y="0" width="1" height="1"/><rect x="12" y="1" width="1" height="1"/><rect x="12" y="2" width="1" height="1"/><rect x="12" y="3" width="1" height="1"/><rect x="12" y="4" width="1" height="1"/><rect x="12" y="5" width="1" height="1"/><rect x="12" y="6" width="1" height="1"/><rect x="12" y="7" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="12" y="9" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/><rect x="12" y="13" width="1" height="1"/><rect x="12" y="14" width="1" height="1"/><rect x="12" y="15" width="1" height="1"/><rect x="12" y="16" width="1" height="1"/><rect x="12" y="17" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/><rect x="13" y="10" width="1" height="1"/><rect x="13" y="11" width="1" height="1"/><rect x="13" y="12" width="1" height="1"/><rect x="13" y="14" width="1" height="1"/><rect x="13" y="15" width="1" height="1"/><rect x="13" y="18" width="1" height="1"/><rect x="13" y="20" width="1" height="1"/><rect x="14" y="12" width="1" height="1"/><rect x="14" y="13" width="1" height="1"/><rect x="14" y="14" width="1" height="1"/><rect x="14" y="18" width="1" height="1"/><rect x="14" y="19" width="1" height="1"/><rect x="15" y="13" width="1" height="1"/><rect x="15" y="15" width="1" height="1"/><rect x="15" y="16" width="1" height="1"/><rect x="15" y="17" width="1" height="1"/><rect x="15" y="18" width="1" height="1"/><rect x="15" y="19" width="1" height="1"/><rect x="16" y="9" width="1" height="1"/><rect x="16" y="13" width="1" height="1"/><rect x="16" y="14" width="1" height="1"/><rect x="16" y="15" width="1" height="1"/><rect x="16" y="16" width="1" height="1"/><rect x="16" y="17" width="1" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="17" y="17" width="1" height="1"/><rect x="17" y="19" width="1" height="1"/><rect x="18" y="9" width="1" height="1"/><rect x="18" y="10" width="1" height="1"/><rect x="18" y="13" width="1" height="1"/><rect x="18" y="14" width="1" height="1"/><rect x="18" y="15" width="1" height="1"/><rect x="18" y="18" width="1" height="1"/><rect x="19" y="9" width="1" height="1"/><rect x="19" y="11" width="1" height="1"/><rect x="19" y="12" width="1" height="1"/><rect x="19" y="17" width="1" height="1"/><rect x="19" y="20" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/><rect x="20" y="9" width="1" height="1"/><rect x="20" y="10" width="1" height="1"/><rect x="20" y="12" width="1" height="1"/><rect x="20" y="13" width="1" height="1"/><rect x="20" y="14" width="1" height="1"/><rect x="20" y="16" width="1" height="1"/><rect x="20" y="20" width="1" height="1"/></g></svg>') center/contain no-repeat}
+@media(max-width:900px){.side-app,.side-hint{display:none}}
+
+.btn-primary{background:#2F6BFF!important;color:#fff!important;box-shadow:0 8px 22px -14px rgba(47,107,255,.9)}
+.btn-primary:hover{background:#2457D8!important}
+.wl-promo-btn{border-radius:8px}
 </style>
 
 </head>
@@ -1049,25 +1137,90 @@ img{opacity:.96}
   </header>
   <div class="app-body">
     <nav class="side" id="side">
-      <button data-pane="dash" class="on">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Обзор</button>
-      <button data-pane="term">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-6 4 4 7-9"/><path d="M3 21h18"/></svg>Терминал</button>
+      <button data-pane="wallet" class="on">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19"/><circle cx="17.5" cy="14.5" r="1.3"/></svg>Кошелёк и счета</button>
       <button data-pane="pay">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Платежи</button>
-      <button data-pane="out">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>Вывод средств</button>
-      <button data-pane="tools">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h12M3 18h7"/><circle cx="18" cy="15" r="3"/></svg>Инструменты</button>
-      <button data-pane="ai">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 01-8 8H7l-4 3V12a8 8 0 018-8h2a8 8 0 018 8z"/></svg>Помощник</button>
-      <button data-pane="prof">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Профиль</button>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>Депозит</button>
+      <button data-pane="dash">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Обзор <em class="side-new">New</em></button>
+      <div class="side-hint" id="sideHint">
+        <button class="side-hint-x" aria-label="Скрыть подсказку">×</button>
+        <span>⚡</span>Торговые сигналы<br>ждут тебя
+      </div>
+      <button class="side-group" id="sideTools" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h10M4 17h7"/></svg>Инструменты<small>⌄</small></button>
+      <div class="side-sub" id="sideSub" hidden>
+        <button data-pane="term">Терминал</button>
+        <button data-pane="out">Вывод средств</button>
+        <button data-pane="tools">Калькуляторы и спецификации</button>
+        <button data-pane="ai">Помощник</button>
+        <button data-pane="prof">Профиль</button>
+      </div>
       <div class="spacer"></div>
+      <div class="side-app">
+        <div class="side-app-links">
+          <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.7-1.3-.1-2.5.8-3.1.8-.6 0-1.6-.8-2.7-.7-1.4 0-2.7.8-3.4 2-1.4 2.5-.4 6.2 1 8.2.7 1 1.5 2.1 2.6 2.1 1 0 1.4-.7 2.7-.7s1.6.7 2.7.6c1.1 0 1.8-1 2.5-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2.2-.8-2.2-3.1zM14.3 6.3c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.6 1 .1 2-.5 2.5-1.2z"/></svg></span>
+          <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3.2v17.6c0 .5.5.8.9.6l10.2-6-2.7-2.6L4 3.2zm12.6 7.1l-2.4-1.4-2.6 2.6 2.6 2.5 2.4-1.4c.9-.5.9-1.8 0-2.3zM4.9 2.6l8.2 7.9 2.1-2.1L5.8 2.2c-.3-.2-.7-.1-.9.4z"/></svg></span>
+        </div>
+        <div class="side-app-qr">
+          <p>Откройте кабинет Nordis на телефоне</p>
+          <div class="qr" aria-hidden="true"></div>
+        </div>
+      </div>
       <button data-logout>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 5l-7 7 7 7"/></svg>Выйти</button>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 5l-7 7 7 7"/></svg>Выйти</button>
     </nav>
     <main class="pane">
+
+      <!-- Кошелёк и счета -->
+      <div data-view="wallet">
+        <div class="wl-promo">
+          <div class="wl-promo-ic" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="14" width="34" height="22" rx="4" fill="#2F6BFF" opacity=".25"/><rect x="6" y="14" width="34" height="22" rx="4" stroke="#6FA2FF" stroke-width="2"/><path d="M6 21h34" stroke="#6FA2FF" stroke-width="2"/><circle cx="33" cy="29" r="3" fill="#F5A524"/></svg>
+          </div>
+          <div class="wl-promo-tx">
+            <b id="wlPromoTitle">Пополните счёт, чтобы начать торговать</b>
+            <span id="wlPromoSub">Чтобы активировать профиль и торговый счёт, внесите первый депозит</span>
+          </div>
+          <button class="btn btn-primary wl-promo-btn" data-goto-pane="pay">Пополнить кошелёк
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <div class="wl-dots"><i class="on"></i><i></i></div>
+
+        <section class="wl-card">
+          <div class="wl-card-head">
+            <h3>Ваш кошелёк <span class="num" id="wlId">—</span></h3>
+            <button class="wl-link" data-goto-pane="pay">История платежей ›</button>
+          </div>
+          <div class="wl-card-body">
+            <div class="wl-brand" id="wlBrand">Nordis</div>
+            <div class="wl-bal">
+              <span>Баланс кошелька</span>
+              <b class="num" id="wlBal">$0,00</b>
+            </div>
+            <div class="wl-acts">
+              <button class="btn btn-ghost" data-goto-pane="out">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v10"/><path d="M8 10l4 4 4-4"/><path d="M4 20h16"/></svg>Вывод средств</button>
+              <button class="btn btn-ghost" id="wlTransfer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg>Перевести</button>
+              <button class="btn btn-primary" data-goto-pane="pay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M12 9v6M9 12h6"/></svg>Пополнить</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="wl-card">
+          <div class="wl-card-head">
+            <h3>Ваши торговые счета</h3>
+            <button class="wl-link" data-goto-pane="prof">+ Открыть счёт</button>
+          </div>
+          <div class="wl-tabs">
+            <button class="on" data-wltab="real">Реальные счета</button>
+            <button data-wltab="demo">Демо счета</button>
+          </div>
+          <div id="wlAccts"></div>
+        </section>
+      </div>
 
       <!-- Обзор -->
       <div data-view="dash">
@@ -1594,7 +1747,7 @@ const SECTIONS=[["hero","Первый экран"],["markets","Котировк�
   ["stats","Условия торговли"],["accounts","Типы счетов"],["platforms","Платформы"],
   ["classes","Классы активов"],["mobile","Мобильное приложение"],["achv","Компания в цифрах"],
   ["cta","Призыв к действию"],["footer","Футер"]];
-const PANES=[["dash","Обзор"],["term","Терминал"],["pay","Платежи"],["out","Вывод средств"],["tools","Инструменты"],["ai","Помощник"],["prof","Профиль"]];
+const PANES=[["wallet","Кошелёк и счета"],["dash","Обзор"],["term","Терминал"],["pay","Платежи"],["out","Вывод средств"],["tools","Инструменты"],["ai","Помощник"],["prof","Профиль"]];
 function elPath(el){
   if(!el||el===document.body) return "body";
   const parts=[];
@@ -2384,7 +2537,7 @@ function rerenderAll(){
     safe(()=>{ renderHist(); renderTx(); renderPositions(); });
     safe(()=>{
       const cur=document.querySelector("#side [data-pane].on");
-      showPane(cur?cur.dataset.pane:"dash");
+      showPane(cur?cur.dataset.pane:"wallet");
     });
   }
 }
@@ -2518,14 +2671,14 @@ function modal(kind){
     go.disabled=false; go.style.opacity="";
     if(r.err) return err(r.err);
     setSession(r.user.email); close();
-    openApp("dash");
+    openApp("wallet");
     toast(signup?("Кошелёк №"+r.user.acct+" создан"):("С возвращением, "+r.user.name));
   };
   el.querySelector("input").focus();
 }
 document.addEventListener("click",e=>{
   const o=e.target.closest("[data-open]"); if(o){modal(o.dataset.open);return;}
-  if(e.target.closest("[data-demo]")){openApp("dash");return;}
+  if(e.target.closest("[data-demo]")){openApp("wallet");return;}
   if(e.target.closest("[data-logout]")){
     setSession(""); loadSession(); leaveApp();
     toast("Вы вышли из кошелька"); return;
@@ -2810,8 +2963,8 @@ function syncHeader(){
   const oe=document.getElementById("outEquity"); if(oe) oe.textContent=usd(state.balance);
   if(typeof applyTextBlocks==="function") applyTextBlocks();
 }
-const APP_KEY="avexo_app_open_v1";
-function rememberApp(pane){ try{ localStorage.setItem(APP_KEY,pane||"dash"); }catch(e){} }
+const APP_KEY="nordis_app_open_v1";
+function rememberApp(pane){ try{ localStorage.setItem(APP_KEY,pane||"wallet"); }catch(e){} }
 function forgetApp(){ try{ localStorage.removeItem(APP_KEY); }catch(e){} }
 function openApp(pane,sym){
   document.getElementById("site").style.display="none";
@@ -2820,7 +2973,7 @@ function openApp(pane,sym){
   if(sym&&prices[sym]) state.curSym=sym;
   loadSession();
   renderHist(); renderTx(); renderPositions();
-  showPane(pane||"dash");
+  showPane(pane||"wallet");
 }
 function leaveApp(){
   forgetApp();
@@ -2828,11 +2981,79 @@ function leaveApp(){
   document.getElementById("site").style.display="";
   window.scrollTo(0,0);
 }
+/* ---------------- кошелёк и торговые счета ---------------- */
+let wlTab="real";
+function wlWalletId(){
+  const u=currentUser();
+  const n=(u&&u.acct)||"000000";
+  return "W"+n+String(1000+(Number(n)%9000)).slice(0,4)+((u&&u.cur)||"USD");
+}
+function bindWalletExtras(){
+  const t=document.getElementById("wlTransfer");
+  if(t&&!t.dataset.ready){ t.dataset.ready="1";
+    t.onclick=()=>toast("Перевод между счетами доступен после пополнения кошелька"); }
+}
+function renderWallet(){
+  bindWalletExtras();
+  const box=document.getElementById("wlAccts"); if(!box) return;
+  const u=currentUser();
+  const bal=state.balance||0;
+  const POS=activePositions();
+  const margin=POS.reduce((s2,p)=>{const [c]=spec(p.sym); return s2+p.vol*c*(prices[p.sym]??p.open)/200;},0);
+  const free=Math.max(0,bal-margin);
+  const id=document.getElementById("wlId"); if(id) id.textContent=wlWalletId();
+  const bb=document.getElementById("wlBal"); if(bb) bb.textContent=usd(bal);
+  const br=document.getElementById("wlBrand"); if(br) br.textContent=(CFG.brand&&CFG.brand.name)||"Nordis";
+  const empty=bal<=0;
+  const pt=document.getElementById("wlPromoTitle"), ps=document.getElementById("wlPromoSub");
+  if(pt) pt.textContent=empty?"Пополните счёт, чтобы начать торговать":"Счёт активен — можно открывать сделки";
+  if(ps) ps.textContent=empty
+    ? "Чтобы активировать профиль и торговый счёт, внесите первый депозит"
+    : "Средства на кошельке доступны для торговли и вывода";
+  const acc=acctList()[0]||{};
+  const demo=wlTab==="demo";
+  const shown=demo?100000:bal;
+  const shownFree=demo?100000:free;
+  box.innerHTML=
+    '<div class="wl-row">'+
+      '<div class="wl-row-id"><b>#'+escapeHtml(String(acc.id||(u&&u.acct)||"—"))+'</b>'+
+        '<small>'+escapeHtml(String(acc.mode||"Hedge"))+'</small>'+
+        '<div class="wl-badges"><span class="wl-chip ok">'+(demo?"Демо":"Активен")+'</span>'+
+        '<span class="wl-chip">'+escapeHtml(String(acc.type||"Standard"))+' · '+escapeHtml(String(acc.srv||srvName()))+'</span></div></div>'+
+      '<div class="wl-col"><span>Баланс счёта</span><b class="num">'+usd(shown)+'</b></div>'+
+      '<div class="wl-col"><span>Свободная маржа</span><b class="num">'+usd(shownFree)+'</b></div>'+
+      '<div class="wl-col"><span>Кредитное плечо</span><b class="num">'+escapeHtml(String(acc.lev||"1:100"))+'</b></div>'+
+      '<div class="wl-row-acts">'+
+        '<button class="wl-gear" data-goto-pane="prof" aria-label="Настройки счёта">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4m0-12.8l-1.4 1.4m-10 10l-1.4 1.4"/></svg></button>'+
+        '<button class="btn btn-ghost btn-sm" data-goto-pane="pay">Пополнить</button>'+
+        '<button class="btn btn-primary btn-sm" data-goto-pane="term">Торговать</button>'+
+      '</div>'+
+    '</div>'+
+    (empty&&!demo
+      ? '<div class="wl-note"><b>Счёт ещё не активирован</b><span>Пополните кошелёк, чтобы активировать счёт и начать торговлю.</span></div>'
+      : '');
+}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-goto-pane]"); if(g){ showPane(g.dataset.gotoPane); return; }
+  const t=e.target.closest("[data-wltab]"); if(t){
+    wlTab=t.dataset.wltab;
+    document.querySelectorAll("[data-wltab]").forEach(b=>b.classList.toggle("on",b===t));
+    renderWallet(); return;
+  }
+  if(e.target.closest(".side-hint-x")){ const h=document.getElementById("sideHint"); if(h) h.hidden=true; return; }
+  const st=e.target.closest("#sideTools"); if(st){
+    const sub=document.getElementById("sideSub");
+    if(sub){ sub.hidden=!sub.hidden; st.setAttribute("aria-expanded", String(!sub.hidden)); }
+  }
+});
 function showPane(id){
   if((CFG.panes||{})[id]===false){const first=PANES.find(([k])=>(CFG.panes||{})[k]!==false); id=first?first[0]:id;}
   rememberApp(id);
   document.querySelectorAll("[data-view]").forEach(v=>v.hidden=v.dataset.view!==id);
   document.querySelectorAll("#side [data-pane]").forEach(b=>b.classList.toggle("on",b.dataset.pane===id));
+  if(id==="wallet"){renderWallet();}
   if(id==="dash"){drawEquity();renderPositions();}
   if(id==="term"){renderWatch();drawCandles();updateTicket();}
   if(id==="prof"){renderProfile();renderAcct();fitAcct();renderIntegrations();}
