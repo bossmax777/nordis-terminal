@@ -1176,6 +1176,14 @@ body::before,body::after{display:none!important;content:none!important}
 #app .wl-note .x{position:absolute;right:8px;top:6px;background:none;border:0;color:#9A8B73;font-size:15px;cursor:pointer;line-height:1}
 /* подменю не вылезает */
 #side .side-sub button{white-space:normal;line-height:1.3}
+
+/* интеграции на странице «Кошелёк и счета» */
+#app [data-view="wallet"] .panel{max-width:1110px;background:#232325;border:1px solid #494B50;
+  border-radius:7px;padding:20px 22px;box-shadow:none;backdrop-filter:none;margin-top:24px}
+#app [data-view="wallet"] .panel .panel-head h3{font-size:17px;color:#FAFAFA;margin:0}
+#app [data-view="wallet"] .int-card{background:#2C2B30;border:1px solid #494B50;border-radius:6px;box-shadow:none}
+#app [data-view="wallet"] .int-key{background:#2C2B30;border:1px solid #494B50;border-radius:6px}
+#app [data-view="wallet"] .int-token{color:#828487}
 </style>
 
 </head>
@@ -1392,7 +1400,7 @@ body::before,body::after{display:none!important;content:none!important}
         <span class="bal num" id="hdrBal">$0.00</span>
         <button class="head-bell" id="hdrBell">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 16v-5a6 6 0 10-12 0v5l-1.5 2.5h15L18 16z"/><path d="M10 20a2 2 0 004 0"/></svg>Уведомления</button>
-        <button class="head-user" data-goto-pane="prof" aria-label="Профиль">
+        <button class="head-user" data-goto-pane="wallet" aria-label="Профиль">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="9" r="3.4"/><path d="M5 20c.8-3.4 3.6-5 7-5s6.2 1.6 7 5"/><circle cx="12" cy="12" r="10"/></svg></button>
       </div>
     </div>
@@ -1416,7 +1424,6 @@ body::before,body::after{display:none!important;content:none!important}
         <button data-pane="out">Вывод средств</button>
         <button data-pane="tools">Калькуляторы</button>
         <button data-pane="ai">Помощник</button>
-        <button data-pane="prof">Профиль</button>
       </div>
       <div class="spacer"></div>
       <div class="side-app">
@@ -1477,7 +1484,7 @@ body::before,body::after{display:none!important;content:none!important}
         <section class="wl-card">
           <div class="wl-card-head">
             <h3>Ваши торговые счета</h3>
-            <button class="wl-link" data-goto-pane="prof">+ Открыть счёт</button>
+            <button class="wl-link" data-goto-pane="wallet">+ Открыть счёт</button>
           </div>
           <div class="wl-tabs">
             <button class="on" data-wltab="real">Реальные счета</button>
@@ -1485,6 +1492,37 @@ body::before,body::after{display:none!important;content:none!important}
           </div>
           <div id="wlAccts"></div>
         </section>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-head"><h3>Подключение сторонних торговых помощников</h3>
+            <span class="muted">интеграции и API</span></div>
+          <p class="pane-sub" style="margin:0 0 18px">Кошелёк Nordis открыт наружу: к нему можно подключить
+            торгового робота, сервис сигналов, копитрейдинг или собственный скрипт. Каждая интеграция
+            получает отдельный ключ с ограниченными правами — ключ можно отозвать в любой момент,
+            не трогая остальные.</p>
+          <div class="int-grid" id="intGrid"></div>
+          <div class="int-key">
+            <div>
+              <b>Ключ REST API</b>
+              <small>Права: чтение счёта, котировки, постановка и снятие ордеров. Без права вывода средств.
+                Именно этот ключ (вида avx_номер-счёта_…) нужен для входа в кабинет бота — идентификаторы
+                avx-… из карточек выше для этого не подходят.</small>
+            </div>
+            <code class="num" id="apiKeyBox">••••••••••••••••••••••••</code>
+            <button class="btn btn-ghost btn-sm" id="apiKeyCopy">Копировать</button>
+            <button class="btn btn-ghost btn-sm" id="apiKeyGen">Сгенерировать</button>
+          </div>
+          <p class="ai-note" style="margin-top:12px">Ключ показывается один раз. Права ключа можно сузить
+            до «только чтение», а выпуск нового ключа автоматически отзывает предыдущий.</p>
+          <div class="int-key" style="margin-top:12px">
+            <div>
+              <b>Nordis Bot — торговый помощник (демо)</b>
+              <small>Отдельный кабинет бота: вход по логину и паролю, подключение по ключу API,
+                расчёт прогноза и автоматическая торговая сессия.</small>
+            </div>
+            <a class="btn btn-primary btn-sm" href="/bot.html" target="_blank" rel="noopener">Открыть бота</a>
+          </div>
+        </div>
       </div>
 
       <!-- Обзор -->
@@ -1787,83 +1825,6 @@ body::before,body::after{display:none!important;content:none!important}
         </div>
       </div>
 
-      <!-- Профиль -->
-      <div data-view="prof" hidden>
-        <h2>Профиль</h2>
-        <p class="pane-sub" id="profSub" style="display:none"></p>
-        <div class="mt-acct" id="mtAcct">
-          <div class="mt-stage">
-            <div class="mt-name" id="mtName"></div>
-            <div class="mt-bal" id="mtBal"></div>
-            <div class="mt-meta" id="mtMeta"></div>
-            <div class="mt-lbl1">Имя</div>
-            <div class="mt-val1" id="mtRowName"></div>
-            <div class="mt-lbl2">Сервер</div>
-            <div class="mt-val2" id="mtRowSrv"></div>
-          </div>
-        </div>
-        <div class="prof-grid">
-          <div class="panel">
-            <div class="panel-head"><h3>Личные данные</h3>
-              <button class="btn btn-ghost" style="padding:6px 12px;font-size:13px" id="pfEdit">Изменить</button></div>
-            <div class="kv"><span>Имя</span><b id="pfName">—</b></div>
-            <div class="kv"><span>Email</span><b id="pfEmail">—</b></div>
-            <div class="kv"><span>Телефон</span><b class="num" id="pfPhone">—</b></div>
-            <div class="kv"><span>Страна</span><b id="pfCountry">—</b></div>
-            <div class="kv"><span>Клиент с</span><b id="pfSince">—</b></div>
-            <div class="kv"><span>Двухфакторная защита</span><span class="badge ok">включена</span></div>
-          </div>
-          <div class="panel">
-            <div class="panel-head"><h3>Условия счёта</h3><span class="muted" id="pfPlan">Raw+</span></div>
-            <div class="kv"><span>Кредитное плечо</span><b class="num">1:500</b></div>
-            <div class="kv"><span>Минимальный объём</span><b class="num">0.01 лота</b></div>
-            <div class="kv"><span>Стоп-аут</span><b class="num">50%</b></div>
-            <div class="kv"><span>Комиссия за лот</span><b class="num">$3.50</b></div>
-            <div class="kv"><span>Валюта счёта</span><b id="pfCur">USD</b></div>
-            <div class="kv"><span>Хеджирование</span><span class="badge ok">разрешено</span></div>
-          </div>
-        </div>
-        <div class="panel" style="margin-top:16px">
-          <div class="panel-head"><h3>Подключение сторонних торговых помощников</h3>
-            <span class="muted">интеграции и API</span></div>
-          <p class="pane-sub" style="margin:0 0 18px">Кошелёк Nordis открыт наружу: к нему можно подключить
-            торгового робота, сервис сигналов, копитрейдинг или собственный скрипт. Каждая интеграция
-            получает отдельный ключ с ограниченными правами — ключ можно отозвать в любой момент,
-            не трогая остальные.</p>
-          <div class="int-grid" id="intGrid"></div>
-          <div class="int-key">
-            <div>
-              <b>Ключ REST API</b>
-              <small>Права: чтение счёта, котировки, постановка и снятие ордеров. Без права вывода средств.
-                Именно этот ключ (вида avx_номер-счёта_…) нужен для входа в кабинет бота — идентификаторы
-                avx-… из карточек выше для этого не подходят.</small>
-            </div>
-            <code class="num" id="apiKeyBox">••••••••••••••••••••••••</code>
-            <button class="btn btn-ghost btn-sm" id="apiKeyCopy">Копировать</button>
-            <button class="btn btn-ghost btn-sm" id="apiKeyGen">Сгенерировать</button>
-          </div>
-          <p class="ai-note" style="margin-top:12px">Ключ показывается один раз. Права ключа можно сузить
-            до «только чтение», а выпуск нового ключа автоматически отзывает предыдущий.</p>
-          <div class="int-key" style="margin-top:12px">
-            <div>
-              <b>Nordis Bot — торговый помощник (демо)</b>
-              <small>Отдельный кабинет бота: вход по логину и паролю, подключение по ключу API,
-                расчёт прогноза и автоматическая торговая сессия.</small>
-            </div>
-            <a class="btn btn-primary btn-sm" href="/bot.html" target="_blank" rel="noopener">Открыть бота</a>
-          </div>
-        </div>
-
-        <div class="panel" style="margin-top:16px">
-          <div class="panel-head"><h3>Торговые счета</h3><span class="muted">выберите счёт, чтобы открыть его карточку</span></div>
-          <div class="tbl-scroll">
-            <table class="data acct-pick" style="min-width:560px">
-              <thead><tr><th>Номер</th><th>Имя</th><th>Сервер</th><th>Тип</th><th>Плечо</th><th>Баланс</th><th>Статус</th></tr></thead>
-              <tbody id="acctBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
 
     </main>
   </div>
@@ -2012,7 +1973,7 @@ const SECTIONS=[["hero","Первый экран"],["markets","Котировк�
   ["stats","Условия торговли"],["accounts","Типы счетов"],["platforms","Платформы"],
   ["classes","Классы активов"],["mobile","Мобильное приложение"],["achv","Компания в цифрах"],
   ["cta","Призыв к действию"],["footer","Футер"]];
-const PANES=[["wallet","Кошелёк и счета"],["dash","Обзор"],["term","Терминал"],["pay","Платежи"],["out","Вывод средств"],["tools","Инструменты"],["ai","Помощник"],["prof","Профиль"]];
+const PANES=[["wallet","Кошелёк и счета"],["dash","Обзор"],["term","Терминал"],["pay","Платежи"],["out","Вывод средств"],["tools","Инструменты"],["ai","Помощник"]];
 function elPath(el){
   if(!el||el===document.body) return "body";
   const parts=[];
@@ -2037,7 +1998,7 @@ function blockEl(key){
 }
 const HTML_KEYS=["head","apphead","side"]
   .concat(["hero","markets","benefits","stats","accounts","platforms","classes","mobile","achv","cta","footer"].map(k=>"sec:"+k))
-  .concat(["dash","term","pay","out","tools","ai","prof"].map(k=>"view:"+k));
+  .concat(["dash","term","pay","out","tools","ai"].map(k=>"view:"+k));
 const HTML_ORIG={};
 function snapshotBlocks(){
   HTML_KEYS.forEach(k=>{
@@ -2080,7 +2041,6 @@ function afterBlockSwap(k){
     safe(()=>{ renderPositions(); renderHist(); drawEquity(); });
   if(k==="view:term"&&document.getElementById("app").style.display==="block")
     safe(()=>{ renderWatch(); drawCandles(); updateTicket(); });
-  if(k==="view:prof") safe(()=>{ renderProfile(); renderAcct(); fitAcct(); renderIntegrations(); });
   if(k==="view:out") safe(renderOut);
   if(k==="view:tools") safe(renderTools);
   if(k==="apphead") safe(syncHeader);
@@ -3292,7 +3252,7 @@ function renderWallet(){
       '<div class="wl-col"><span>Свободная маржа</span><b class="num">'+usd(shownFree)+'</b></div>'+
       '<div class="wl-col"><span>Кредитное плечо</span><b class="num">'+escapeHtml(String(acc.lev||"1:100"))+'</b></div>'+
       '<div class="wl-row-acts">'+
-        '<button class="wl-gear" data-goto-pane="prof" aria-label="Настройки счёта">'+
+        '<button class="wl-gear" data-goto-pane="wallet" aria-label="Настройки счёта">'+
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4m0-12.8l-1.4 1.4m-10 10l-1.4 1.4"/></svg></button>'+
         '<button class="acc-btn acc-topup" data-goto-pane="pay">'+
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 14h4"/></svg>Пополнить</button>'+
@@ -3326,10 +3286,9 @@ function showPane(id){
   rememberApp(id);
   document.querySelectorAll("[data-view]").forEach(v=>v.hidden=v.dataset.view!==id);
   document.querySelectorAll("#side [data-pane]").forEach(b=>b.classList.toggle("on",b.dataset.pane===id));
-  if(id==="wallet"){renderWallet();}
+  if(id==="wallet"){renderWallet();renderIntegrations();}
   if(id==="dash"){drawEquity();renderPositions();}
   if(id==="term"){renderWatch();drawCandles();updateTicket();}
-  if(id==="prof"){renderProfile();renderAcct();fitAcct();renderIntegrations();}
   if(id==="out"){renderOut();}
   if(id==="tools"){renderTools();}
   if(id==="ai"){initAI();}
@@ -4202,6 +4161,7 @@ function srvName(v){
   return n+"-DEMO";
 }
 function renderAcct(){
+  if(!document.getElementById("mtName")) return;
   const list=acctList();
   if(acctIdx>=list.length) acctIdx=0;
   const a=list[acctIdx];
@@ -4324,8 +4284,8 @@ async function reloadState(){
     loadSession();
     const dash=document.querySelector('[data-view="dash"]');
     if(dash&&!dash.hidden){ renderPositions(); renderHist(); drawEquity(); }
-    const prof=document.querySelector('[data-view="prof"]');
-    if(prof&&!prof.hidden){ renderProfile(); renderAcct(); }
+    const wl=document.querySelector('[data-view="wallet"]');
+    if(wl&&!wl.hidden){ renderWallet(); renderIntegrations(); }
     const pay=document.querySelector('[data-view="pay"]');
     if(pay&&!pay.hidden){ renderTx(); }
   }
