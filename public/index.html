@@ -1086,6 +1086,61 @@ body::before,body::after{display:none!important;content:none!important}
 #app .pane{padding:48px 40px 70px;max-width:none}
 #app .tab{background:#2C2B30;border-color:#494B50;color:#8A8C90;border-radius:4px}
 #app .tab.on{background:#2D6CF0;color:#fff;border-color:transparent}
+
+/* ===== раскладка кабинета 1:1 с референсом ===== */
+#app .app-body{display:grid!important;grid-template-columns:217px minmax(0,1fr)!important;
+  max-width:none!important;margin:0!important;min-height:calc(100vh - 66px)}
+#app .app-head-in{max-width:none;padding:0 22px;height:66px}
+#app .app-head .logo{font-size:26px;gap:10px}
+#app .app-head .logo img,#app .app-head .logo-mark{width:30px;height:30px}
+#side{padding:0!important;gap:0!important;border-right:1px solid #2E2E31!important;background:#232325!important}
+#side button{width:100%!important;border-radius:0!important;margin:0!important;padding:18px 26px!important;
+  transform:none!important;transition:none!important;box-shadow:none!important;font-size:14px;color:#9A9C9F}
+#side button:hover{background:#28282B!important;transform:none!important}
+#side button.on{background:#2C2B30!important;color:#FAFAFA!important;box-shadow:none!important}
+#side button.on svg{color:#E5484D}
+#side .side-hint{margin:0 14px 22px!important}
+#side .side-sub{padding:0 0 12px}
+#side .side-sub button{padding:10px 26px!important;font-size:12.5px}
+#side .side-app{padding:24px 14px;border-top:1px solid #2E2E31}
+#side .spacer{flex:1}
+#app .pane{padding:44px 40px 70px!important;max-width:none}
+/* панели шире, как в референсе */
+#app .wl-promo,#app .wl-card{max-width:1110px;margin-left:0;margin-right:auto}
+#app .wl-promo{margin-bottom:0}
+#app .wl-dots{margin:16px 0 18px;max-width:1110px}
+#app .wl-card{margin-bottom:24px}
+/* кнопки кошелька фиксированной ширины */
+#app .wl-acts{gap:12px}
+#app .wl-btn{width:150px;min-width:150px}
+
+/* ===== баннер: фон-схема и кнопка как в референсе ===== */
+#app .wl-promo{position:relative;overflow:hidden;padding:25px 32px;gap:25px;min-height:128px;
+  background:#232325!important;border:1px solid #2E2E31!important;border-radius:7px!important}
+#app .wl-promo::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;
+  background-image:
+    linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(0deg,rgba(255,255,255,.045) 1px,transparent 1px),
+    radial-gradient(circle,rgba(255,255,255,.10) 1.5px,transparent 1.6px);
+  background-size:38px 100%,100% 30px,76px 60px;
+  background-position:0 0,0 0,19px 15px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 52%,#000 88%);
+  mask-image:linear-gradient(90deg,transparent 52%,#000 88%)}
+#app .wl-promo::after{content:"";position:absolute;right:-30px;top:-20px;width:240px;height:180px;
+  pointer-events:none;opacity:.18;
+  background:
+    repeating-linear-gradient(135deg,rgba(255,255,255,.08) 0 1px,transparent 1px 22px),
+    repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 1px,transparent 1px 26px)}
+#app .wl-promo-ic,#app .wl-promo-tx,#app .wl-promo-btn{position:relative;z-index:2}
+#app .wl-promo-ic{width:60px;height:60px}
+#app .wl-promo-tx b{font-size:18px;margin-bottom:5px}
+#app .wl-promo-tx span{font-size:12px;color:#A1A1A8}
+#app .wl-promo-btn{margin-left:auto;background:#2D6CF0;color:#fff;border:0;border-radius:4px;
+  display:flex;align-items:center;gap:14px;padding:13px 20px;max-width:245px;width:245px;
+  font:600 12px/1.35 Arial,Helvetica,sans-serif;cursor:pointer;text-align:left}
+#app .wl-promo-btn:hover{background:#2458CC}
+#app .wl-promo-btn svg{width:18px;height:18px;flex:none}
+#app .wl-promo-btn b{font-weight:700}
 </style>
 
 </head>
@@ -1354,7 +1409,7 @@ body::before,body::after{display:none!important;content:none!important}
             <b id="wlPromoTitle">Пополните счёт, чтобы начать торговать</b>
             <span id="wlPromoSub">Чтобы активировать профиль и торговый счёт, внесите первый депозит</span>
           </div>
-          <button class="btn btn-primary wl-promo-btn" data-goto-pane="pay">Пополнить кошелёк
+          <button class="wl-promo-btn" data-goto-pane="pay"><span>Пополните ваш кошелёк<br><b class="cfgBrand">Nordis</b></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
         <div class="wl-dots"><i class="on"></i><i></i></div>
