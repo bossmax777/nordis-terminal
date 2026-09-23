@@ -1141,6 +1141,41 @@ body::before,body::after{display:none!important;content:none!important}
 #app .wl-promo-btn:hover{background:#2458CC}
 #app .wl-promo-btn svg{width:18px;height:18px;flex:none}
 #app .wl-promo-btn b{font-weight:700}
+
+/* ===== плашка бренда: градиент снят с референса пипеткой ===== */
+#app .wl-brand{width:112px;height:64px;border-radius:3px;border:0;
+  background:linear-gradient(135deg,#CD9E7A 0%,#B2886A 28%,#96735A 52%,#6B513E 78%,#38281F 100%)!important;
+  color:#fff;font:700 20px/1 Arial,Helvetica,sans-serif;text-shadow:0 1px 2px rgba(0,0,0,.35);
+  display:grid;place-items:center}
+/* ===== строка торгового счёта 1:1 ===== */
+#app .wl-row{display:flex;align-items:center;gap:24px;padding:18px 0 6px;border:0;flex-wrap:nowrap}
+#app .wl-row-id{min-width:210px;flex:none}
+#app .wl-row-id b{font-size:13px;letter-spacing:0}
+#app .wl-row-id small{font-size:11px;color:#8A8C90;margin-left:8px}
+#app .wl-badges{margin-top:8px;gap:8px}
+#app .wl-chip{font-size:9.5px;padding:3px 6px;border-radius:2px;line-height:1.3}
+#app .wl-col{min-width:118px;flex:none}
+#app .wl-col span{font-size:10px;color:#8A8C90;margin-bottom:6px;white-space:nowrap}
+#app .wl-col b{font-size:13px;white-space:nowrap}
+#app .wl-row-acts{margin-left:auto;gap:14px;align-items:center;flex:none}
+#app .wl-gear{width:24px;height:24px;border:0;background:none;color:#8A8C90;padding:0;margin-right:4px}
+#app .wl-gear svg{width:20px;height:20px}
+#app .acc-btn{width:128px;height:38px;border:0;border-radius:4px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font:600 12px/1 Arial,Helvetica,sans-serif}
+#app .acc-btn svg{width:17px;height:17px}
+#app .acc-topup{background:#26314B;color:#80A8FF}
+#app .acc-topup:hover{background:#2C3A59}
+#app .acc-trade{background:#2D6CF0;color:#fff}
+#app .acc-trade:hover{background:#2458CC}
+/* ===== плашка активации 1:1 ===== */
+#app .wl-note{position:relative;background:#3E2C1E;border:0;border-radius:3px;color:#C89538;
+  width:566px;max-width:100%;padding:11px 34px 12px 14px;margin:14px 0 6px;font-size:11px;line-height:1.45}
+#app .wl-note b{display:block;font-size:11px;color:#C89538;font-weight:600;margin-bottom:3px}
+#app .wl-note span{color:#9A8B73;font-size:10.5px}
+#app .wl-note .x{position:absolute;right:8px;top:6px;background:none;border:0;color:#9A8B73;font-size:15px;cursor:pointer;line-height:1}
+/* подменю не вылезает */
+#side .side-sub button{white-space:normal;line-height:1.3}
 </style>
 
 </head>
@@ -1379,7 +1414,7 @@ body::before,body::after{display:none!important;content:none!important}
       <div class="side-sub" id="sideSub" hidden>
         <button data-pane="term">Терминал</button>
         <button data-pane="out">Вывод средств</button>
-        <button data-pane="tools">Калькуляторы и спецификации</button>
+        <button data-pane="tools">Калькуляторы</button>
         <button data-pane="ai">Помощник</button>
         <button data-pane="prof">Профиль</button>
       </div>
@@ -3259,12 +3294,16 @@ function renderWallet(){
       '<div class="wl-row-acts">'+
         '<button class="wl-gear" data-goto-pane="prof" aria-label="Настройки счёта">'+
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4m0-12.8l-1.4 1.4m-10 10l-1.4 1.4"/></svg></button>'+
-        '<button class="btn btn-ghost btn-sm" data-goto-pane="pay">Пополнить</button>'+
-        '<button class="btn btn-primary btn-sm" data-goto-pane="term">Торговать</button>'+
+        '<button class="acc-btn acc-topup" data-goto-pane="pay">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 14h4"/></svg>Пополнить</button>'+
+        '<button class="acc-btn acc-trade" data-goto-pane="term">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16l5-5 3 3 6-7"/><path d="M15 7h4v4"/></svg>Торговать</button>'+
       '</div>'+
     '</div>'+
     (empty&&!demo
-      ? '<div class="wl-note"><b>Счёт ещё не активирован</b><span>Пополните кошелёк, чтобы активировать счёт и начать торговлю.</span></div>'
+      ? '<div class="wl-note"><button class="x" aria-label="Закрыть" data-note-x>×</button>'+
+        '<b>Ваш счёт ещё не полностью активирован</b>'+
+        '<span>Пополните счёт, чтобы активировать аккаунт и начать торговлю.</span></div>'
       : '');
 }
 function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -3275,6 +3314,7 @@ document.addEventListener("click",e=>{
     document.querySelectorAll("[data-wltab]").forEach(b=>b.classList.toggle("on",b===t));
     renderWallet(); return;
   }
+  const nx=e.target.closest("[data-note-x]"); if(nx){ const n=nx.closest(".wl-note"); if(n) n.remove(); return; }
   if(e.target.closest(".side-hint-x")){ const h=document.getElementById("sideHint"); if(h) h.hidden=true; return; }
   const st=e.target.closest("#sideTools"); if(st){
     const sub=document.getElementById("sideSub");
