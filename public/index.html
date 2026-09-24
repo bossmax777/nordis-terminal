@@ -1221,6 +1221,10 @@ body::before,body::after{display:none!important;content:none!important}
 #app .wl-btn.is-blue{background:#26314B!important;color:#80A8FF!important}
 #app .wl-btn.is-blue svg{color:#80A8FF}
 #app .app-head .logo .cfgBrand,#app .app-head .logo .cfgBrand2{color:#E5484D!important}
+/* контент тянется на всю ширину окна, как на широких мониторах у ФхПро-подобных кабинетов */
+#app .wl-promo,#app .wl-card,#app .wl-dots,#app .mkt-bar,
+#app [data-view="wallet"] .panel{max-width:1600px!important;width:auto!important;margin-right:0!important}
+#app .pane{max-width:1680px}
 /* боковое меню всегда целиком на экране: «Выйти» не уезжает вниз страницы */
 #app .app-body{align-items:start}
 #app #side{position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;overscroll-behavior:contain}
