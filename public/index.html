@@ -1177,6 +1177,40 @@ body::before,body::after{display:none!important;content:none!important}
 /* подменю не вылезает */
 #side .side-sub button{white-space:normal;line-height:1.3}
 
+/* ---- баннер активации и голова кошелька 1:1 с референсом ---- */
+#app [data-view="wallet"]{--wlLine:#2A2A2A}
+#app .wl-promo{background:#131313!important;border:1px solid #2A2A2A!important;border-radius:12px!important;
+  min-height:94px;padding:0 20px!important;gap:16px;align-items:center;overflow:hidden;position:relative;margin-bottom:12px}
+#app .wl-promo::after{display:block!important;content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+  background:
+    radial-gradient(2.4px 2.4px at 86% 16%,#6E6E6E 99%,transparent 100%),
+    radial-gradient(2.4px 2.4px at 90.5% 60%,#6E6E6E 99%,transparent 100%),
+    radial-gradient(2.4px 2.4px at 94% 30%,#6E6E6E 99%,transparent 100%),
+    radial-gradient(2.4px 2.4px at 97% 78%,#6E6E6E 99%,transparent 100%),
+    radial-gradient(2.4px 2.4px at 82.5% 88%,#6E6E6E 99%,transparent 100%),
+    linear-gradient(#3A3A3A,#3A3A3A),linear-gradient(#3A3A3A,#3A3A3A),
+    linear-gradient(#3A3A3A,#3A3A3A),linear-gradient(#3A3A3A,#3A3A3A);
+  background-repeat:no-repeat;
+  background-size:auto,auto,auto,auto,auto,110px 1px,1px 34px,70px 1px,1px 26px;
+  background-position:0 0,0 0,0 0,0 0,0 0,84% 16%,90.5% 16%,88% 60%,94% 30%}
+#app .wl-promo-ic{width:45px;height:45px}
+#app .wl-promo-tx b{font-family:Arial,Helvetica,sans-serif!important;font-size:23px!important;font-weight:700;
+  color:#FFFFFF;letter-spacing:0;line-height:1.15}
+#app .wl-promo-tx span{font-size:16px!important;color:#9A9A9A!important;margin-top:8px!important;line-height:1.2}
+#app .wl-promo.is-ok .wl-promo-btn{display:none!important}
+#app .wl-dots{display:none!important}
+#app [data-view="wallet"] .wl-card{background:#161616!important;border:1px solid #2A2A2A!important;border-radius:12px!important;padding:22px 20px!important}
+#app .wl-wallet .wl-card-head h3{font-family:Arial,Helvetica,sans-serif!important;font-size:22px!important;font-weight:700;color:#FFFFFF;display:flex;align-items:baseline;gap:12px}
+#app .wl-wallet .wl-card-head h3 #wlId{font-size:15px!important;font-weight:400;color:#8A8A8A!important;letter-spacing:.2px}
+#app .wl-wallet .wl-card-body{gap:21px!important;align-items:center}
+#app .wl-brand{width:112px!important;height:64px!important;border-radius:5px!important;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Georgia,"Times New Roman",serif!important;font-size:21px!important;font-weight:400;color:#FFFFFF;
+  letter-spacing:.2px;text-shadow:0 1px 2px rgba(60,25,5,.45);
+  background:linear-gradient(140deg,#CE9B80 0%,#E4AC82 18%,#D79A70 40%,#C08157 60%,#9C5E34 80%,#6A3A1A 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28)}
+#app .wl-bal span{font-size:15px!important;color:#9A9A9A!important}
+#app .wl-bal b{font-size:24px!important;font-weight:700;color:#FFFFFF!important;margin-top:9px!important;display:block;letter-spacing:0}
 /* интеграции на странице «Кошелёк и счета» */
 #app [data-view="wallet"] .panel{max-width:1110px;background:#232325;border:1px solid #494B50;
   border-radius:7px;padding:20px 22px;box-shadow:none;backdrop-filter:none;margin-top:24px}
@@ -1445,13 +1479,13 @@ body::before,body::after{display:none!important;content:none!important}
       <div data-view="wallet">
         <div class="wl-promo">
           <div class="wl-promo-ic" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="14" width="34" height="22" rx="4" fill="#2F6BFF" opacity=".25"/><rect x="6" y="14" width="34" height="22" rx="4" stroke="#6FA2FF" stroke-width="2"/><path d="M6 21h34" stroke="#6FA2FF" stroke-width="2"/><circle cx="33" cy="29" r="3" fill="#F5A524"/></svg>
+            <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" fill="url(#wlOkG)"/><circle cx="24" cy="24" r="23" fill="none" stroke="#1E7A24" stroke-width="1"/><path d="M14 24.5l7 7 13-14" stroke="#fff" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><defs><radialGradient id="wlOkG" cx="35%" cy="28%" r="85%"><stop offset="0" stop-color="#6BE84F"/><stop offset="45%" stop-color="#23C425"/><stop offset="1" stop-color="#0E8A17"/></radialGradient></defs></svg>
           </div>
           <div class="wl-promo-tx">
             <b id="wlPromoTitle">Пополните счёт, чтобы начать торговать</b>
             <span id="wlPromoSub">Чтобы активировать профиль и торговый счёт, внесите первый депозит</span>
           </div>
-          <button class="wl-promo-btn" data-goto-pane="pay"><span>Пополните ваш кошелёк<br><b class="cfgBrand">Nordis</b></span>
+          <button class="wl-promo-btn" id="wlPromoBtn" data-goto-pane="pay"><span>Пополните ваш кошелёк<br><b class="cfgBrand">Nordis</b></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
         <div class="wl-dots"><i class="on"></i><i></i></div>
@@ -3234,10 +3268,12 @@ function renderWallet(){
   const br=document.getElementById("wlBrand"); if(br) br.textContent=(CFG.brand&&CFG.brand.name)||"Nordis";
   const empty=bal<=0;
   const pt=document.getElementById("wlPromoTitle"), ps=document.getElementById("wlPromoSub");
-  if(pt) pt.textContent=empty?"Пополните счёт, чтобы начать торговать":"Счёт активен — можно открывать сделки";
+  if(pt) pt.textContent=empty?"Пополните счёт, чтобы начать торговать":"Твой аккаунт полностью активирован!";
   if(ps) ps.textContent=empty
     ? "Чтобы активировать профиль и торговый счёт, внесите первый депозит"
-    : "Средства на кошельке доступны для торговли и вывода";
+    : "Ты можешь торговать, пополнять и выводить средства без ограничений.";
+  const pb=document.getElementById("wlPromoBtn"); if(pb) pb.style.display=empty?"":"none";
+  const pw=document.querySelector(".wl-promo"); if(pw) pw.classList.toggle("is-ok",!empty);
   const acc=acctList()[0]||{};
   const demo=wlTab==="demo";
   const shown=demo?100000:bal;
