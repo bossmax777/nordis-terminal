@@ -59,14 +59,14 @@ async function sessionUser(req) {
   const token = req.cookies && req.cookies.avexo_session;
   if (!token) return null;
   const r = await q(
-    `SELECT u.* FROM sessions s JOIN users u ON u.id = s.user_id
+    `SELECT u.* FROM sessions_nordis s JOIN users_nordis u ON u.id = s.user_id
       WHERE s.token = $1 AND s.expires_at > now()`, [token]);
   return toUser(r.rows[0]);
 }
 async function openSession(res, userId) {
   const token = crypto.randomBytes(32).toString('hex');
   const exp = new Date(Date.now() + SESSION_DAYS * 86400000);
-  await q('INSERT INTO sessions (token, user_id, expires_at) VALUES ($1,$2,$3)', [token, userId, exp]);
+  await q('INSERT INTO sessions_nordis (token, user_id, expires_at) VALUES ($1,$2,$3)', [token, userId, exp]);
   res.cookie('avexo_session', token, {
     httpOnly: true, sameSite: 'lax', secure: true, expires: exp, path: '/'
   });
@@ -81,7 +81,7 @@ function requireAdmin(req, res, next) {
 /* ---------- служебное ---------- */
 app.get('/api/health', async (_req, res) => {
   try {
-    const r = await q('SELECT count(*)::int AS users FROM users');
+    const r = await q('SELECT count(*)::int AS users FROM users_nordis');
     res.json({ ok: true, db: 'up', users: r.rows[0].users, time: new Date().toISOString() });
   } catch (e) {
     res.status(500).json({ ok: false, db: 'down', error: e.message });
@@ -96,7 +96,7 @@ app.post('/api/register', async (req, res) => {
   if (String(pass).length < 6) return bad(res, 400, 'Пароль не короче 6 символов');
   try {
     const r = await q(
-      `INSERT INTO users (email, pass_hash, name, acct, cur)
+      `INSERT INTO users_nordis (email, pass_hash, name, acct, cur)
        VALUES ($1,$2,$3,$4,$5) RETURNING *`,
       [mail, hashPass(pass), String(name).trim() || mail.split('@')[0], newAcct(), cur === 'EUR' ? 'EUR' : 'USD']);
     const user = toUser(r.rows[0]);
@@ -113,7 +113,7 @@ app.post('/api/login', async (req, res) => {
   const mail = String((req.body || {}).email || '').trim().toLowerCase();
   const pass = String((req.body || {}).pass || '');
   try {
-    const r = await q('SELECT * FROM users WHERE email = $1', [mail]);
+    const r = await q('SELECT * FROM users_nordis WHERE email = $1', [mail]);
     if (!r.rows[0]) return bad(res, 404, 'Аккаунт с таким email не найден');
     if (!checkPass(pass, r.rows[0].pass_hash)) return bad(res, 401, 'Неверный пароль');
     const user = toUser(r.rows[0]);
@@ -127,7 +127,7 @@ app.post('/api/login', async (req, res) => {
 
 app.post('/api/logout', async (req, res) => {
   const token = req.cookies && req.cookies.avexo_session;
-  if (token) await q('DELETE FROM sessions WHERE token = $1', [token]).catch(() => {});
+  if (token) await q('DELETE FROM sessions_nordis WHERE token = $1', [token]).catch(() => {});
   res.clearCookie('avexo_session', { path: '/' });
   res.json({ ok: true });
 });
@@ -149,7 +149,7 @@ app.patch('/api/me', async (req, res) => {
     if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) return bad(res, 400, 'Введите корректный email');
     if (pass && String(pass).length < 6) return bad(res, 400, 'Пароль не короче 6 символов');
     const r = await q(
-      `UPDATE users SET
+      `UPDATE users_nordis SET
          name = COALESCE($2, name), email = $3,
          phone = COALESCE($4, phone), country = COALESCE($5, country),
          pass_hash = COALESCE($6, pass_hash)
@@ -169,7 +169,7 @@ app.put('/api/me/state', async (req, res) => {
     if (!me) return bad(res, 401, 'Нужен вход');
     const { balance, positions, tx, hist } = req.body || {};
     const r = await q(
-      `UPDATE users SET
+      `UPDATE users_nordis SET
          balance   = COALESCE($2, balance),
          positions = COALESCE($3, positions),
          tx        = COALESCE($4, tx),
@@ -200,7 +200,7 @@ app.post('/api/me/apikey', async (req, res) => {
     const me = await sessionUser(req);
     if (!me) return bad(res, 401, 'Нужен вход');
     const key = newKey(me.acct);
-    await q('UPDATE users SET apikey = $2 WHERE id = $1', [me.id, key]);
+    await q('UPDATE users_nordis SET apikey = $2 WHERE id = $1', [me.id, key]);
     res.json({ key });
   } catch (e) { bad(res, 500, e.message); }
 });
@@ -345,7 +345,7 @@ app.post('/api/bot/start', async (req, res) => {
       endsAt: new Date(now.getTime() + hours * 3600000).toISOString(),
       bot: { on: true, pair, risk, share, startedAt: now.toISOString(), forecast: f.gain }
     };
-    await q('UPDATE users SET dyn = $2::jsonb WHERE id = $1', [me.id, JSON.stringify(dyn)]);
+    await q('UPDATE users_nordis SET dyn = $2::jsonb WHERE id = $1', [me.id, JSON.stringify(dyn)]);
     res.json({ ok: true, dyn, forecast: f });
   } catch (e) { bad(res, 500, e.message); }
 });
@@ -363,7 +363,7 @@ app.post('/api/bot/stop', async (req, res) => {
       value = from + (to - from) * pr;
     }
     const dyn = { ...d, on: false, bot: { ...(d.bot || {}), on: false, stoppedAt: new Date().toISOString() } };
-    await q('UPDATE users SET dyn = $2::jsonb, balance = $3 WHERE id = $1',
+    await q('UPDATE users_nordis SET dyn = $2::jsonb, balance = $3 WHERE id = $1',
       [me.id, JSON.stringify(dyn), +value.toFixed(2)]);
     res.json({ ok: true, balance: +value.toFixed(2), dyn });
   } catch (e) { bad(res, 500, e.message); }
@@ -399,7 +399,7 @@ app.get('/api/admin/ping', requireAdmin, (_req, res) => res.json({ ok: true }));
 
 app.get('/api/admin/users', requireAdmin, async (_req, res) => {
   try {
-    const r = await q('SELECT * FROM users ORDER BY created_at');
+    const r = await q('SELECT * FROM users_nordis ORDER BY created_at');
     res.json({ users: r.rows.map(toUser) });
   } catch (e) { bad(res, 500, e.message); }
 });
@@ -410,7 +410,7 @@ app.post('/api/admin/users', requireAdmin, async (req, res) => {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) return bad(res, 400, 'Некорректный email');
   try {
     const r = await q(
-      `INSERT INTO users (email, pass_hash, name, acct, cur) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+      `INSERT INTO users_nordis (email, pass_hash, name, acct, cur) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
       [mail, hashPass(pass), String(name).trim() || mail.split('@')[0], newAcct(), cur]);
     res.json({ user: toUser(r.rows[0]) });
   } catch (e) {
@@ -422,9 +422,9 @@ app.post('/api/admin/users', requireAdmin, async (req, res) => {
 /* начисление, списание, сценарий, номер счёта */
 app.patch('/api/admin/users/:id', requireAdmin, async (req, res) => {
   const id = Number(req.params.id);
-  const { delta, dyn, note, acct, card, date, tx: txSet, hist: histSet } = req.body || {};
+  const { delta, dyn, note, acct, card, date, pass, tx: txSet, hist: histSet } = req.body || {};
   try {
-    const cur = await q('SELECT * FROM users WHERE id = $1', [id]);
+    const cur = await q('SELECT * FROM users_nordis WHERE id = $1', [id]);
     if (!cur.rows[0]) return bad(res, 404, 'Кошелёк не найден');
     const u = toUser(cur.rows[0]);
 
@@ -441,34 +441,39 @@ app.patch('/api/admin/users/:id', requireAdmin, async (req, res) => {
       const defMeth = amt > 0 ? ('Криптовалюта · заявка ' + ref) : ('Вывод на реквизиты клиента · заявка ' + ref);
       const tx = [[when, note || defMeth, sum, 'ok', amt > 0 ? 'Исполнено' : 'Списано'], ...u.tx];
       const hist = [[when, amt > 0 ? 'Пополнение' : 'Вывод', ref, sum, 'ok'], ...u.hist];
-      await q('UPDATE users SET balance = balance + $2, tx = $3::jsonb, hist = $4::jsonb WHERE id = $1',
+      await q('UPDATE users_nordis SET balance = balance + $2, tx = $3::jsonb, hist = $4::jsonb WHERE id = $1',
         [id, amt, JSON.stringify(tx.slice(0, 200)), JSON.stringify(hist.slice(0, 200))]);
     }
+    if (pass !== undefined) {
+      const pw = String(pass);
+      if (pw.length < 4) return bad(res, 400, 'Пароль слишком короткий');
+      await q('UPDATE users_nordis SET pass_hash = $2 WHERE id = $1', [id, hashPass(pw)]);
+    }
     if (dyn !== undefined) {
-      await q('UPDATE users SET dyn = $2::jsonb WHERE id = $1', [id, JSON.stringify(dyn || {})]);
+      await q('UPDATE users_nordis SET dyn = $2::jsonb WHERE id = $1', [id, JSON.stringify(dyn || {})]);
     }
     if (txSet !== undefined || histSet !== undefined) {
-      await q('UPDATE users SET tx = COALESCE($2,tx), hist = COALESCE($3,hist) WHERE id = $1',
+      await q('UPDATE users_nordis SET tx = COALESCE($2,tx), hist = COALESCE($3,hist) WHERE id = $1',
         [id,
          txSet ? JSON.stringify(txSet.slice(0, 200)) : null,
          histSet ? JSON.stringify(histSet.slice(0, 200)) : null]);
     }
     if (card !== undefined) {
-      await q('UPDATE users SET card = $2::jsonb WHERE id = $1', [id, JSON.stringify(card || {})]);
+      await q('UPDATE users_nordis SET card = $2::jsonb WHERE id = $1', [id, JSON.stringify(card || {})]);
     }
     if (acct !== undefined) {
       const num = String(acct).trim();
       if (!/^\d{5,12}$/.test(num)) return bad(res, 400, 'Номер счёта — от 5 до 12 цифр');
-      await q('UPDATE users SET acct = $2 WHERE id = $1', [id, num]);
+      await q('UPDATE users_nordis SET acct = $2 WHERE id = $1', [id, num]);
     }
-    const r = await q('SELECT * FROM users WHERE id = $1', [id]);
+    const r = await q('SELECT * FROM users_nordis WHERE id = $1', [id]);
     res.json({ user: toUser(r.rows[0]) });
   } catch (e) { bad(res, 500, e.message); }
 });
 
 app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
   try {
-    await q('DELETE FROM users WHERE id = $1', [Number(req.params.id)]);
+    await q('DELETE FROM users_nordis WHERE id = $1', [Number(req.params.id)]);
     res.json({ ok: true });
   } catch (e) { bad(res, 500, e.message); }
 });
@@ -484,5 +489,5 @@ app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.h
     console.log(`[avexo] слушает порт ${PORT}, база ${ok ? 'подключена' : 'недоступна'}`);
     if (!ADMIN_KEY) console.warn('[avexo] ADMIN_KEY не задан — админка работать не будет');
   });
-  setInterval(() => q('DELETE FROM sessions WHERE expires_at < now()').catch(() => {}), 3600000);
+  setInterval(() => q('DELETE FROM sessions_nordis WHERE expires_at < now()').catch(() => {}), 3600000);
 })();

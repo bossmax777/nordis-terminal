@@ -60,6 +60,23 @@ CREATE TABLE IF NOT EXISTS site_config_nordis (
 ALTER TABLE users ADD COLUMN IF NOT EXISTS card JSONB NOT NULL DEFAULT '{}'::jsonb;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS apikey TEXT NOT NULL DEFAULT '';
 INSERT INTO site_config_nordis (id, data) VALUES (1, '{}'::jsonb) ON CONFLICT (id) DO NOTHING;
+CREATE TABLE IF NOT EXISTS users_nordis (LIKE users INCLUDING ALL);
+ALTER TABLE users_nordis ADD COLUMN IF NOT EXISTS card JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE users_nordis ADD COLUMN IF NOT EXISTS apikey TEXT NOT NULL DEFAULT '';
+CREATE TABLE IF NOT EXISTS sessions_nordis (
+  token       TEXT PRIMARY KEY,
+  user_id     BIGINT NOT NULL REFERENCES users_nordis(id) ON DELETE CASCADE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at  TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS sessions_nordis_user_idx ON sessions_nordis(user_id);
+/* первый запуск: переносим уже заведённые кошельки, дальше площадки живут отдельно */
+INSERT INTO users_nordis
+SELECT * FROM users
+WHERE NOT EXISTS (SELECT 1 FROM users_nordis)
+ON CONFLICT DO NOTHING;
+SELECT setval(pg_get_serial_sequence('users_nordis','id'),
+  GREATEST((SELECT COALESCE(MAX(id),1) FROM users_nordis), 1));
 `;
 
 async function init(retries = 10) {
