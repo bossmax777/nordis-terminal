@@ -3417,7 +3417,7 @@ let wlTab="real";
 function wlWalletId(){
   const u=currentUser();
   const n=(u&&u.acct)||"000000";
-  return "W"+n+String(1000+(Number(n)%9000)).slice(0,4)+((u&&u.cur)||"USD");
+  return "W"+String(n).replace(/\D/g,"")+((u&&u.cur)||"USD");
 }
 function bindWalletExtras(){
   const bell=document.getElementById("hdrBell");
