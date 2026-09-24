@@ -1220,6 +1220,22 @@ body::before,body::after{display:none!important;content:none!important}
 #app .wl-acts{margin-left:auto;gap:14px}
 #app .wl-btn.is-blue{background:#26314B!important;color:#80A8FF!important}
 #app .wl-btn.is-blue svg{color:#80A8FF}
+#app .mkt-bar{display:flex;align-items:center;gap:14px;max-width:1110px;margin:0 0 18px;
+  background:#3E2C1E;border:1px solid #5A421F;border-radius:7px;padding:14px 18px;color:#E7C173}
+#app .mkt-bar svg{width:22px;height:22px;flex:none;color:#E0A83C}
+#app .mkt-bar b{display:block;font-size:15px;color:#F0CE8C}
+#app .mkt-bar span{display:block;font-size:13.5px;color:#C29E62;margin-top:3px}
+#app .crypto{margin:14px 0 4px;padding:14px 16px;background:#1D1D20;border:1px solid #333338;border-radius:8px}
+#app .cr-lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#828487;margin:0 0 8px}
+#app .cr-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#app .cr-row button{padding:9px 14px;border-radius:6px;border:1px solid #3C3C42;background:#2A2A2E;
+  color:#C8C8C8;font-size:13.5px;cursor:pointer;display:flex;align-items:center;gap:8px}
+#app .cr-row button small{color:#7E8083;font-size:11.5px}
+#app .cr-row button.on{border-color:#2D6CF0;background:#26314B;color:#9CC0FF}
+#app .cr-row button.on small{color:#7E9FDC}
+#app .cr-row button:disabled{opacity:.35;cursor:not-allowed}
+#app .cr-sum{font-size:13px;color:#9A9A9A;border-top:1px solid #333338;padding-top:11px}
+#app .cr-sum b{color:#FAFAFA}
 /* интеграции на странице «Кошелёк и счета» */
 #app [data-view="wallet"] .panel{max-width:1110px;background:#232325;border:1px solid #494B50;
   border-radius:7px;padding:20px 22px;box-shadow:none;backdrop-filter:none;margin-top:24px}
@@ -1483,6 +1499,10 @@ body::before,body::after{display:none!important;content:none!important}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 5l-7 7 7 7"/></svg>Выйти</button>
     </nav>
     <main class="pane">
+      <div class="mkt-bar" id="mktBar" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div><b id="mktBarT">Биржа закрыта</b><span id="mktBarS"></span></div>
+      </div>
 
       <!-- Кошелёк и счета -->
       <div data-view="wallet">
@@ -1707,6 +1727,13 @@ body::before,body::after{display:none!important;content:none!important}
               </div>
             </div>
             <div class="methods" id="methods"></div>
+            <div class="crypto" id="cryptoBox" hidden>
+              <div class="cr-lbl">Монета</div>
+              <div class="cr-row" id="crCoins"></div>
+              <div class="cr-lbl">Сеть</div>
+              <div class="cr-row" id="crNets"></div>
+              <div class="cr-sum" id="crSum"></div>
+            </div>
             <div class="field"><label for="amt">Сумма, USD</label><input id="amt" class="num" type="number" min="10" step="10" value="500"></div>
             <div class="amt-row">
               <button data-amt="100">$100</button><button data-amt="500">$500</button>
@@ -2445,6 +2472,77 @@ function initAI(){
 }
 
 /* ---------------- динамика кошелька по параметрам из админки ---------------- */
+/* ---------- часы работы биржи (металлы XAU/USD, режим Нью-Йорка) ----------
+   Открытие: воскресенье 18:00 ET, закрытие: пятница 17:00 ET,
+   ежедневный перерыв 17:00–18:00 ET. Суббота — выходной.            */
+const MKT_TZ="America/New_York";
+const _mktOffCache=new Map();
+function mktOff(ts){
+  const k=Math.floor(ts/3600000);
+  if(_mktOffCache.has(k)) return _mktOffCache.get(k);
+  let off=-5*3600000;
+  try{
+    const p=new Intl.DateTimeFormat("en-US",{timeZone:MKT_TZ,hour12:false,
+      year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"})
+      .formatToParts(new Date(ts)).reduce((o,x)=>(o[x.type]=x.value,o),{});
+    off=Date.UTC(+p.year,+p.month-1,+p.day,(+p.hour)%24,+p.minute,+p.second)-Math.floor(ts/1000)*1000;
+  }catch(e){}
+  if(_mktOffCache.size>500) _mktOffCache.clear();
+  _mktOffCache.set(k,off);
+  return off;
+}
+/* торговые отрезки по дням недели биржи (часы локального времени биржи) */
+function mktSegs(dow){
+  if(dow===6) return [];              /* суббота */
+  if(dow===0) return [[18,24]];       /* воскресенье — открытие в 18:00 */
+  if(dow===5) return [[0,17]];        /* пятница — закрытие в 17:00 */
+  return [[0,17],[18,24]];            /* пн–чт, перерыв 17:00–18:00 */
+}
+function mktOpen(ts){
+  ts=ts||Date.now();
+  const W=ts+mktOff(ts), d=new Date(W);
+  const h=d.getUTCHours()+d.getUTCMinutes()/60;
+  return mktSegs(d.getUTCDay()).some(([a,b])=>h>=a&&h<b);
+}
+/* ближайшее открытие после ts (в обычном времени) */
+function mktNextOpen(ts){
+  ts=ts||Date.now();
+  const off=mktOff(ts); let W=ts+off;
+  const day0=Math.floor(W/86400000)*86400000;
+  for(let i=0;i<9;i++){
+    const day=day0+i*86400000;
+    for(const [a] of mktSegs(new Date(day).getUTCDay())){
+      const st=day+a*3600000;
+      if(st>W) return st-off;
+    }
+  }
+  return ts+86400000;
+}
+/* сколько торгового времени прошло между двумя моментами */
+function mktElapsed(a,b){
+  if(!(b>a)) return 0;
+  if(b-a>400*86400000) return b-a;
+  const off=mktOff(a), A=a+off, B=b+off;
+  let total=0;
+  for(let day=Math.floor(A/86400000)*86400000; day<B; day+=86400000){
+    for(const [h0,h1] of mktSegs(new Date(day).getUTCDay())){
+      const s=day+h0*3600000, e=day+h1*3600000;
+      total+=Math.max(0,Math.min(B,e)-Math.max(A,s));
+    }
+  }
+  return total;
+}
+/* момент обычного времени, когда наберётся need торговых миллисекунд */
+function mktEndWall(st,need){
+  let t=st+need;
+  for(let i=0;i<40;i++){
+    const el=mktElapsed(st,t);
+    const left=need-el;
+    if(left<=60000) break;
+    t+=Math.max(left,60000);
+  }
+  return t;
+}
 function dynCfg(){
   const base={on:false,from:1000,to:5000,hours:24,noise:.35,startedAt:"",endsAt:""};
   const u=currentUser();
@@ -2458,13 +2556,15 @@ function dynCfg(){
 function dynWindow(){
   const d=dynCfg();
   if(!d.on||!d.startedAt) return null;
-  const st=new Date(d.startedAt).getTime(), en=new Date(d.endsAt).getTime();
-  if(!isFinite(st)||!isFinite(en)||en<=st) return null;
-  return {d,st,en,span:en-st};
+  const st=new Date(d.startedAt).getTime(), en0=new Date(d.endsAt).getTime();
+  if(!isFinite(st)||!isFinite(en0)||en0<=st) return null;
+  const tspan=en0-st;                 /* срок в торговых часах */
+  const en=mktEndWall(st,tspan);      /* с учётом выходных и ночных пауз */
+  return {d,st,en,span:en-st,tspan};
 }
 function dynProgress(t){
   const w=dynWindow(); if(!w) return null;
-  return Math.max(0,Math.min(1,((t||Date.now())-w.st)/w.span));
+  return Math.max(0,Math.min(1,mktElapsed(w.st,t||Date.now())/w.tspan));
 }
 /* многочастотная волна: даёт и микроколебания, и затяжные просадки */
 function _phase(i,seed){const a=Math.sin(i*374.761+seed*911.13)*43758.5453; return (a-Math.floor(a))*Math.PI*2;}
@@ -2503,14 +2603,35 @@ function dynCurve(d,pr,st,span){
   }
   return Math.max(0,base+w*amp);
 }
+function mktLabel(ts){
+  const d=new Date(ts);
+  const day=["воскресенье","понедельник","вторник","среду","четверг","пятницу","субботу"][d.getDay()];
+  return day+", "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+
+    " (ваше время)";
+}
+function renderMkt(){
+  const bar=document.getElementById("mktBar"); if(!bar) return;
+  const open=mktOpen();
+  bar.hidden=open;
+  if(open) return;
+  const nx=mktNextOpen();
+  const left=Math.max(0,nx-Date.now());
+  const hh=Math.floor(left/3600000), mm=Math.floor(left%3600000/60000);
+  const t=document.getElementById("mktBarT"), sb=document.getElementById("mktBarS");
+  const wkd=new Date(Date.now()).getDay();
+  if(t) t.textContent = (wkd===6||wkd===0) ? "Биржа закрыта — выходные" : "Биржа закрыта — технический перерыв";
+  if(sb) sb.textContent="Торги по XAU/USD возобновятся в "+mktLabel(nx)+
+    " · через "+(hh?hh+" ч ":"")+mm+" мин. Сценарии и сделки на паузе до открытия.";
+}
+setInterval(renderMkt,30000);
 function dynSeed(){
   const w=dynWindow(); if(!w) return 1;
   return (w.st/60000)%9973;
 }
 function dynValue(t){
   const w=dynWindow(); if(!w) return null;
-  const pr=Math.max(0,Math.min(1,((t||Date.now())-w.st)/w.span));
-  return dynCurve(w.d,pr,w.st,w.span);
+  const pr=Math.max(0,Math.min(1,mktElapsed(w.st,t||Date.now())/w.tspan));
+  return dynCurve(w.d,pr,w.st,w.tspan);
 }
 function dynSeries(n){
   const w=dynWindow(); if(!w) return [];
@@ -3341,6 +3462,7 @@ function showPane(id){
   rememberApp(id);
   document.querySelectorAll("[data-view]").forEach(v=>v.hidden=v.dataset.view!==id);
   document.querySelectorAll("#side [data-pane]").forEach(b=>b.classList.toggle("on",b.dataset.pane===id));
+  renderMkt();
   if(id==="wallet"){renderWallet();renderIntegrations();}
   if(id==="dash"){drawEquity();renderPositions();}
   if(id==="term"){renderWatch();drawCandles();updateTicket();}
@@ -4125,6 +4247,44 @@ function renderMethods(){
       <span class="m-r">${f} · ${eta}</span></label>`).join("");
   document.querySelectorAll("[data-m]").forEach(el=>el.onclick=()=>{state.method=+el.dataset.m;renderMethods();calcPay();});
 }
+/* ---- криптовалюта: монета, сеть, расчёт ---- */
+const COINS=[
+  ["USDT","Tether","usdt",1],
+  ["BTC","Bitcoin","btc",113400],
+  ["ETH","Ethereum","eth",4180],
+  ["TON","Toncoin","ton",3.15],
+  ["USDC","USD Coin","usdc",1]
+];
+const NETS={
+  usdt:[["TRC-20","Tron · комиссия сети ~$1"],["ERC-20","Ethereum · ~$4"],["BEP-20","BNB Smart Chain · ~$0.3"],["TON","TON · ~$0.05"]],
+  usdc:[["ERC-20","Ethereum · ~$4"],["BEP-20","BNB Smart Chain · ~$0.3"],["SOL","Solana · ~$0.02"]],
+  btc:[["Bitcoin","основная сеть · ~$1.5"],["BEP-20","BTCB в BNB Chain · ~$0.3"]],
+  eth:[["ERC-20","Ethereum · ~$4"],["ARB","Arbitrum One · ~$0.2"]],
+  ton:[["TON","основная сеть · ~$0.05"]]
+};
+state.coin="usdt"; state.net="TRC-20";
+function coinRow(){ return COINS.find(c=>c[2]===state.coin)||COINS[0]; }
+function renderCrypto(){
+  const box=document.getElementById("cryptoBox"); if(!box) return;
+  const isCrypto=METHODS[state.method] && METHODS[state.method][1]==="Криптовалюта";
+  box.hidden=!isCrypto;
+  if(!isCrypto) return;
+  document.getElementById("crCoins").innerHTML=COINS.map(([t,n,k])=>
+    `<button type="button" data-coin="${k}" class="${k===state.coin?"on":""}"><b>${t}</b><small>${n}</small></button>`).join("");
+  const nets=NETS[state.coin]||[];
+  if(!nets.some(([n])=>n===state.net)) state.net=nets[0][0];
+  document.getElementById("crNets").innerHTML=nets.map(([n,d])=>
+    `<button type="button" data-net="${n}" class="${n===state.net?"on":""}"><b>${n}</b><small>${d}</small></button>`).join("");
+  document.querySelectorAll("[data-coin]").forEach(b=>b.onclick=()=>{state.coin=b.dataset.coin;renderCrypto();});
+  document.querySelectorAll("[data-net]").forEach(b=>b.onclick=()=>{state.net=b.dataset.net;renderCrypto();});
+  const amt=parseFloat(document.getElementById("amt").value)||0;
+  const [tic,,,rate]=coinRow();
+  const qty=rate?amt/rate:0;
+  const prec=rate>1000?6:(rate>10?4:2);
+  document.getElementById("crSum").innerHTML=
+    "К переводу: <b>"+qty.toFixed(prec)+" "+tic+"</b> ("+tic+" "+state.net+", курс 1 "+tic+" ≈ "+usd(rate)+
+    "). Реквизиты для перевода приходят после подтверждения заявки — на странице они не публикуются.";
+}
 function calcPay(){
   const amt=parseFloat(document.getElementById("amt").value)||0;
   const m=METHODS[state.method];
@@ -4134,6 +4294,7 @@ function calcPay(){
   document.getElementById("payFee").textContent=usd(fee);
   document.getElementById("payEta").textContent=m[4];
   document.getElementById("payTotal").textContent=usd(Math.max(0,amt-fee));
+  renderCrypto();
 }
 document.getElementById("amt").addEventListener("input",calcPay);
 document.querySelectorAll("[data-amt]").forEach(b=>b.onclick=()=>{
@@ -4147,6 +4308,11 @@ document.querySelectorAll("[data-pay]").forEach(b=>b.onclick=()=>{
   document.getElementById("payGo").textContent=inMode?"Пополнить счёт":"Заказать вывод";
   calcPay();
 });
+function payMethodName(){
+  const m=METHODS[state.method];
+  if(m && m[1]==="Криптовалюта") return "Криптовалюта "+coinRow()[0]+" ("+state.net+")";
+  return m?m[1]:"Пополнение";
+}
 function payRef(){
   return "AVX-"+String(Date.now()).slice(-6)+"-"+Math.random().toString(36).slice(2,5).toUpperCase();
 }
@@ -4158,7 +4324,7 @@ document.getElementById("payGo").onclick=()=>{
   const date=new Date().toLocaleDateString("ru-RU");
   if(inMode){
     /* пополнение оформляется заявкой: деньги зачислит администратор после подтверждения */
-    state.tx.unshift([date,METHODS[state.method][1]+" · заявка "+ref,
+    state.tx.unshift([date,payMethodName()+" · заявка "+ref,
       "+"+usd(amt),"wait","На рассмотрении"]);
     state.hist.unshift([date,"Заявка на пополнение",ref,"+"+usd(amt),"wait"]);
     const box=document.getElementById("payRefBox");
@@ -4173,7 +4339,7 @@ document.getElementById("payGo").onclick=()=>{
     return;
   }
   state.balance+=inMode?amt:-amt;
-  state.tx.unshift([date,METHODS[state.method][1],
+  state.tx.unshift([date,payMethodName(),
     (inMode?"+":"−")+usd(amt),inMode?"ok":"wait",inMode?"Исполнено":"На рассмотрении"]);
   state.hist.unshift([date,inMode?"Пополнение":"Вывод","—",
     (inMode?"+":"−")+usd(amt),inMode?"ok":"wait"]);

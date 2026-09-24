@@ -166,6 +166,12 @@ table.data td,.d-tbl td{border-bottom-color:var(--line-soft)}
 .fc{background:linear-gradient(140deg,rgba(47,107,255,.12),rgba(56,189,248,.06));border-color:rgba(47,107,255,.3)}
 .ai-say,.log-ic{background:var(--surface-2)}
 .foot{border-top-color:var(--line)}
+
+.mkt-bar{display:flex;align-items:center;gap:14px;background:#3E2C1E;border:1px solid #5A421F;
+  border-radius:8px;padding:14px 18px;color:#E7C173;margin-bottom:16px}
+.mkt-bar svg{width:22px;height:22px;flex:none;color:#E0A83C}
+.mkt-bar b{display:block;font-size:15px;color:#F0CE8C}
+.mkt-bar span{display:block;font-size:13.5px;color:#C29E62;margin-top:3px}
 </style>
 </head>
 <body>
@@ -216,6 +222,10 @@ table.data td,.d-tbl td{border-bottom-color:var(--line-soft)}
 
 <!-- РАБОЧИЙ СТОЛ -->
 <main class="wrap hidden" id="desk">
+  <div class="mkt-bar" id="mktBar" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <div><b id="mktBarT">Биржа закрыта</b><span id="mktBarS"></span></div>
+  </div>
   <div class="grid">
 
     <!-- параметры -->
@@ -340,13 +350,101 @@ async function api(url,opt){
 function err(id,msg){const b=$(id);if(!msg){b.classList.remove("on");return;}b.textContent=msg;b.classList.add("on");}
 
 /* ============ модель сценария (та же, что в кабинете) ============ */
+/* ---------- часы работы биржи (металлы XAU/USD, режим Нью-Йорка) ----------
+   Открытие: воскресенье 18:00 ET, закрытие: пятница 17:00 ET,
+   ежедневный перерыв 17:00–18:00 ET. Суббота — выходной.            */
+const MKT_TZ="America/New_York";
+const _mktOffCache=new Map();
+function mktOff(ts){
+  const k=Math.floor(ts/3600000);
+  if(_mktOffCache.has(k)) return _mktOffCache.get(k);
+  let off=-5*3600000;
+  try{
+    const p=new Intl.DateTimeFormat("en-US",{timeZone:MKT_TZ,hour12:false,
+      year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"})
+      .formatToParts(new Date(ts)).reduce((o,x)=>(o[x.type]=x.value,o),{});
+    off=Date.UTC(+p.year,+p.month-1,+p.day,(+p.hour)%24,+p.minute,+p.second)-Math.floor(ts/1000)*1000;
+  }catch(e){}
+  if(_mktOffCache.size>500) _mktOffCache.clear();
+  _mktOffCache.set(k,off);
+  return off;
+}
+/* торговые отрезки по дням недели биржи (часы локального времени биржи) */
+function mktSegs(dow){
+  if(dow===6) return [];              /* суббота */
+  if(dow===0) return [[18,24]];       /* воскресенье — открытие в 18:00 */
+  if(dow===5) return [[0,17]];        /* пятница — закрытие в 17:00 */
+  return [[0,17],[18,24]];            /* пн–чт, перерыв 17:00–18:00 */
+}
+function mktOpen(ts){
+  ts=ts||Date.now();
+  const W=ts+mktOff(ts), d=new Date(W);
+  const h=d.getUTCHours()+d.getUTCMinutes()/60;
+  return mktSegs(d.getUTCDay()).some(([a,b])=>h>=a&&h<b);
+}
+/* ближайшее открытие после ts (в обычном времени) */
+function mktNextOpen(ts){
+  ts=ts||Date.now();
+  const off=mktOff(ts); let W=ts+off;
+  const day0=Math.floor(W/86400000)*86400000;
+  for(let i=0;i<9;i++){
+    const day=day0+i*86400000;
+    for(const [a] of mktSegs(new Date(day).getUTCDay())){
+      const st=day+a*3600000;
+      if(st>W) return st-off;
+    }
+  }
+  return ts+86400000;
+}
+/* сколько торгового времени прошло между двумя моментами */
+function mktElapsed(a,b){
+  if(!(b>a)) return 0;
+  if(b-a>400*86400000) return b-a;
+  const off=mktOff(a), A=a+off, B=b+off;
+  let total=0;
+  for(let day=Math.floor(A/86400000)*86400000; day<B; day+=86400000){
+    for(const [h0,h1] of mktSegs(new Date(day).getUTCDay())){
+      const s=day+h0*3600000, e=day+h1*3600000;
+      total+=Math.max(0,Math.min(B,e)-Math.max(A,s));
+    }
+  }
+  return total;
+}
+/* момент обычного времени, когда наберётся need торговых миллисекунд */
+function mktEndWall(st,need){
+  let t=st+need;
+  for(let i=0;i<40;i++){
+    const el=mktElapsed(st,t);
+    const left=need-el;
+    if(left<=60000) break;
+    t+=Math.max(left,60000);
+  }
+  return t;
+}
 function win(){
   const d=S.dyn||{};
   if(!d.on||!d.startedAt) return null;
-  const st=new Date(d.startedAt).getTime(), en=new Date(d.endsAt).getTime();
-  if(!isFinite(st)||!isFinite(en)||en<=st) return null;
-  return {d,st,en,span:en-st};
+  const st=new Date(d.startedAt).getTime(), en0=new Date(d.endsAt).getTime();
+  if(!isFinite(st)||!isFinite(en0)||en0<=st) return null;
+  const tspan=en0-st, en=mktEndWall(st,tspan);
+  return {d,st,en,span:en-st,tspan};
 }
+function mktLabel(ts){
+  const d=new Date(ts);
+  const day=["воскресенье","понедельник","вторник","среду","четверг","пятницу","субботу"][d.getDay()];
+  return day+", "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+" (ваше время)";
+}
+function renderMkt(){
+  const bar=document.getElementById("mktBar"); if(!bar) return;
+  const open=mktOpen(); bar.hidden=open; if(open) return;
+  const nx=mktNextOpen(), left=Math.max(0,nx-Date.now());
+  const hh=Math.floor(left/3600000), mm=Math.floor(left%3600000/60000), wd=new Date(Date.now()).getDay();
+  document.getElementById("mktBarT").textContent=(wd===6||wd===0)
+    ? "Биржа закрыта — выходные" : "Биржа закрыта — технический перерыв";
+  document.getElementById("mktBarS").textContent="Торги по XAU/USD возобновятся в "+mktLabel(nx)+
+    " · через "+(hh?hh+" ч ":"")+mm+" мин. Сессия бота стоит на паузе до открытия.";
+}
+setInterval(renderMkt,30000); renderMkt();
 function seedOf(){const w=win();return w?(w.st/60000)%9973:1;}
 function rnd(seed,i){const x=Math.sin(seed*13.17+i*97.31)*43758.5453;return x-Math.floor(x);}
 /* волна и кривая — один в один с кабинетом, чтобы цифры совпадали */
@@ -383,11 +481,11 @@ function dynCurve(d,pr,st,span){
   return Math.max(0,base+w*amp);
 }
 
-function progress(t){const w=win();if(!w)return null;return Math.max(0,Math.min(1,((t||Date.now())-w.st)/w.span));}
+function progress(t){const w=win();if(!w)return null;return Math.max(0,Math.min(1,mktElapsed(w.st,t||Date.now())/w.tspan));}
 function value(t){
   const w=win(); if(!w) return S.user?S.user.balance:0;
-  const pr=Math.max(0,Math.min(1,((t||Date.now())-w.st)/w.span));
-  return dynCurve(w.d,pr,w.st,w.span);
+  const pr=Math.max(0,Math.min(1,mktElapsed(w.st,t||Date.now())/w.tspan));
+  return dynCurve(w.d,pr,w.st,w.tspan);
 }
 let FEES={lot:3.5,swap:4.2,plat:1.5};
 function posFee(p){

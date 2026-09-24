@@ -1299,9 +1299,11 @@ function renderPayouts(){
           <select data-po="${i}" class="po-sel">
             ${Object.keys(PO_ST).map(k=>`<option value="${k}"${k===st?" selected":""}>${PO_ST[k][0]}</option>`).join("")}
           </select>
+          ${st!=="ok"?`<button class="btn btn-primary btn-sm" data-pook="${i}">${r.out?"Выплатить":"Принять"}</button>`:""}
         </div></td></tr>`;
     }).join("")+'</tbody></table></div>';
   box.querySelectorAll("[data-po]").forEach(sel=>sel.onchange=()=>setPayout(rows[+sel.dataset.po],sel.value));
+  box.querySelectorAll("[data-pook]").forEach(b=>b.onclick=()=>setPayout(rows[+b.dataset.pook],"ok"));
 }
 async function setPayout(row,st){
   const u=row.u, tx=JSON.parse(JSON.stringify(u.tx||[])), hist=JSON.parse(JSON.stringify(u.hist||[]));
