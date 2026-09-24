@@ -1679,7 +1679,7 @@ body::before,body::after{display:none!important;content:none!important}
       <!-- Терминал -->
       <div data-view="term" hidden>
         <h2>Торговый терминал</h2>
-        <p class="pane-sub">Имитация исполнения: ордера учитываются только внутри этой страницы.</p>
+        
         <div class="term">
           <div class="watch">
             <div class="watch-h">Обзор рынка</div>
@@ -1730,7 +1730,7 @@ body::before,body::after{display:none!important;content:none!important}
       <!-- Платежи -->
       <div data-view="pay" hidden>
         <h2>Платежи</h2>
-        <p class="pane-sub">Макет форм пополнения и вывода. Реквизиты не запрашиваются и не сохраняются.</p>
+        
         <div class="pay-grid">
           <div class="panel">
             <div class="panel-head">
@@ -1788,8 +1788,7 @@ body::before,body::after{display:none!important;content:none!important}
       <!-- Вывод средств -->
       <div data-view="out" hidden>
         <h2>Вывод средств</h2>
-        <p class="pane-sub">Заявка уменьшает баланс кошелька и попадает в историю операций.
-          Реквизиты в этом макете не запрашиваются и не хранятся.</p>
+        
         <div class="pay-grid">
           <div class="panel">
             <div class="panel-head"><h3>Новая заявка</h3><span class="muted" id="outState">доступно к выводу</span></div>
@@ -2472,7 +2471,7 @@ function initAI(){
   const key=((CFG.ai||{}).key||"").trim();
   document.getElementById("aiNote").textContent = key
     ? "Отвечает языковая модель через ваш ключ. Copilot объясняет механику и считает риск, но торговых рекомендаций не даёт."
-    : "Работает встроенная база знаний и расчётный модуль. В админке можно подключить языковую модель по ключу. Торговых рекомендаций Copilot не даёт.";
+    : "";
   const POS=activePositions();
   aiSay("Здравствуйте. Я FxPro Copilot — слежу за вашим счётом и котировками.\n\n"+
     "Сейчас у вас "+POS.length+" открытых позиций, баланс "+usd(state.balance)+
@@ -3442,7 +3441,7 @@ function renderWallet(){
       '<div class="wl-row-id"><b>#'+escapeHtml(String(acc.id||(u&&u.acct)||"—"))+'</b>'+
         '<small>'+escapeHtml(String(acc.mode||"Hedge"))+'</small>'+
         '<div class="wl-badges"><span class="wl-chip ok">'+(demo?"Демо":"Активен")+'</span>'+
-        '<span class="wl-chip">'+escapeHtml(String(acc.type||"Standard"))+' · '+escapeHtml(String(acc.srv||srvName()))+'</span></div></div>'+
+        
       '<div class="wl-col"><span>Баланс счёта</span><b class="num">'+usd(shown)+'</b></div>'+
       '<div class="wl-col"><span>Свободная маржа</span><b class="num">'+usd(shownFree)+'</b></div>'+
       '<div class="wl-col"><span>Кредитное плечо</span><b class="num">'+escapeHtml(String(acc.lev||"1:100"))+'</b></div>'+
