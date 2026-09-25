@@ -2679,7 +2679,7 @@ function renderMkt(){
   const wkd=new Date(Date.now()).getDay();
   if(t) t.textContent = (wkd===6||wkd===0) ? "Биржа закрыта — выходные" : "Биржа закрыта — технический перерыв";
   if(sb) sb.textContent="Торги по XAU/USD возобновятся в "+mktLabel(nx)+
-    " · через "+(hh?hh+" ч ":"")+mm+" мин. Сценарии и сделки на паузе до открытия.";
+    " · через "+(hh?hh+" ч ":"")+mm+" мин. ";
 }
 setInterval(renderMkt,30000);
 
