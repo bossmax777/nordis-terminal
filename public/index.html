@@ -1234,7 +1234,7 @@ body::before,body::after{display:none!important;content:none!important}
 #app #side::-webkit-scrollbar-thumb{background:#3A3A3E;border-radius:3px}
 #app #side .spacer{flex:1 1 auto;min-height:18px}
 #app #side [data-logout]{margin-top:auto!important;flex:none}
-#app .side-hint[hidden]{display:none!important}
+#app .side-hint{display:none!important}
 @media(max-height:760px){#app .side-app{display:none}}
 #app .mkt-bar{display:flex;align-items:center;gap:14px;max-width:1110px;margin:0 0 18px;
   background:#3E2C1E;border:1px solid #5A421F;border-radius:7px;padding:14px 18px;color:#E7C173}
@@ -1472,10 +1472,7 @@ body::before,body::after{display:none!important;content:none!important}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>Депозит</button>
       <button data-pane="dash">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Обзор <em class="side-new">New</em></button>
-      <div class="side-hint" id="sideHint">
-        <button class="side-hint-x" aria-label="Скрыть подсказку">×</button>
-        <span>⚡</span>Торговые сигналы<br>ждут тебя
-      </div>
+
       <button class="side-group" id="sideTools" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h10M4 17h7"/></svg>Инструменты<small>⌄</small></button>
       <div class="side-sub" id="sideSub" hidden>
