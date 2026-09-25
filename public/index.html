@@ -1255,6 +1255,7 @@ body::before,body::after{display:none!important;content:none!important}
 #app .cr-row button:disabled{opacity:.35;cursor:not-allowed}
 #app .cr-sum{font-size:13px;color:#9A9A9A;border-top:1px solid #333338;padding-top:11px}
 #app .cr-sum b{color:#FAFAFA}
+#app .pay-addr.is-off{display:none!important}
 #app .pay-addr small{display:block;margin-top:7px;font-size:11.5px;line-height:1.4;opacity:.85}
 #app .pay-addr{display:block!important;margin-top:10px;padding:11px 13px;border:1px dashed #6A5326;border-radius:7px;background:#2A2317}
 #app .pay-addr span{display:block;font-size:12px;color:#C29E62;margin-bottom:6px}
@@ -3487,6 +3488,7 @@ function showPane(id){
   if(id==="wallet"){renderWallet();renderIntegrations();}
   if(id==="dash"){drawEquity();renderPositions();}
   if(id==="term"){renderWatch();drawCandles();updateTicket();}
+  if(id==="pay"){renderMethods();calcPay();}
   if(id==="out"){renderOut();}
   if(id==="tools"){renderTools();}
   if(id==="ai"){initAI();}
@@ -4427,12 +4429,16 @@ function demoReq(){
   return "DEMO-NOT-A-REAL-ACCOUNT";
 }
 function renderPayReq(){
-  const box=document.getElementById("payReqBox"); if(!box) return;
-  const val=document.getElementById("payReqVal");
+  const boxes=document.querySelectorAll("#payReqBox, .pay-req-box");
+  if(!boxes.length) return;
   const m=METHODS[state.method]||METHODS[0];
   const show=state.payMode!=="out" && m && m[1]==="Криптовалюта";
-  box.hidden=!show;
-  if(show&&val) val.textContent=demoReq();
+  boxes.forEach(box=>{
+    box.hidden=!show;
+    box.classList.toggle("is-off",!show);
+    const val=box.querySelector("#payReqVal")||document.getElementById("payReqVal");
+    if(show&&val) val.textContent=demoReq();
+  });
 }
 /* ---- криптовалюта: монета, сеть, расчёт ---- */
 const COINS=[
