@@ -438,7 +438,8 @@ function win(){
 function mktLabel(ts){
   const d=new Date(ts);
   const day=["воскресенье","понедельник","вторник","среду","четверг","пятницу","субботу"][d.getDay()];
-  return day+", "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+" (ваше время)";
+  return day+", "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})+" "+
+    d.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+" (ваше время)";
 }
 function renderMkt(){
   const bar=document.getElementById("mktBar"); if(!bar) return;
