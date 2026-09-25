@@ -1220,6 +1220,9 @@ body::before,body::after{display:none!important;content:none!important}
 #app .wl-acts{margin-left:auto;gap:14px}
 #app .wl-btn.is-blue{background:#26314B!important;color:#80A8FF!important}
 #app .wl-btn.is-blue svg{color:#80A8FF}
+#app .head-name{font-size:14px;color:#FAFAFA;font-weight:600;letter-spacing:.01em;
+  max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:900px){#app .head-name{display:none}}
 #app .app-head .logo .cfgBrand,#app .app-head .logo .cfgBrand2{color:#E5484D!important}
 /* контент тянется на всю ширину окна, как на широких мониторах у ФхПро-подобных кабинетов */
 #app .wl-promo,#app .wl-card,#app .wl-dots,#app .mkt-bar,
@@ -1456,6 +1459,7 @@ body::before,body::after{display:none!important;content:none!important}
       <div class="logo"><span class="logo-mark cfgMark">A</span> <span class="cfgBrand">Nordis</span></div>
       <span class="pill" id="acctLabel" hidden>Демо-счёт</span>
       <div class="head-right">
+        <span class="head-name" id="hdrName" hidden></span>
         <span class="bal num" id="hdrBal">$0.00</span>
         <button class="head-bell" id="hdrBell">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 16v-5a6 6 0 10-12 0v5l-1.5 2.5h15L18 16z"/><path d="M10 20a2 2 0 004 0"/></svg>Уведомления</button>
@@ -3370,6 +3374,8 @@ function syncHeader(){
     ? 'Кошелёк <span class="num">'+wlWalletId()+'</span> · счёт <span class="num">'+u.acct+'</span> · сервер '+srvName(u.card&&u.card.srv)
     : 'Гостевой счёт · зарегистрируйтесь, чтобы завести свой кошелёк';
   /* баланс одинаковый в шапке, на карточке счёта и в разделе вывода */
+  const hn=document.getElementById("hdrName");
+  if(hn){ const nm=(u&&String(u.name||"").trim())||""; hn.textContent=nm; hn.hidden=!nm; }
   const hb=document.getElementById("hdrBal"); if(hb) hb.textContent=usd(state.balance);
   const mb=document.getElementById("mtBal");
   if(mb) mb.textContent=fmt(state.balance,2)+" "+((u&&u.cur)||"USD");
