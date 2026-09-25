@@ -167,11 +167,16 @@ table.data td,.d-tbl td{border-bottom-color:var(--line-soft)}
 .ai-say,.log-ic{background:var(--surface-2)}
 .foot{border-top-color:var(--line)}
 
-.mkt-bar{display:flex;align-items:center;gap:14px;background:#3E2C1E;border:1px solid #5A421F;
-  border-radius:8px;padding:14px 18px;color:#E7C173;margin-bottom:16px}
-.mkt-bar svg{width:22px;height:22px;flex:none;color:#E0A83C}
-.mkt-bar b{display:block;font-size:15px;color:#F0CE8C}
-.mkt-bar span{display:block;font-size:13.5px;color:#C29E62;margin-top:3px}
+.mkt-bar{display:flex;align-items:center;gap:16px;width:100%;box-sizing:border-box;
+  background:#3A1216;border:1px solid #7F1D1D;border-left:4px solid #E5484D;
+  border-radius:14px;padding:16px 20px;color:#F7B4B7;margin-bottom:18px}
+.mkt-bar svg{width:26px;height:26px;flex:none;color:#E5484D}
+.mkt-bar>div{flex:1;min-width:0}
+.mkt-bar b{display:block;font-size:16px;color:#FFD5D7}
+.mkt-bar span{display:block;font-size:13.5px;color:#F0A3A6;margin-top:4px;line-height:1.35}
+.mkt-demo{flex:none;align-self:flex-start;background:#E5484D;color:#fff;border-radius:6px;
+  padding:3px 9px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.is-mkt-closed #btnStart{opacity:.45;pointer-events:none;filter:grayscale(.5)}
 </style>
 </head>
 <body>
@@ -225,6 +230,7 @@ table.data td,.d-tbl td{border-bottom-color:var(--line-soft)}
   <div class="mkt-bar" id="mktBar" hidden>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
     <div><b id="mktBarT">Биржа закрыта</b><span id="mktBarS"></span></div>
+    <span class="mkt-demo">демо</span>
   </div>
   <div class="grid">
 
@@ -436,7 +442,9 @@ function mktLabel(ts){
 }
 function renderMkt(){
   const bar=document.getElementById("mktBar"); if(!bar) return;
-  const open=mktOpen(); bar.hidden=open; if(open) return;
+  const open=mktOpen(); bar.hidden=open;
+  document.body.classList.toggle("is-mkt-closed",!open);
+  if(open) return;
   const nx=mktNextOpen(), left=Math.max(0,nx-Date.now());
   const hh=Math.floor(left/3600000), mm=Math.floor(left%3600000/60000), wd=new Date(Date.now()).getDay();
   document.getElementById("mktBarT").textContent=(wd===6||wd===0)
@@ -781,6 +789,7 @@ function checkBalance(){
 
 /* ============ запуск и остановка ============ */
 on("btnStart",async ()=>{
+  if(!mktOpen()){ renderMkt(); return toast("Биржа закрыта — запуск сессии недоступен"); }
   if(!S.fc) return toast("Подождите расчёт прогноза");
   if(!confirm("Запустить торговую сессию?\n\nПара: "+S.pair+"\nГоризонт: "+S.hours+" ч\nРежим: "+
     (S.risks[S.risk]||{}).name+"\nРасчётный результат: "+sig(S.fc.gain))) return;
