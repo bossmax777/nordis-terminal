@@ -2077,10 +2077,14 @@ const DEFAULTS={
   ai:{on:true,key:"",model:"gpt-4o-mini"}
 };
 /* старые настройки в базе могли остаться со старым названием бренда */
+/* Название бренда читается из разметки — правьте текст прямо в HTML */
+function brandName(){
+  const el=document.querySelector(".cfgBrand");
+  const t=el?String(el.textContent||"").trim():"";
+  return t||(document.title||"").trim().split(/\s+/)[0]||"Trade";
+}
+/* нормализация названия отключена: имя бренда берётся как есть */
 function brandFix(v){
-  if(typeof v==="string") return v.replace(/Avexo/g,"Nordis").replace(/BullWaves/g,"Nordis").replace(/AVEXO/g,"NORDIS").replace(/BULLWAVES/g,"NORDIS").replace(/avexo(?=[\s.,:;!?)"'<])/g,"nordis");
-  if(Array.isArray(v)) return v.map(brandFix);
-  if(v&&typeof v==="object"){ const o={}; for(const k in v) o[k]=brandFix(v[k]); return o; }
   return v;
 }
 function deepMerge(base,over){
@@ -2213,7 +2217,7 @@ function applyConfig(){
   document.documentElement.style.setProperty("--accent",b.accent||"#4F46E5");
   document.documentElement.style.setProperty("--brand",b.accent||"#4F46E5");
   document.documentElement.style.setProperty("--sell",b.red||"#EF4444");
-  document.querySelectorAll(".cfgBrand").forEach(e=>e.textContent=b.name||"Nordis");
+  if(b.name) document.querySelectorAll(".cfgBrand").forEach(e=>e.textContent=b.name);
   document.querySelectorAll(".cfgBrand2").forEach(e=>e.textContent=b.suffix||"Trade");
   document.querySelectorAll(".cfgMark").forEach(e=>e.textContent=b.mark||"A");
   const h=CFG.hero||{};
@@ -2232,7 +2236,7 @@ function applyConfig(){
   setTxt("cfgClsH",H.classes); setTxt("cfgMobH",H.mobile); setTxt("cfgAchvH",H.achv);
   const c=CFG.cta||{}; setTxt("cfgCtaH",c.h); setTxt("cfgCtaP",c.p); setTxt("cfgCtaBtn",c.btn);
   const f=CFG.foot||{}; setTxt("cfgFootAbout",f.about); setTxt("cfgDemoNote",f.note); setTxt("cfgDisclaimer",f.disclaimer);
-  document.title=(b.name||"Nordis")+" "+(b.suffix||"Trade");
+  if(b.name) document.title=b.name+(b.suffix?" "+b.suffix:"");
   safe(applyHtmlBlocks);   /* HTML из редактора страниц главнее полей */
   applyOverrides();
 }
@@ -3528,7 +3532,8 @@ function renderWallet(){
   const free=Math.max(0,bal-margin);
   const id=document.getElementById("wlId"); if(id) id.textContent=wlWalletId();
   const bb=document.getElementById("wlBal"); if(bb) bb.textContent=usd(bal);
-  const br=document.getElementById("wlBrand"); if(br) br.textContent=(CFG.brand&&CFG.brand.name)||"Nordis";
+  const br=document.getElementById("wlBrand");
+  if(br&&USE_STORED_HTML&&CFG.brand&&CFG.brand.name) br.textContent=CFG.brand.name;
   const empty=bal<=0;
   const pt=document.getElementById("wlPromoTitle"), ps=document.getElementById("wlPromoSub");
   if(pt) pt.textContent=empty?"Пополните счёт, чтобы начать торговать":"Твой аккаунт полностью активирован!";
@@ -4731,9 +4736,9 @@ function acctList(){
 const money=(n,c)=>n.toLocaleString("ru-RU",{minimumFractionDigits:2,maximumFractionDigits:2}).replace(/,/,".")+" "+c;
 /* имя сервера задаётся в админке, пометка -DEMO добавляется всегда */
 function srvName(v){
-  let n=String(v||"Nordis").trim().replace(/[<>"']/g,"").slice(0,24);
+  let n=String(v||brandName()).trim().replace(/[<>"']/g,"").slice(0,24);
   n=n.replace(/[-_ ]?(demo|live|real)$/i,"").replace(/[-_ ]+$/,"");
-  if(!n) n="Nordis";
+  if(!n) n=brandName();
   return n+"-DEMO";
 }
 function renderAcct(){
