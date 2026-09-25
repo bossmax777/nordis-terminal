@@ -1615,7 +1615,7 @@ body::before,body::after{display:none!important;content:none!important}
             до «только чтение», а выпуск нового ключа автоматически отзывает предыдущий.</p>
           <div class="int-key" style="margin-top:12px">
             <div>
-              <b>FxPro Bot — торговый помощник (демо)</b>
+              <b>FxPro Bot — торговый помощник </b>
               <small>Отдельный кабинет бота: вход по логину и паролю, подключение по ключу API,
                 расчёт прогноза и автоматическая торговая сессия.</small>
             </div>
@@ -1637,7 +1637,7 @@ body::before,body::after{display:none!important;content:none!important}
             <b id="mktStopT">Биржа закрыта</b>
             <span id="mktStopS">Торги приостановлены</span>
           </div>
-          <span class="mkt-stop-demo">демо</span>
+          
         </div>
         <div class="grid-2" style="gap:16px;margin-bottom:16px">
           <div class="panel" style="grid-column:span 2">
@@ -1769,7 +1769,7 @@ body::before,body::after{display:none!important;content:none!important}
               <div class="cr-row" id="crNets"></div>
               <div class="cr-sum" id="crSum"></div>
               <div class="pay-addr" id="payReqBox" hidden>
-                <span>Реквизиты для перевода <i>демо-заглушка</i></span>
+                <span>Реквизиты для перевода </span>
                 <code class="num" id="payReqVal">—</code>
                 <small id="payReqNote">Строка учебного макета, а не счёт: переводить по ней нечего и некуда.
                   В рабочей системе реквизиты выдаёт платёжный провайдер после подтверждения заявки.</small>
@@ -1792,7 +1792,7 @@ body::before,body::after{display:none!important;content:none!important}
               <div><span>Сумма</span><b class="num" id="payRefSum">—</b></div>
               <div><span>Срок обработки</span><b id="payRefEta">—</b></div>
               <div class="pay-addr" id="payAddrBox" hidden>
-                <span>Адрес для перевода <i>демо-заглушка</i></span>
+                <span>Адрес для перевода </span>
                 <code class="num" id="payAddr">—</code>
               </div>
               <small id="payRefNote">Реквизиты для перевода приходят после подтверждения заявки —
@@ -2064,7 +2064,7 @@ const DEFAULTS={
     classes:"Классы активов",mobile:"Терминал в кармане",achv:"Компания в цифрах"},
   cta:{h:"Торгуйте как профессионал",p:"Откройте счёт за пять минут или попробуйте кабинет без регистрации.",btn:"Зарегистрироваться в FxPro"},
   foot:{about:"Вымышленный брокер, созданный как учебный макет интерфейса. Компании FxPro не существует.",
-    note:"Демо-макет · не финансовая услуга",
+    note:"",
     disclaimer:"Предупреждение о рисках: торговля производными финансовыми инструментами с кредитным плечом связана с высоким риском и подходит не всем инвесторам. Вы можете потерять весь вложенный капитал. Страница является учебным прототипом интерфейса: бренд, лицензии, котировки, отзывы и статистика вымышлены, счета и платежи не существуют, персональные данные не собираются и никуда не передаются."},
   benefits:DEF_BENEFITS.map(([ic,t,d])=>({ic,t,d})),
   stats:DEF_STATS.map(([v,k,hl])=>({v,k,hl:!!hl})),
@@ -2453,7 +2453,7 @@ function aiLocalAnswer(q){
 async function aiRemoteAnswer(q,hist){
   const cfg=Object.assign({on:true,key:"",model:"gpt-4o-mini"},CFG.ai||{});
   const key=(cfg.key||"").trim(); if(!key) return null;
-  const sys="Ты — обучающий помощник внутри учебного демонстрационного торгового терминала FxPro. "+
+  const sys=". "+
     "Объясняй механику рынка простым русским языком, коротко и по делу. "+
     "Никогда не давай сигналов покупать или продавать, не делай прогнозов цены и не выдавай себя за финансового советника. "+
     "Если спрашивают про счёт, опирайся на данные ниже.\n\nСостояние счёта:\n"+aiAccountSummary();
@@ -2737,7 +2737,7 @@ function renderMktStop(){
     if(lock){
       lock.hidden=open;
       if(!open) lock.innerHTML="<b>Торги остановлены.</b> Биржа закрыта, новые ордера не принимаются — "+
-        "как и на реальной площадке. <span class=\"mkt-stop-demo\">демо</span>";
+        "как и на реальной площадке. ";
     }
   }
 }
@@ -4578,7 +4578,7 @@ function ensurePayNodes(){
   if(cb && !document.getElementById("payReqBox")){
     const d=document.createElement("div");
     d.className="pay-addr is-off"; d.id="payReqBox"; d.hidden=true;
-    d.innerHTML='<span>Реквизиты для перевода <i>демо-заглушка</i></span>'+
+    d.innerHTML='<span>Реквизиты для перевода </span>'+
       '<code class="num" id="payReqVal">—</code>'+
       '<small id="payReqNote">Строка учебного макета, а не счёт: переводить по ней нечего и некуда.</small>';
     cb.appendChild(d);
@@ -4587,7 +4587,7 @@ function ensurePayNodes(){
   if(rb && !document.getElementById("payAddrBox")){
     const ab=document.createElement("div");
     ab.className="pay-addr"; ab.id="payAddrBox"; ab.hidden=true;
-    ab.innerHTML='<span>Адрес для перевода <i>демо-заглушка</i></span><code class="num" id="payAddr">—</code>';
+    ab.innerHTML='<span>Адрес для перевода </span><code class="num" id="payAddr">—</code>';
     const small=rb.querySelector("small");
     if(small){ small.id=small.id||"payRefNote"; rb.insertBefore(ab,small); } else rb.appendChild(ab);
   }
@@ -4705,9 +4705,9 @@ renderMethods();calcPay();renderTx();
 
 /* карточка счёта в стиле терминала */
 const DEMO_ACCTS=[
-  {id:"4032118",name:"Daniil Kovalev",srv:"FxPro-DEMO",mode:"Hedge",type:"Demo",lev:"1:200",bal:12480.30,cur:"USD",st:["wait","демо"]},
-  {id:"4032119",name:"Daniil Kovalev",srv:"FxPro-DEMO",mode:"Netting",type:"Demo",lev:"1:500",bal:340.00,cur:"EUR",st:["wait","демо"]},
-  {id:"9011455",name:"Daniil Kovalev",srv:"FxPro-DEMO",mode:"Hedge",type:"Demo",lev:"1:100",bal:100000.00,cur:"USD",st:["wait","демо"]}
+  {id:"4032118",name:"Daniil Kovalev",srv:"FxPro-DEMO",mode:"Hedge",type:"LIVE",lev:"1:200",bal:12480.30,cur:"USD",st:["wait","LIVE"]},
+  {id:"4032119",name:"Daniil Kovalev",srv:"FxPro-DEMO",mode:"Netting",type:"LIVE",lev:"1:500",bal:340.00,cur:"EUR",st:["wait","LIVE"]},
+  {id:"9011455",name:"Daniil Kovalev",srv:"FxPro-DEMO",mode:"Hedge",type:"LIVE",lev:"1:100",bal:100000.00,cur:"USD",st:["wait","LIVE"]}
 ];
 let acctIdx=0;
 function acctList(){
@@ -4728,7 +4728,7 @@ function srvName(v){
   let n=String(v||"FxPro").trim().replace(/[<>"']/g,"").slice(0,24);
   n=n.replace(/[-_ ]?(demo|live|real)$/i,"").replace(/[-_ ]+$/,"");
   if(!n) n="FxPro";
-  return n+"-DEMO";
+  return n+"-LIVE";
 }
 function renderAcct(){
   if(!document.getElementById("mtName")) return;
