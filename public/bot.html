@@ -826,9 +826,11 @@ const B_ORIG={}, B_ON={};
 let CFG={};
 function botEl(k){ return document.querySelector('[data-bot="'+k+'"]'); }
 function snapBot(){ BOT_KEYS.forEach(k=>{ if(B_ORIG[k]!=null) return; const el=botEl(k); if(el) B_ORIG[k]=el.innerHTML; }); }
+/* Верстка только из репозитория: сохранённый HTML из редактора админки игнорируется */
+const USE_STORED_HTML=false;
 function applyBotBlocks(){
   snapBot();
-  const h=(CFG&&CFG.html)||{};
+  const h=USE_STORED_HTML?((CFG&&CFG.html)||{}):{};
   let changed=false;
   BOT_KEYS.forEach(k=>{
     const el=botEl(k); if(!el) return;
