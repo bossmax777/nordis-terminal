@@ -448,7 +448,7 @@ function renderMkt(){
   if(open) return;
   const nx=mktNextOpen(), left=Math.max(0,nx-Date.now());
   const hh=Math.floor(left/3600000), mm=Math.floor(left%3600000/60000), wd=new Date(Date.now()).getDay();
-  document.getElementById("mktBarT").textContent=(wd===6||wd===0)
+  document.getElementById("mktBarT").textContent=(left>6*3600000)
     ? "Биржа закрыта — выходные" : "Биржа закрыта — технический перерыв";
   document.getElementById("mktBarS").textContent="Торги по XAU/USD возобновятся в "+mktLabel(nx)+
     " · через "+(hh?hh+" ч ":"")+mm+" мин. Сессия бота стоит на паузе до открытия.";
