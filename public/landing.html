@@ -1,562 +1,763 @@
-<!-- Главная страница Тюльпана. Отдельный файл: сервер подставляет его внутрь
-     блока #site вместо прежней главной. Кабинет (#app) не затрагивается.
-     Все стили и классы с префиксом tl- и областью #site, чтобы ничего
-     не пересекалось с разметкой кабинета. -->
-<style id="tlCss">
-#site{--tl-bg:#0A0608;--tl-bg2:#120A0D;--tl-card:#180D11;--tl-card2:#201116;
-  --tl-line:#32181F;--tl-line2:#4A2029;--tl-red:#E11D31;--tl-red2:#FF4D5E;--tl-red-dim:#8E0D1B;
-  --tl-text:#F7EDEF;--tl-muted:#AD8E95;--tl-dim:#7C6168;--tl-up:#36D399;--tl-down:#FF5A66;
-  background:var(--tl-bg);color:var(--tl-text);
-  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-#site *{box-sizing:border-box}
-#site{overflow-x:clip}
-#site .tl-wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-#site .tl-num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+<!-- Главная страница Тюльпана. Вся разметка и стили живут внутри блока #site,
+     классы с префиксом tl- — личный кабинет (#app) и его скрипт не затрагиваются.
+     Иллюстрации нарисованы в Higgsfield под эту страницу. -->
+<style>
+#site{
+  --tl-bg:#080506; --tl-bg2:#0E0A0C; --tl-panel:#140D10; --tl-panel2:#1B1114;
+  --tl-line:rgba(255,255,255,.075); --tl-line2:rgba(255,255,255,.16);
+  --tl-text:#F3EDEE; --tl-mut:#9B8B8F; --tl-mut2:#6E6064;
+  --tl-red:#D81128; --tl-red2:#FF4257; --tl-redsoft:rgba(216,17,40,.14);
+  --tl-up:#2FBF8F; --tl-down:#FF4257; --tl-gold:#D8A24A;
+  --tl-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  background:var(--tl-bg); color:var(--tl-text); display:block;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+#site *,#site *::before,#site *::after{box-sizing:border-box}
+#site h1,#site h2,#site h3,#site h4,#site p,#site ul,#site ol,#site figure{margin:0}
+#site ul,#site ol{padding:0;list-style:none}
 #site a{color:inherit;text-decoration:none}
+#site button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#site img{display:block;max-width:100%}
+#site table{border-collapse:collapse;width:100%}
+#site .tl-num{font-family:var(--tl-mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+#site .tl-up{color:var(--tl-up)} #site .tl-down{color:var(--tl-down)}
 
-/* ---------- кнопки ---------- */
+#site .tl-wrap{width:100%;max-width:1220px;margin:0 auto;padding:0 28px}
+#site .tl-sec{padding:84px 0;position:relative}
+#site .tl-sec+.tl-sec{border-top:1px solid var(--tl-line)}
+#site .tl-eyebrow{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--tl-mut2);font-family:var(--tl-mono)}
+#site .tl-eyebrow b{color:var(--tl-red2);font-weight:600}
+#site .tl-eyebrow i{flex:1;height:1px;background:var(--tl-line);font-style:normal}
+#site .tl-h2{font-size:clamp(27px,3.5vw,42px);line-height:1.1;letter-spacing:-.02em;font-weight:650;margin-top:20px}
+#site .tl-h2 em{font-style:normal;color:var(--tl-red2)}
+#site .tl-lead{color:var(--tl-mut);margin-top:16px;max-width:66ch;font-size:16.5px}
+#site .tl-note{font-size:12.5px;color:var(--tl-mut2);margin-top:18px;line-height:1.6}
+
 #site .tl-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  border:1px solid transparent;border-radius:3px;cursor:pointer;font:inherit;font-size:14px;
-  font-weight:600;letter-spacing:.2px;padding:13px 22px;transition:.16s;white-space:nowrap}
-#site .tl-btn-red{background:var(--tl-red);color:#fff;box-shadow:0 0 0 0 rgba(225,29,49,.5)}
-#site .tl-btn-red:hover{background:#F32438;box-shadow:0 8px 26px -10px rgba(225,29,49,.9)}
-#site .tl-btn-ghost{background:transparent;border-color:var(--tl-line2);color:var(--tl-text)}
-#site .tl-btn-ghost:hover{border-color:var(--tl-red);color:var(--tl-red2)}
-#site .tl-btn-sm{padding:9px 16px;font-size:13px}
+  padding:13px 24px;border:1px solid transparent;border-radius:3px;font-size:14.5px;font-weight:600;
+  letter-spacing:.01em;transition:background .16s,border-color .16s,color .16s,box-shadow .16s;white-space:nowrap}
+#site .tl-btn-red{background:var(--tl-red);color:#fff}
+#site .tl-btn-red:hover{background:#F0162E;box-shadow:0 10px 30px -12px rgba(216,17,40,.95)}
+#site .tl-btn-ghost{border-color:var(--tl-line2);color:var(--tl-text)}
+#site .tl-btn-ghost:hover{border-color:var(--tl-red2);color:var(--tl-red2)}
+#site .tl-btn-sm{padding:9px 17px;font-size:13px}
 
-/* ---------- шапка ---------- */
-#site .tl-head{position:sticky;top:0;z-index:30;background:rgba(10,6,8,.86);
+/* --- строка торговых сессий --- */
+#site .tl-top{background:#050303;border-bottom:1px solid var(--tl-line);font-size:12px}
+#site .tl-top-in{display:flex;align-items:center;gap:22px;height:36px;overflow:hidden}
+#site .tl-ses{display:flex;align-items:center;gap:18px;flex:1;min-width:0}
+#site .tl-ses li{display:flex;align-items:center;gap:7px;color:var(--tl-mut2);white-space:nowrap}
+#site .tl-dot{width:6px;height:6px;border-radius:50%;background:#43383B;flex:none}
+#site .tl-ses li.on{color:var(--tl-mut)}
+#site .tl-ses li.on .tl-dot{background:var(--tl-up);box-shadow:0 0 0 3px rgba(47,191,143,.16)}
+#site .tl-utc{color:var(--tl-mut2);font-family:var(--tl-mono);white-space:nowrap}
+#site .tl-badge-demo{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border:1px solid rgba(216,17,40,.4);
+  border-radius:2px;color:var(--tl-red2);font-size:11px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+
+/* --- шапка --- */
+#site .tl-head{position:sticky;top:0;z-index:40;background:rgba(8,5,6,.86);
   backdrop-filter:blur(14px);border-bottom:1px solid var(--tl-line)}
-#site .tl-head-in{display:flex;align-items:center;gap:30px;height:68px}
-#site .tl-logo{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;letter-spacing:-.3px}
-#site .tl-logo svg{width:24px;height:24px;flex:none}
-#site .tl-logo i{font-style:normal;color:var(--tl-dim);font-weight:400;font-size:12px;
-  letter-spacing:2.4px;text-transform:uppercase;margin-left:2px}
-#site .tl-nav{display:flex;gap:26px;margin-left:12px;font-size:13.5px;color:var(--tl-muted)}
-#site .tl-nav a{position:relative;padding:4px 0;transition:.15s}
-#site .tl-nav a:hover{color:var(--tl-text)}
-#site .tl-nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
-  background:var(--tl-red);transition:right .2s}
-#site .tl-nav a:hover::after{right:0}
-#site .tl-head-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-#site .tl-lang{font-size:12px;color:var(--tl-dim);letter-spacing:1px;padding-right:6px}
-#site #burger{display:none;background:none;border:1px solid var(--tl-line2);color:var(--tl-text);
-  width:38px;height:38px;border-radius:3px;font-size:17px;cursor:pointer}
+#site .tl-head-in{display:flex;align-items:center;gap:26px;height:68px}
+#site .tl-logo{display:flex;align-items:center;gap:11px;font-weight:650;font-size:19px;letter-spacing:-.01em}
+#site .tl-logo svg{width:26px;height:26px;flex:none}
+#site .tl-logo span{color:var(--tl-mut2);font-weight:500;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;padding-left:11px;margin-left:3px;border-left:1px solid var(--tl-line2)}
+#site .tl-nav{display:flex;gap:4px;margin-left:12px;flex:1}
+#site .tl-nav a{padding:8px 13px;font-size:14px;color:var(--tl-mut);border-radius:3px;transition:color .15s,background .15s}
+#site .tl-nav a:hover{color:var(--tl-text);background:rgba(255,255,255,.05)}
+#site .tl-head-right{display:flex;align-items:center;gap:10px}
 
-/* ---------- первый экран ---------- */
-#site .tl-hero{position:relative;padding:92px 0 64px;overflow:hidden;text-align:center}
-#site .tl-hero::before{content:"";position:absolute;inset:-40% 20% auto;height:720px;
-  background:radial-gradient(60% 50% at 50% 0,rgba(225,29,49,.22),transparent 70%);pointer-events:none}
-#site .tl-hero::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(var(--tl-line) 1px,transparent 1px),
-    linear-gradient(90deg,var(--tl-line) 1px,transparent 1px);
-  background-size:68px 68px;opacity:.5;
-  mask-image:radial-gradient(70% 60% at 50% 20%,#000,transparent 75%);
-  -webkit-mask-image:radial-gradient(70% 60% at 50% 20%,#000,transparent 75%)}
-#site .tl-hero>*{position:relative;z-index:1}
-#site .tl-eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--tl-line2);
-  border-radius:40px;padding:6px 15px 6px 10px;font-size:11.5px;letter-spacing:1.4px;
-  text-transform:uppercase;color:var(--tl-muted);margin-bottom:28px}
-#site .tl-eyebrow b{display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:var(--tl-red);box-shadow:0 0 0 4px rgba(225,29,49,.18)}
-#site .tl-h1{font-size:clamp(34px,5.4vw,66px);line-height:1.04;font-weight:700;
-  letter-spacing:-2px;margin:0 auto 22px;max-width:16ch}
-#site .tl-h1 em{font-style:normal;color:var(--tl-red2);
-  text-shadow:0 0 44px rgba(225,29,49,.45)}
-#site .tl-lead{font-size:clamp(15px,1.6vw,18px);line-height:1.62;color:var(--tl-muted);
-  max-width:60ch;margin:0 auto 32px}
-#site .tl-hero-act{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-#site .tl-hero-note{margin:22px auto 0;font-size:11.5px;line-height:1.6;color:var(--tl-dim);max-width:62ch}
+/* --- первый экран --- */
+#site .tl-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--tl-line)}
+#site .tl-hero-bg{position:absolute;inset:0;z-index:0}
+#site .tl-hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.5}
+#site .tl-hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(8,5,6,.97) 0%,rgba(8,5,6,.86) 46%,rgba(8,5,6,.6) 100%),
+             linear-gradient(0deg,var(--tl-bg) 2%,rgba(8,5,6,0) 55%)}
+#site .tl-hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1.08fr .92fr;
+  gap:52px;align-items:center;padding:78px 0 70px}
+#site .tl-hero h1{font-size:clamp(34px,5.1vw,60px);line-height:1.04;letter-spacing:-.03em;font-weight:680;margin-top:22px}
+#site .tl-hero h1 em{font-style:normal;color:var(--tl-red2)}
+#site .tl-hero-sub{color:var(--tl-mut);font-size:17.5px;margin-top:20px;max-width:52ch}
+#site .tl-hero-act{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+#site .tl-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:38px;
+  background:var(--tl-line);border:1px solid var(--tl-line)}
+#site .tl-kpi div{background:var(--tl-bg);padding:15px 14px}
+#site .tl-kpi b{display:block;font-size:22px;font-weight:620;font-family:var(--tl-mono);letter-spacing:-.02em}
+#site .tl-kpi small{display:block;color:var(--tl-mut2);font-size:11.5px;margin-top:5px;line-height:1.4}
 
-/* ---------- панель с графиком ---------- */
-#site .tl-panel{margin-top:54px;border:1px solid var(--tl-line);border-radius:6px;
-  background:linear-gradient(180deg,var(--tl-card2),var(--tl-card));
-  display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);text-align:left;overflow:hidden}
-#site .tl-panel-l{padding:22px 24px 10px;border-right:1px solid var(--tl-line)}
-#site .tl-panel-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-#site .tl-panel-top b{font-size:15px;letter-spacing:.4px}
-#site .tl-panel-top span{font-size:11.5px;color:var(--tl-dim);letter-spacing:1.2px;text-transform:uppercase}
-#site .tl-price{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
-#site .tl-price b{font-size:34px;font-weight:600;letter-spacing:-1px}
-#site .tl-price i{font-style:normal;font-size:14px;font-weight:600;color:var(--tl-up)}
-#site .tl-panel canvas{width:100%;height:170px;display:block}
-#site .tl-price i.dn{color:var(--tl-down)}
-#site .tl-panel-r{display:grid;grid-template-rows:repeat(3,1fr)}
-#site .tl-stat{padding:18px 22px;border-bottom:1px solid var(--tl-line)}
-#site .tl-stat:last-child{border-bottom:0}
-#site .tl-stat b{display:block;font-size:24px;font-weight:600;letter-spacing:-.6px;margin-bottom:3px}
-#site .tl-stat span{font-size:12px;color:var(--tl-muted);line-height:1.5}
-#site .tl-stat em{font-style:normal;color:var(--tl-red2)}
+/* --- панель котировок в первом экране --- */
+#site .tl-quote{background:linear-gradient(180deg,var(--tl-panel2),var(--tl-panel));
+  border:1px solid var(--tl-line2);border-radius:4px;overflow:hidden;
+  box-shadow:0 40px 90px -50px rgba(0,0,0,.95)}
+#site .tl-quote-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--tl-line)}
+#site .tl-quote-head b{font-size:14px;letter-spacing:.01em}
+#site .tl-quote-head .tl-tag{margin-left:auto;font-size:11px;color:var(--tl-mut2);font-family:var(--tl-mono)}
+#site .tl-quote-body{padding:16px}
+#site .tl-bidask{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+#site .tl-ba{border:1px solid var(--tl-line);border-radius:3px;padding:10px 12px;background:rgba(0,0,0,.25)}
+#site .tl-ba small{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tl-mut2)}
+#site .tl-ba b{font-size:23px;font-family:var(--tl-mono);font-weight:600;letter-spacing:-.02em}
+#site .tl-spread{text-align:right;padding-bottom:10px}
+#site .tl-spread small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--tl-mut2)}
+#site .tl-spread b{font-size:15px;font-family:var(--tl-mono)}
+#site #tlChart{display:block;width:100%;height:132px;margin-top:14px}
+#site .tl-quote-foot{display:flex;gap:7px;padding:0 16px 16px;flex-wrap:wrap}
+#site .tl-chip{padding:6px 11px;border:1px solid var(--tl-line);border-radius:2px;font-size:12px;
+  color:var(--tl-mut);font-family:var(--tl-mono);cursor:pointer;transition:border-color .15s,color .15s}
+#site .tl-chip:hover{border-color:var(--tl-line2);color:var(--tl-text)}
+#site .tl-chip.on{border-color:var(--tl-red);color:var(--tl-red2);background:var(--tl-redsoft)}
 
-/* ---------- бегущая строка ---------- */
-#site .tl-tape{border-top:1px solid var(--tl-line);border-bottom:1px solid var(--tl-line);
-  background:var(--tl-bg2);overflow:hidden;margin-top:10px}
-#site .tl-tape-row{display:flex;width:max-content;animation:tlTape 46s linear infinite}
-#site .tl-tape-row span{display:inline-flex;align-items:center;gap:9px;padding:13px 26px;
-  font-size:12.5px;color:var(--tl-muted);border-right:1px solid var(--tl-line);white-space:nowrap}
-#site .tl-tape-row span b{color:var(--tl-text);font-weight:600;letter-spacing:.3px}
-#site .tl-tape-row span i{font-style:normal;font-weight:600}
-#site .tl-tape-row span i.up{color:var(--tl-up)}
-#site .tl-tape-row span i.dn{color:var(--tl-down)}
-@keyframes tlTape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion:reduce){#site .tl-tape-row{animation:none}}
+/* --- бегущая строка --- */
+#site .tl-tape{border-bottom:1px solid var(--tl-line);background:var(--tl-bg2);overflow:hidden}
+#site .tl-tape-run{display:flex;gap:0;width:max-content;animation:tl-run 46s linear infinite}
+#site .tl-tape:hover .tl-tape-run{animation-play-state:paused}
+@keyframes tl-run{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+#site .tl-tape i{display:flex;align-items:center;gap:9px;padding:11px 20px;font-style:normal;
+  font-size:13px;font-family:var(--tl-mono);border-right:1px solid var(--tl-line);white-space:nowrap}
+#site .tl-tape i u{text-decoration:none;color:var(--tl-mut)}
 
-/* ---------- общие секции ---------- */
-#site .tl-sec{padding:84px 0;border-bottom:1px solid var(--tl-line)}
-#site .tl-kicker{font-size:11.5px;letter-spacing:2.4px;text-transform:uppercase;
-  color:var(--tl-red2);margin:0 0 14px}
-#site .tl-h2{font-size:clamp(25px,3.2vw,38px);line-height:1.12;letter-spacing:-1.1px;
-  font-weight:700;margin:0 0 14px;max-width:22ch}
-#site .tl-sub{font-size:14.5px;line-height:1.65;color:var(--tl-muted);max-width:62ch;margin:0}
-#site .tl-sec-head{margin-bottom:46px}
+/* --- таблицы условий --- */
+#site .tl-tablewrap{margin-top:30px;border:1px solid var(--tl-line);border-radius:4px;overflow-x:auto}
+#site .tl-tbl{min-width:760px;font-size:14px}
+#site .tl-tbl th{text-align:right;padding:13px 16px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tl-mut2);font-weight:600;background:#0B0708;border-bottom:1px solid var(--tl-line);white-space:nowrap}
+#site .tl-tbl th:first-child,#site .tl-tbl td:first-child{text-align:left}
+#site .tl-tbl td{text-align:right;padding:14px 16px;border-bottom:1px solid var(--tl-line);white-space:nowrap}
+#site .tl-tbl tr:last-child td{border-bottom:0}
+#site .tl-tbl tbody tr:hover td{background:rgba(255,255,255,.025)}
+#site .tl-tbl .tl-inst{display:flex;align-items:center;gap:10px;font-weight:600}
+#site .tl-tbl .tl-inst s{text-decoration:none;width:3px;height:17px;background:var(--tl-red);border-radius:2px;flex:none}
+#site .tl-tbl .tl-inst.g s{background:var(--tl-gold)}
+#site .tl-tbl .tl-inst em{font-style:normal;color:var(--tl-mut2);font-size:12px;font-weight:400}
+#site .tl-tbl td.tl-num{font-family:var(--tl-mono)}
+#site .tl-sess-on,#site .tl-sess-off{font-size:11px;font-family:var(--tl-mono);padding:3px 7px;border-radius:2px}
+#site .tl-sess-on{color:var(--tl-up);background:rgba(47,191,143,.1)}
+#site .tl-sess-off{color:var(--tl-mut2);background:rgba(255,255,255,.04)}
 
-/* ---------- шаги ---------- */
-#site .tl-steps{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:56px;align-items:start}
-#site .tl-step{position:relative;padding:0 0 34px 56px;border-left:1px solid var(--tl-line2)}
-#site .tl-step:last-child{padding-bottom:0;border-left-color:transparent}
-#site .tl-step::before{content:attr(data-n);position:absolute;left:-19px;top:-4px;width:38px;height:38px;
-  border-radius:50%;background:var(--tl-bg);border:1px solid var(--tl-red);color:var(--tl-red2);
-  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.5px}
-#site .tl-step h3{margin:4px 0 8px;font-size:17.5px;letter-spacing:-.3px}
-#site .tl-step p{margin:0;font-size:14px;line-height:1.65;color:var(--tl-muted)}
+/* --- типы счетов --- */
+#site .tl-plans{margin-top:30px;border:1px solid var(--tl-line);border-radius:4px;overflow-x:auto}
+#site .tl-plans table{min-width:800px;font-size:14px}
+#site .tl-plans thead th{padding:20px 18px;text-align:left;border-bottom:1px solid var(--tl-line);vertical-align:top}
+#site .tl-plans thead th:first-child{width:30%;background:#0B0708}
+#site .tl-plans thead th.on{background:linear-gradient(180deg,rgba(216,17,40,.16),rgba(216,17,40,.02))}
+#site .tl-plans .tl-pname{font-size:19px;font-weight:650;letter-spacing:-.01em}
+#site .tl-plans .tl-ptag{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tl-red2);margin-bottom:8px;font-family:var(--tl-mono)}
+#site .tl-plans .tl-pdep{display:block;color:var(--tl-mut);font-size:13px;margin-top:7px;font-family:var(--tl-mono)}
+#site .tl-plans tbody th{text-align:left;padding:13px 18px;font-weight:500;color:var(--tl-mut);
+  font-size:13.5px;border-bottom:1px solid var(--tl-line);background:#0B0708;white-space:nowrap}
+#site .tl-plans tbody td{padding:13px 18px;border-bottom:1px solid var(--tl-line);
+  font-family:var(--tl-mono);font-size:13.5px}
+#site .tl-plans tbody td.on{background:rgba(216,17,40,.05)}
+#site .tl-plans tfoot td{padding:18px}
+#site .tl-yes{color:var(--tl-up)} #site .tl-no{color:var(--tl-mut2)}
 
-/* ---------- котировки ---------- */
-#site .tl-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-#site .tl-chips .tab{background:transparent;border:1px solid var(--tl-line2);color:var(--tl-muted);
-  border-radius:3px;padding:7px 14px;font:inherit;font-size:12.5px;cursor:pointer;transition:.15s}
-#site .tl-chips .tab:hover{color:var(--tl-text)}
-#site .tl-chips .tab.on{background:var(--tl-red);border-color:var(--tl-red);color:#fff}
-#site .tl-board{border:1px solid var(--tl-line);border-radius:6px;overflow:hidden;background:var(--tl-card)}
-#site .tl-board-top{display:flex;align-items:center;gap:12px;padding:12px 18px;
-  border-bottom:1px solid var(--tl-line);background:var(--tl-bg2);font-size:12px;color:var(--tl-dim);
-  letter-spacing:1.4px;text-transform:uppercase}
-#site .tl-board-top b{width:7px;height:7px;border-radius:50%;background:var(--tl-up);
-  box-shadow:0 0 0 4px rgba(54,211,153,.14)}
-#site .tl-scroll{overflow-x:auto}
-#site .tl-board table{width:100%;border-collapse:collapse;min-width:720px}
-#site .tl-board th{text-align:right;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
-  color:var(--tl-dim);font-weight:500;padding:13px 18px;border-bottom:1px solid var(--tl-line)}
-#site .tl-board th:first-child{text-align:left}
-#site .tl-board td{padding:13px 18px;border-bottom:1px solid var(--tl-line);font-size:14px;text-align:right}
-#site .tl-board td:first-child{text-align:left}
-#site .tl-board tr:last-child td{border-bottom:0}
-#site .tl-board tr:hover td{background:rgba(225,29,49,.05)}
-#site .tl-board .sym{display:flex;align-items:center;gap:11px}
-#site .tl-board .sym-ic{width:30px;height:30px;border-radius:3px;background:var(--tl-card2);
-  border:1px solid var(--tl-line2);display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;color:var(--tl-red2);flex:none}
-#site .tl-board .sym b{display:block;font-size:13.5px;font-weight:600;letter-spacing:.3px}
-#site .tl-board .sym small{display:block;font-size:11.5px;color:var(--tl-dim);margin-top:1px}
-#site .tl-board .src{font-style:normal;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;
-  color:var(--tl-dim);border:1px solid var(--tl-line2);border-radius:2px;padding:1px 5px;margin-left:6px}
-#site .tl-board .src.on{color:var(--tl-up);border-color:rgba(54,211,153,.4)}
-#site .tl-board .up{color:var(--tl-up)}
-#site .tl-board .down{color:var(--tl-down)}
-#site .tl-board .q-trade{cursor:pointer;color:var(--tl-red2);font-size:12.5px;font-weight:600;
-  border-bottom:1px solid rgba(255,77,94,.35);padding-bottom:1px}
-#site .tl-board-note{padding:12px 18px;font-size:11.5px;color:var(--tl-dim);line-height:1.55;
-  border-top:1px solid var(--tl-line);background:var(--tl-bg2)}
+/* --- блоки с картинками --- */
+#site .tl-split{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center;margin-top:34px}
+#site .tl-split.rev .tl-split-txt{order:2}
+#site .tl-figure{position:relative;border:1px solid var(--tl-line2);border-radius:4px;overflow:hidden;
+  min-height:300px;box-shadow:0 36px 80px -46px rgba(0,0,0,.95);
+  background:
+    radial-gradient(70% 90% at 70% 20%,rgba(216,17,40,.26),rgba(216,17,40,0) 70%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 34px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 1px,transparent 1px 34px),
+    linear-gradient(180deg,var(--tl-panel2),#0A0607)}
+#site .tl-figure img{width:100%;height:100%;object-fit:cover}
+#site .tl-figure figcaption{position:absolute;left:0;right:0;bottom:0;padding:20px 18px 14px;font-size:11.5px;
+  color:var(--tl-mut);font-family:var(--tl-mono);
+  background:linear-gradient(0deg,rgba(5,3,3,.95),rgba(5,3,3,0))}
+#site .tl-fl{margin-top:8px}
+#site .tl-fl li{display:flex;gap:13px;padding:15px 0;border-bottom:1px solid var(--tl-line)}
+#site .tl-fl li:last-child{border-bottom:0}
+#site .tl-fl b{display:block;font-size:15px;font-weight:600;margin-bottom:3px}
+#site .tl-fl span{color:var(--tl-mut);font-size:14px}
+#site .tl-fl s{text-decoration:none;flex:none;width:30px;height:30px;border-radius:3px;display:grid;
+  place-items:center;background:var(--tl-redsoft);color:var(--tl-red2);font-size:11.5px;
+  font-family:var(--tl-mono);margin-top:2px}
+#site .tl-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--tl-line);
+  border:1px solid var(--tl-line);margin-top:26px}
+#site .tl-mini div{background:var(--tl-bg);padding:16px 15px}
+#site .tl-mini b{display:block;font-size:20px;font-family:var(--tl-mono);font-weight:620}
+#site .tl-mini small{display:block;color:var(--tl-mut2);font-size:11.5px;margin-top:4px}
 
-/* ---------- счета ---------- */
-#site .tl-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
-  background:var(--tl-line);border:1px solid var(--tl-line);border-radius:6px;overflow:hidden}
-#site .tl-plan{background:var(--tl-card);padding:28px 24px;display:flex;flex-direction:column}
-#site .tl-plan.on{background:linear-gradient(180deg,rgba(225,29,49,.14),var(--tl-card))}
-#site .tl-plan h3{margin:0 0 4px;font-size:19px;letter-spacing:-.4px}
-#site .tl-plan .tl-tag{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tl-red2);
-  margin-bottom:18px;display:block;min-height:14px}
-#site .tl-plan dl{margin:0 0 22px;display:grid;gap:11px}
-#site .tl-plan .tl-row{display:flex;justify-content:space-between;gap:14px;font-size:13.5px;
-  padding-bottom:10px;border-bottom:1px dashed var(--tl-line2)}
-#site .tl-plan .tl-row span{color:var(--tl-muted)}
-#site .tl-plan .tl-row b{font-weight:600;letter-spacing:.2px}
-#site .tl-plan .tl-btn{margin-top:auto;width:100%}
+/* --- инструменты --- */
+#site .tl-tabs{display:flex;gap:6px;margin-top:28px;flex-wrap:wrap}
+#site .tl-tab{padding:9px 15px;border:1px solid var(--tl-line);border-radius:2px;font-size:13.5px;
+  color:var(--tl-mut);transition:.15s}
+#site .tl-tab:hover{color:var(--tl-text);border-color:var(--tl-line2)}
+#site .tl-tab.on{background:var(--tl-red);border-color:var(--tl-red);color:#fff}
+#site .tl-tab u{text-decoration:none;opacity:.6;font-family:var(--tl-mono);font-size:12px;margin-left:6px}
+#site .tl-inst-body{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;margin-top:26px;align-items:start}
+#site .tl-inst-desc{color:var(--tl-mut);font-size:15.5px}
+#site .tl-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+#site .tl-pills span{padding:7px 11px;border:1px solid var(--tl-line);border-radius:2px;
+  font-size:12.5px;font-family:var(--tl-mono);color:var(--tl-mut)}
+#site .tl-inst-facts{margin-top:22px;border-top:1px solid var(--tl-line)}
+#site .tl-inst-facts div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;
+  border-bottom:1px solid var(--tl-line);font-size:13.5px}
+#site .tl-inst-facts span{color:var(--tl-mut2)}
+#site .tl-inst-facts b{font-family:var(--tl-mono);font-weight:600}
 
-/* ---------- цифры ---------- */
-#site .tl-facts{background:linear-gradient(90deg,var(--tl-red-dim),#5E0A14 60%,var(--tl-bg2));
-  border-bottom:1px solid var(--tl-line)}
-#site .tl-facts-in{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;padding:46px 0}
-#site .tl-fact b{display:block;font-size:clamp(26px,3.4vw,38px);font-weight:700;letter-spacing:-1.4px;line-height:1}
-#site .tl-fact span{display:block;margin-top:8px;font-size:12.5px;line-height:1.5;color:rgba(255,235,238,.72)}
+/* --- калькулятор --- */
+#site .tl-calc{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:30px;
+  background:var(--tl-line);border:1px solid var(--tl-line);border-radius:4px;overflow:hidden}
+#site .tl-calc-in,#site .tl-calc-out{background:var(--tl-panel);padding:26px}
+#site .tl-calc-out{background:#0B0708}
+#site .tl-field{margin-bottom:16px}
+#site .tl-field label{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tl-mut2);margin-bottom:7px}
+#site .tl-field select,#site .tl-field input{width:100%;padding:11px 13px;background:var(--tl-bg);
+  border:1px solid var(--tl-line2);border-radius:3px;color:var(--tl-text);font-size:14.5px;
+  font-family:var(--tl-mono);outline:none}
+#site .tl-field select:focus,#site .tl-field input:focus{border-color:var(--tl-red)}
+#site .tl-res{display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  padding:13px 0;border-bottom:1px solid var(--tl-line)}
+#site .tl-res:last-of-type{border-bottom:0}
+#site .tl-res span{color:var(--tl-mut);font-size:13.5px}
+#site .tl-res b{font-size:17px;font-family:var(--tl-mono);font-weight:620}
+#site .tl-res.big b{font-size:24px;color:var(--tl-red2)}
 
-/* ---------- академия ---------- */
-#site .tl-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-#site .tl-card{border:1px solid var(--tl-line);border-radius:6px;background:var(--tl-card);
-  padding:26px 22px;transition:.18s}
-#site .tl-card:hover{border-color:var(--tl-line2);transform:translateY(-2px)}
-#site .tl-card .tl-ix{width:40px;height:40px;border-radius:3px;border:1px solid var(--tl-line2);
-  display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--tl-red2)}
-#site .tl-card .tl-ix svg{width:19px;height:19px}
-#site .tl-card h3{margin:0 0 9px;font-size:16.5px;letter-spacing:-.3px}
-#site .tl-card p{margin:0 0 14px;font-size:13.5px;line-height:1.62;color:var(--tl-muted)}
-#site .tl-card em{font-style:normal;font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--tl-dim)}
+/* --- календарь --- */
+#site .tl-cal{margin-top:26px;border:1px solid var(--tl-line);border-radius:4px;overflow:hidden}
+#site .tl-cal-row{display:grid;grid-template-columns:62px 54px 1fr 92px 92px;gap:14px;align-items:center;
+  padding:13px 16px;border-bottom:1px solid var(--tl-line);font-size:13.5px}
+#site .tl-cal-row:last-child{border-bottom:0}
+#site .tl-cal-row.h{background:#0B0708;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--tl-mut2)}
+#site .tl-cal-row time{font-family:var(--tl-mono);color:var(--tl-mut)}
+#site .tl-cal-row .tl-cc{font-family:var(--tl-mono);font-size:12px;color:var(--tl-text)}
+#site .tl-cal-row .tl-imp{display:inline-flex;gap:3px}
+#site .tl-cal-row .tl-imp s{text-decoration:none;width:5px;height:12px;background:#352A2D;border-radius:1px}
+#site .tl-cal-row .tl-imp s.a{background:var(--tl-red2)}
+#site .tl-cal-row .tl-fc{text-align:right;font-family:var(--tl-mono);color:var(--tl-mut)}
 
-/* ---------- вопросы ---------- */
-#site .tl-faq{display:grid;gap:0;border-top:1px solid var(--tl-line)}
+/* --- риски --- */
+#site .tl-risk{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+#site .tl-risk article{border:1px solid var(--tl-line);border-left:2px solid var(--tl-red);
+  border-radius:3px;padding:22px;background:var(--tl-panel)}
+#site .tl-risk h4{font-size:15.5px;font-weight:620;margin-bottom:8px}
+#site .tl-risk p{color:var(--tl-mut);font-size:14px}
+
+/* --- платежи --- */
+#site .tl-pay{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:30px;
+  background:var(--tl-line);border:1px solid var(--tl-line)}
+#site .tl-pay div{background:var(--tl-panel);padding:20px}
+#site .tl-pay b{display:block;font-size:15px;font-weight:620;margin-bottom:12px}
+#site .tl-pay dl{display:grid;grid-template-columns:auto auto;gap:6px 10px;font-size:13px;margin:0}
+#site .tl-pay dt{color:var(--tl-mut2)}
+#site .tl-pay dd{margin:0;text-align:right;font-family:var(--tl-mono)}
+
+/* --- FAQ --- */
+#site .tl-faq{margin-top:26px;border-top:1px solid var(--tl-line)}
 #site .tl-faq details{border-bottom:1px solid var(--tl-line)}
-#site .tl-faq summary{list-style:none;cursor:pointer;padding:22px 44px 22px 0;position:relative;
-  font-size:16px;font-weight:600;letter-spacing:-.2px}
+#site .tl-faq summary{display:flex;align-items:flex-start;gap:14px;padding:19px 0;cursor:pointer;
+  list-style:none;font-size:16px;font-weight:550}
 #site .tl-faq summary::-webkit-details-marker{display:none}
-#site .tl-faq summary::after{content:"+";position:absolute;right:8px;top:19px;font-size:21px;
-  font-weight:400;color:var(--tl-red2);transition:.2s}
-#site .tl-faq details[open] summary::after{content:"−"}
-#site .tl-faq p{margin:0 0 24px;font-size:14px;line-height:1.7;color:var(--tl-muted);max-width:76ch}
+#site .tl-faq summary s{text-decoration:none;color:var(--tl-red2);font-family:var(--tl-mono);font-size:13px;margin-top:3px}
+#site .tl-faq summary::after{content:"+";margin-left:auto;color:var(--tl-mut2);font-size:20px;line-height:1}
+#site .tl-faq details[open] summary::after{content:"–"}
+#site .tl-faq p{color:var(--tl-mut);font-size:15px;padding:0 0 20px 30px;max-width:80ch}
 
-/* ---------- призыв ---------- */
-#site .tl-cta{position:relative;padding:92px 0;text-align:center;overflow:hidden}
-#site .tl-cta::before{content:"";position:absolute;inset:auto 25% -60%;height:420px;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(225,29,49,.3),transparent 70%)}
-#site .tl-cta>*{position:relative}
+/* --- CTA и подвал --- */
+#site .tl-cta{position:relative;overflow:hidden;border-top:1px solid var(--tl-line)}
+#site .tl-cta-bg{position:absolute;inset:0}
+#site .tl-cta-bg img{width:100%;height:100%;object-fit:cover;opacity:.3}
+#site .tl-cta-bg::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(70% 120% at 50% 110%,rgba(216,17,40,.3),rgba(8,5,6,.95) 70%)}
+#site .tl-cta-in{position:relative;text-align:center;padding:80px 0}
+#site .tl-cta h2{font-size:clamp(26px,3.6vw,40px);line-height:1.1;letter-spacing:-.02em;font-weight:660}
+#site .tl-cta p{color:var(--tl-mut);margin-top:16px;max-width:60ch;margin-left:auto;margin-right:auto}
+#site .tl-cta-act{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+#site .tl-foot{background:#050303;border-top:1px solid var(--tl-line);padding:56px 0 30px}
+#site .tl-foot-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:36px}
+#site .tl-foot h5{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tl-mut2);margin-bottom:14px}
+#site .tl-foot li{margin-bottom:9px;font-size:14px;color:var(--tl-mut)}
+#site .tl-foot li a:hover{color:var(--tl-red2)}
+#site .tl-foot-about p{color:var(--tl-mut2);font-size:13.5px;margin-top:14px;max-width:38ch}
+#site .tl-foot-dis{margin-top:40px;padding-top:24px;border-top:1px solid var(--tl-line);
+  color:var(--tl-mut2);font-size:12.5px;line-height:1.75}
+#site .tl-foot-dis b{color:var(--tl-mut)}
 
-/* ---------- футер ---------- */
-#site .tl-foot{background:var(--tl-bg2);padding:58px 0 34px}
-#site .tl-foot-grid{display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:34px;margin-bottom:38px}
-#site .tl-foot h4{margin:0 0 14px;font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--tl-dim)}
-#site .tl-foot ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:13.5px;color:var(--tl-muted)}
-#site .tl-foot ul a:hover{color:var(--tl-red2)}
-#site .tl-foot-about p{margin:14px 0 0;font-size:13px;line-height:1.65;color:var(--tl-muted);max-width:42ch}
-#site .tl-disc{border-top:1px solid var(--tl-line);padding-top:22px;font-size:11.5px;line-height:1.7;
-  color:var(--tl-dim)}
-#site .tl-disc b{color:var(--tl-muted);font-weight:600}
-
-@media (max-width:980px){
+@media (max-width:1040px){
   #site .tl-nav{display:none}
-  #site #burger{display:inline-flex;align-items:center;justify-content:center}
-  #site .tl-panel{grid-template-columns:minmax(0,1fr)}
-  #site .tl-panel-l{border-right:0;border-bottom:1px solid var(--tl-line)}
-  #site .tl-panel-r{grid-template-rows:none;grid-template-columns:repeat(3,1fr)}
-  #site .tl-stat{border-bottom:0;border-right:1px solid var(--tl-line)}
-  #site .tl-stat:last-child{border-right:0}
-  #site .tl-steps{grid-template-columns:minmax(0,1fr);gap:34px}
-  #site .tl-plans,#site .tl-cards{grid-template-columns:minmax(0,1fr)}
-  #site .tl-facts-in{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
-  #site .tl-foot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #site .tl-hero-in,#site .tl-split,#site .tl-calc,#site .tl-inst-body{grid-template-columns:1fr}
+  #site .tl-split{gap:34px}
+  #site .tl-split.rev .tl-split-txt{order:0}
+  #site .tl-risk,#site .tl-pay,#site .tl-foot-top{grid-template-columns:1fr 1fr}
+  #site .tl-hero-in{padding:56px 0 50px}
+}
+@media (max-width:620px){
+  #site .tl-wrap{padding:0 16px}
+  #site .tl-sec{padding:60px 0}
+  #site .tl-kpi,#site .tl-mini{grid-template-columns:1fr 1fr}
+  #site .tl-risk,#site .tl-pay,#site .tl-foot-top{grid-template-columns:1fr}
+  #site .tl-ses{display:none}
+  #site .tl-utc{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #site .tl-we{display:none}
+  #site .tl-hero-act .tl-btn,#site .tl-cta-act .tl-btn{width:100%}
+  #site .tl-cal-row{grid-template-columns:52px 1fr 70px;gap:10px}
+  #site .tl-cal-row .tl-imp,#site .tl-cal-row .tl-fc.prev{display:none}
+  #site{overflow-x:clip}
 }
 @media (max-width:560px){
-  #site{overflow-x:hidden}
-  #site .tl-wrap{padding:0 16px}
-  #site .tl-sec{padding:58px 0}
-  #site .tl-hero{padding:62px 0 44px}
-  #site .tl-head-in{height:60px;gap:12px}
-  #site .tl-logo{font-size:17px}
-  #site .tl-logo i,#site .tl-lang{display:none}
-  #site .tl-head-right{gap:8px}
-  #site .tl-head-right .tl-btn-ghost{display:none}
-  #site .tl-head-right .tl-btn{padding:9px 13px;font-size:12.5px}
-  #site .tl-panel-r{grid-template-columns:minmax(0,1fr)}
-  #site .tl-stat{border-right:0;border-bottom:1px solid var(--tl-line)}
-  #site .tl-hero-act .tl-btn{width:100%}
-  #site .tl-facts-in{grid-template-columns:minmax(0,1fr);gap:22px;padding:36px 0}
-  #site .tl-foot-grid{grid-template-columns:minmax(0,1fr);gap:26px}
-  #site .tl-step{padding-left:44px}
-  #site .tl-faq summary{font-size:15px;padding-right:36px}
+  #site .tl-logo span{display:none}
+  #site .tl-head-in{gap:12px;height:60px}
+  #site .tl-head-right .tl-btn{padding:8px 12px;font-size:12.5px}
 }
 </style>
 
+<div class="tl-top">
+  <div class="tl-wrap tl-top-in">
+    <ul class="tl-ses" id="tlSes">
+      <li data-ses="syd"><s class="tl-dot"></s>Сидней</li>
+      <li data-ses="tok"><s class="tl-dot"></s>Токио</li>
+      <li data-ses="lon"><s class="tl-dot"></s>Лондон</li>
+      <li data-ses="ny"><s class="tl-dot"></s>Нью-Йорк</li>
+    </ul>
+    <span class="tl-utc" id="tlUtc">UTC --:--</span>
+    <span class="tl-utc tl-we" id="tlWe"></span>
+    <span class="tl-badge-demo">Учебный стенд</span>
+  </div>
+</div>
+
 <header class="tl-head">
   <div class="tl-wrap tl-head-in">
-    <a href="#" class="tl-logo" aria-label="Тюльпан">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#E11D31" stroke-width="1.6" stroke-linecap="round">
-        <path d="M12 12.4c-2.6 0-4.2-2-4.2-5 1.9.5 3.3 1.6 4.2 3.2.9-1.6 2.3-2.7 4.2-3.2 0 3-1.6 5-4.2 5z"/>
-        <path d="M12 12.4V21"/><path d="M12 16.6c-1.9 0-3.2-1-3.9-2.6M12 18.4c1.9 0 3.2-1 3.9-2.6"/>
+    <a class="tl-logo" href="#">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 21V11" stroke="#D81128" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M12 11c0-4 2.2-7.2 4.6-8.6C17.6 5.6 16 10 12 11Z" fill="#FF4257"/>
+        <path d="M12 11C12 7 9.8 3.8 7.4 2.4 6.4 5.6 8 10 12 11Z" fill="#D81128"/>
+        <path d="M12 11c1.9-1.5 4.6-1.9 6.6-1-1 2.6-3.9 3.8-6.6 1Z" fill="#8E0A1B"/>
+        <path d="M12 11C10.1 9.5 7.4 9.1 5.4 10c1 2.6 3.9 3.8 6.6 1Z" fill="#8E0A1B"/>
       </svg>
-      <span class="cfgBrand">Тюльпан</span><i>Markets</i>
+      Тюльпан<span>Trading</span>
     </a>
     <nav class="tl-nav">
-      <a href="#markets">Котировки</a>
-      <a href="#how">Как устроено</a>
+      <a href="#terms">Условия</a>
       <a href="#accounts">Счета</a>
-      <a href="#academy">Академия</a>
+      <a href="#execution">Исполнение</a>
+      <a href="#instruments">Инструменты</a>
+      <a href="#platform">Платформа</a>
+      <a href="#analytics">Аналитика</a>
       <a href="#faq">Вопросы</a>
     </nav>
     <div class="tl-head-right">
-      <span class="tl-lang">RU</span>
       <button class="tl-btn tl-btn-ghost tl-btn-sm" data-open="login">Войти</button>
       <button class="tl-btn tl-btn-red tl-btn-sm" data-open="signup">Открыть счёт</button>
-      <button id="burger" aria-label="К котировкам">≡</button>
     </div>
   </div>
 </header>
 
-<section class="tl-hero" data-sec="hero">
-  <div class="tl-wrap">
-    <span class="tl-eyebrow"><b></b> Демонстрационный стенд · не брокер</span>
-    <h1 class="tl-h1" id="cfgH1">Терминал, который<br><em>ничего не прячет</em></h1>
-    <p class="tl-lead">Тюльпан — учебная торговая площадка. Живые котировки, честно посчитанные
-      сборы и сценарии помощника, которые видно от первой сделки до итога дня. Без реальных
-      денег и без мелкого шрифта.</p>
-    <div class="tl-hero-act">
-      <button class="tl-btn tl-btn-red" data-open="signup">Завести демо-кошелёк</button>
-      <button class="tl-btn tl-btn-ghost" data-demo>Посмотреть кабинет</button>
-    </div>
-    <p class="tl-hero-note">Учебный демонстрационный проект. Сервис не является брокером,
-      не принимает платежи и не отправляет ордера на биржу: счета, сделки и суммы условны.</p>
-
-    <div class="tl-panel">
-      <div class="tl-panel-l">
-        <div class="tl-panel-top"><b>EUR/USD</b><span>5 минут · поток котировок</span></div>
-        <div class="tl-price">
-          <b class="tl-num" id="tlPrice">1.08412</b>
-          <i class="tl-num" id="tlChg">+0.23%</i>
-        </div>
-        <canvas id="tlChart" aria-label="График EUR/USD"></canvas>
-      </div>
-      <div class="tl-panel-r">
-        <div class="tl-stat"><b class="tl-num">0.0 <em>пт</em></b>
-          <span>Спред на демо-счёте: цена берётся из потока, наценки сверху нет</span></div>
-        <div class="tl-stat"><b class="tl-num">21:00 <em>CST</em></b>
-          <span>Итог торгового дня записывается в историю по будням</span></div>
-        <div class="tl-stat"><b class="tl-num">2 <em>площадки</em></b>
-          <span>Один кошелёк виден и в кабинете, и в едином боте</span></div>
-      </div>
-    </div>
+<section class="tl-hero">
+  <div class="tl-hero-bg">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3Givmq2UV4fPBT1uGMBauLpThAj/hf_20261004_103507_3c2535b4-47b6-4905-a84e-db9f214c0702.png"
+         alt="" onerror="this.style.display='none'">
   </div>
-</section>
-
-<div class="tl-tape" aria-hidden="true">
-  <div class="tl-tape-row">
-    <span><b>XAU/USD</b> 2 412.60 <i class="up">+0.42%</i></span>
-    <span><b>EUR/USD</b> 1.08412 <i class="up">+0.23%</i></span>
-    <span><b>BTC/USD</b> 67 240 <i class="dn">−1.18%</i></span>
-    <span><b>US500</b> 5 486.2 <i class="up">+0.31%</i></span>
-    <span><b>USOIL</b> 78.94 <i class="dn">−0.64%</i></span>
-    <span><b>USD/JPY</b> 157.82 <i class="up">+0.11%</i></span>
-    <span><b>XAG/USD</b> 31.07 <i class="up">+0.88%</i></span>
-    <span><b>GBP/USD</b> 1.27340 <i class="dn">−0.09%</i></span>
-    <span><b>XAU/USD</b> 2 412.60 <i class="up">+0.42%</i></span>
-    <span><b>EUR/USD</b> 1.08412 <i class="up">+0.23%</i></span>
-    <span><b>BTC/USD</b> 67 240 <i class="dn">−1.18%</i></span>
-    <span><b>US500</b> 5 486.2 <i class="up">+0.31%</i></span>
-    <span><b>USOIL</b> 78.94 <i class="dn">−0.64%</i></span>
-    <span><b>USD/JPY</b> 157.82 <i class="up">+0.11%</i></span>
-    <span><b>XAG/USD</b> 31.07 <i class="up">+0.88%</i></span>
-    <span><b>GBP/USD</b> 1.27340 <i class="dn">−0.09%</i></span>
-  </div>
-</div>
-
-<section class="tl-sec" id="how" data-sec="benefits">
-  <div class="tl-wrap tl-steps">
-    <div class="tl-sec-head" style="margin:0">
-      <p class="tl-kicker">Как устроено</p>
-      <h2 class="tl-h2">Три шага от регистрации до итога дня</h2>
-      <p class="tl-sub">Никаких скрытых этапов: всё, что делает площадка, видно в кабинете
-        и записывается в историю операций.</p>
-    </div>
+  <div class="tl-wrap tl-hero-in">
     <div>
-      <div class="tl-step" data-n="01">
-        <h3>Кошелёк за минуту</h3>
-        <p>Почта и пароль — и у вас демо-кошелёк с номером счёта. Баланс нулевой: пополнение
-          оформляется заявкой и проводится вручную, чтобы было видно весь путь заявки.</p>
+      <div class="tl-eyebrow"><b>01</b> Валютный рынок · металлы · индексы · сырьё</div>
+      <h1>Маржинальная торговля <em>без скрытых условий</em> в терминале Тюльпан</h1>
+      <p class="tl-hero-sub">Рыночное исполнение, плавающий спред от 0.0 пункта на ECN-счёте и
+        полная карточка издержек по каждой сделке: спред, комиссия за лот, своп за перенос позиции.
+        Всё, из чего складывается результат, видно до открытия ордера.</p>
+      <div class="tl-hero-act">
+        <button class="tl-btn tl-btn-red" data-open="signup">Открыть счёт за 2 минуты</button>
+        <button class="tl-btn tl-btn-ghost" data-demo>Войти в терминал</button>
       </div>
-      <div class="tl-step" data-n="02">
-        <h3>Сценарий вместо обещаний</h3>
-        <p>Выбираете инструмент, горизонт и режим риска — помощник показывает расчёт до запуска:
-          валовую прибыль, сборы площадки и допустимую просадку. Цифры не меняются задним числом.</p>
+      <div class="tl-kpi">
+        <div><b>34 мс</b><small>среднее время исполнения ордера</small></div>
+        <div><b>0.0</b><small>спред от, пункта, счёт ECN Pro</small></div>
+        <div><b>1:200</b><small>максимальное кредитное плечо</small></div>
+        <div><b>144</b><small>торговых инструмента в терминале</small></div>
       </div>
-      <div class="tl-step" data-n="03">
-        <h3>Итог дня в 21:00</h3>
-        <p>По будням площадка сама дописывает строку «Результат дня» в историю операций —
-          с плюсом или с минусом, как получилось. То же самое уходит в отчёт единого бота.</p>
+    </div>
+    <div class="tl-quote">
+      <div class="tl-quote-head">
+        <s class="tl-dot" id="tlDot" style="background:#2FBF8F"></s>
+        <b id="tlSym">EUR/USD</b>
+        <span class="tl-tag" id="tlState">M15 · поток условный</span>
+      </div>
+      <div class="tl-quote-body">
+        <div class="tl-bidask">
+          <div class="tl-ba"><small>Bid</small><b id="tlBid" class="tl-down">1.08432</b></div>
+          <div class="tl-ba"><small>Ask</small><b id="tlAsk" class="tl-up">1.08434</b></div>
+          <div class="tl-spread"><small>Спред</small><b id="tlSpr">0.2</b></div>
+        </div>
+        <canvas id="tlChart" height="132"></canvas>
+      </div>
+      <div class="tl-quote-foot" id="tlChips">
+        <button class="tl-chip on" data-q="EUR/USD">EUR/USD</button>
+        <button class="tl-chip" data-q="GBP/USD">GBP/USD</button>
+        <button class="tl-chip" data-q="USD/JPY">USD/JPY</button>
+        <button class="tl-chip" data-q="XAU/USD">XAU/USD</button>
+        <button class="tl-chip" data-q="US30">US30</button>
+        <button class="tl-chip" data-q="BTC/USD">BTC/USD</button>
       </div>
     </div>
   </div>
 </section>
 
-<section class="tl-sec" id="markets" data-sec="markets">
+<div class="tl-tape"><div class="tl-tape-run" id="tlTape"></div></div>
+
+<section class="tl-sec" id="terms">
   <div class="tl-wrap">
-    <div class="tl-sec-head">
-      <p class="tl-kicker">Котировки</p>
-      <h2 class="tl-h2">Поток цен, а не красивая картинка</h2>
-      <p class="tl-sub">Где получается — тянем реальный поток, где нет — честно подписываем
-        «модель». Подмены одного другим не бывает.</p>
+    <div class="tl-eyebrow"><b>02</b> Торговые условия <i></i></div>
+    <h2 class="tl-h2">Спреды, свопы и маржинальные требования — <em>одной таблицей</em></h2>
+    <p class="tl-lead">Спред плавающий и зависит от ликвидности: в азиатскую сессию и на выходе
+      макростатистики он расширяется. Ниже — типичные значения в спокойном рынке, своп начисляется
+      за перенос позиции через 00:00 по серверу, со среды на четверг — в тройном размере.</p>
+    <div class="tl-tablewrap">
+      <table class="tl-tbl">
+        <thead><tr>
+          <th>Инструмент</th><th>Тип. спред</th><th>Своп long</th><th>Своп short</th>
+          <th>Маржа</th><th>Шаг / мин. объём</th><th>Торговые часы, UTC</th><th>Сессия</th>
+        </tr></thead>
+        <tbody id="tlTerms"></tbody>
+      </table>
     </div>
-    <div class="tl-chips" id="qTabs"></div>
-    <div class="tl-board">
-      <div class="tl-board-top"><b></b> Торговый экран · обновление каждые несколько секунд</div>
-      <div class="tl-scroll">
-        <table>
-          <thead><tr>
-            <th>Инструмент</th><th>Bid</th><th>Ask</th><th>Изм. за день</th><th>Спред</th><th></th>
-          </tr></thead>
-          <tbody id="qBody"></tbody>
-        </table>
-      </div>
-      <p class="tl-board-note" id="liveNote"></p>
-    </div>
+    <p class="tl-note">Спред указан в пунктах инструмента, свопы — в пунктах за лот в сутки.
+      Значения условные: это учебный стенд, котировки и начисления симулируются, реальных сделок нет.</p>
   </div>
 </section>
 
-<section class="tl-sec" id="accounts" data-sec="accounts">
+<section class="tl-sec" id="accounts">
   <div class="tl-wrap">
-    <div class="tl-sec-head">
-      <p class="tl-kicker">Счета</p>
-      <h2 class="tl-h2">Три учебных счёта с разной глубиной</h2>
-      <p class="tl-sub">Отличаются не «статусом», а тем, какие инструменты и отчёты открыты.
-        Перейти с одного на другой можно в любой момент — это демо.</p>
-    </div>
+    <div class="tl-eyebrow"><b>03</b> Типы счётов <i></i></div>
+    <h2 class="tl-h2">Три схемы издержек — <em>выбор за стратегией</em></h2>
+    <p class="tl-lead">На счетах «Старт» и «Актив» вознаграждение площадки заложено в спред,
+      на ECN Pro спред сырой, а плата берётся отдельной комиссией за лот. Скальперу и алгоритму
+      выгоднее второй вариант, позиционной торговле — первый.</p>
     <div class="tl-plans">
-      <div class="tl-plan">
-        <h3>Старт</h3><span class="tl-tag">для первого знакомства</span>
-        <dl>
-          <div class="tl-row"><span>Стартовый баланс</span><b class="tl-num">$0</b></div>
-          <div class="tl-row"><span>Инструменты</span><b>валюты, золото</b></div>
-          <div class="tl-row"><span>Плечо</span><b class="tl-num">1:100</b></div>
-          <div class="tl-row"><span>Сценарии помощника</span><b>один активный</b></div>
-          <div class="tl-row"><span>Отчёт за сутки</span><b>в кабинете</b></div>
-        </dl>
-        <button class="tl-btn tl-btn-ghost" data-open="signup">Выбрать «Старт»</button>
-      </div>
-      <div class="tl-plan on">
-        <h3>База</h3><span class="tl-tag">чаще всего берут этот</span>
-        <dl>
-          <div class="tl-row"><span>Стартовый баланс</span><b class="tl-num">$0</b></div>
-          <div class="tl-row"><span>Инструменты</span><b>+ индексы, нефть</b></div>
-          <div class="tl-row"><span>Плечо</span><b class="tl-num">1:200</b></div>
-          <div class="tl-row"><span>Сценарии помощника</span><b>до трёх сразу</b></div>
-          <div class="tl-row"><span>Отчёт за сутки</span><b>кабинет + Telegram</b></div>
-        </dl>
-        <button class="tl-btn tl-btn-red" data-open="signup">Выбрать «Базу»</button>
-      </div>
-      <div class="tl-plan">
-        <h3>Про</h3><span class="tl-tag">для единого бота</span>
-        <dl>
-          <div class="tl-row"><span>Стартовый баланс</span><b class="tl-num">$0</b></div>
-          <div class="tl-row"><span>Инструменты</span><b>весь список</b></div>
-          <div class="tl-row"><span>Плечо</span><b class="tl-num">1:500</b></div>
-          <div class="tl-row"><span>Сценарии помощника</span><b>массовый запуск</b></div>
-          <div class="tl-row"><span>Отчёт за сутки</span><b>+ ключ REST API</b></div>
-        </dl>
-        <button class="tl-btn tl-btn-ghost" data-open="signup">Выбрать «Про»</button>
-      </div>
+      <table>
+        <thead><tr>
+          <th></th>
+          <th><span class="tl-ptag">для первых шагов</span><span class="tl-pname">Старт</span>
+            <span class="tl-pdep">от $100</span></th>
+          <th class="on"><span class="tl-ptag">выбор большинства</span><span class="tl-pname">Актив</span>
+            <span class="tl-pdep">от $1 000</span></th>
+          <th><span class="tl-ptag">ECN · сырой спред</span><span class="tl-pname">ECN Pro</span>
+            <span class="tl-pdep">от $10 000</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><th>Спред, пункты</th><td>от 1.4</td><td class="on">от 0.6</td><td>от 0.0</td></tr>
+          <tr><th>Комиссия за лот</th><td>нет</td><td class="on">нет</td><td>$3.5 за сторону</td></tr>
+          <tr><th>Макс. плечо</th><td>1:100</td><td class="on">1:200</td><td>1:200</td></tr>
+          <tr><th>Мин. объём / шаг</th><td>0.01 / 0.01</td><td class="on">0.01 / 0.01</td><td>0.01 / 0.01</td></tr>
+          <tr><th>Тип исполнения</th><td>Market</td><td class="on">Market</td><td>Market</td></tr>
+          <tr><th>Margin call / Stop out</th><td>100% / 50%</td><td class="on">100% / 50%</td><td>100% / 50%</td></tr>
+          <tr><th>Хеджирование, локи</th><td class="tl-yes">да</td><td class="on tl-yes">да</td><td class="tl-yes">да</td></tr>
+          <tr><th>Отложенные и трейлинг-стоп</th><td class="tl-yes">да</td><td class="on tl-yes">да</td><td class="tl-yes">да</td></tr>
+          <tr><th>Сценарный помощник</th><td class="tl-no">нет</td><td class="on tl-yes">да</td><td class="tl-yes">да</td></tr>
+          <tr><th>Отчёт за сутки в Telegram</th><td class="tl-no">нет</td><td class="on tl-yes">да</td><td class="tl-yes">да</td></tr>
+          <tr><th>Приоритет в поддержке</th><td>общая очередь</td><td class="on">в течение часа</td><td>персональный менеджер</td></tr>
+        </tbody>
+        <tfoot><tr>
+          <td></td>
+          <td><button class="tl-btn tl-btn-ghost tl-btn-sm" data-open="signup">Открыть «Старт»</button></td>
+          <td class="on"><button class="tl-btn tl-btn-red tl-btn-sm" data-open="signup">Открыть «Актив»</button></td>
+          <td><button class="tl-btn tl-btn-ghost tl-btn-sm" data-open="signup">Открыть ECN Pro</button></td>
+        </tr></tfoot>
+      </table>
     </div>
   </div>
 </section>
 
-<section class="tl-facts" data-sec="stats">
-  <div class="tl-wrap tl-facts-in">
-    <div class="tl-fact"><b class="tl-num">8</b><span>инструментов в сценариях помощника</span></div>
-    <div class="tl-fact"><b class="tl-num">21:00</b><span>по Китаю фиксируется итог дня</span></div>
-    <div class="tl-fact"><b class="tl-num">5/7</b><span>дней в неделю считается торговое время</span></div>
-    <div class="tl-fact"><b class="tl-num">0 ₽</b><span>стоит всё: это учебный стенд</span></div>
-  </div>
-</section>
-
-<section class="tl-sec" id="academy" data-sec="platforms">
+<section class="tl-sec" id="execution">
   <div class="tl-wrap">
-    <div class="tl-sec-head">
-      <p class="tl-kicker">Академия</p>
-      <h2 class="tl-h2">Разбираем то, что обычно прячут в сноски</h2>
-      <p class="tl-sub">Короткие материалы о том, как читать отчёты площадки и откуда берутся
-        цифры в кабинете.</p>
+    <div class="tl-eyebrow"><b>04</b> Исполнение и ликвидность <i></i></div>
+    <h2 class="tl-h2">Ордер уходит в рынок, <em>а не в чужую книгу</em></h2>
+    <div class="tl-split">
+      <div class="tl-split-txt">
+        <ul class="tl-fl">
+          <li><s>01</s><div><b>Агрегация потока</b><span>Цена собирается из нескольких источников
+            ликвидности: в стакан попадает лучший bid и лучший ask, а не единственная котировка.</span></div></li>
+          <li><s>02</s><div><b>Market Execution без реквот</b><span>Заявка исполняется по доступной цене.
+            На быстром рынке возможно проскальзывание — его границу вы задаёте сами полем «максимальное отклонение».</span></div></li>
+          <li><s>03</s><div><b>Частичное исполнение крупного объёма</b><span>Если на лучшем уровне не хватает
+            ликвидности, объём добирается следующими — в журнале видно каждую часть и её цену.</span></div></li>
+          <li><s>04</s><div><b>Полный набор ордеров</b><span>Market, Limit, Stop, Stop-Limit, трейлинг-стоп
+            и частичное закрытие. Стоп-лосс и тейк-профит можно выставить сразу в заявке.</span></div></li>
+        </ul>
+        <div class="tl-mini">
+          <div><b>34 мс</b><small>медианное исполнение</small></div>
+          <div><b>99.2%</b><small>ордеров без реквот</small></div>
+          <div><b>0.4</b><small>среднее проскальзывание, пункта</small></div>
+          <div><b>24/5</b><small>доступ к валютной сессии</small></div>
+        </div>
+      </div>
+      <figure class="tl-figure">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3Givmq2UV4fPBT1uGMBauLpThAj/hf_20261004_103508_c2d9553d-24ea-4353-8bbf-44bd918cfcdc.png"
+             alt="Схема агрегации ликвидности" loading="lazy" onerror="this.style.display='none'">
+        <figcaption>Агрегация ликвидности и путь ордера · иллюстрация к стенду</figcaption>
+      </figure>
     </div>
-    <div class="tl-cards">
-      <div class="tl-card">
-        <div class="tl-ix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-          stroke-linecap="round"><path d="M3 17l5-6 4 4 7-9"/><path d="M3 21h18"/></svg></div>
-        <h3>Откуда берётся «результат дня»</h3>
-        <p>Как площадка считает дневную дельту по сценарию, почему в выходные она нулевая
-          и что именно попадает в строку истории.</p>
-        <em>7 минут чтения</em>
+  </div>
+</section>
+
+<section class="tl-sec" id="instruments">
+  <div class="tl-wrap">
+    <div class="tl-eyebrow"><b>05</b> Инструменты <i></i></div>
+    <h2 class="tl-h2">144 инструмента <em>в одном счёте</em></h2>
+    <div class="tl-tabs" id="tlITabs"></div>
+    <div class="tl-inst-body">
+      <div>
+        <p class="tl-inst-desc" id="tlIDesc"></p>
+        <div class="tl-pills" id="tlIPills"></div>
+        <div class="tl-inst-facts" id="tlIFacts"></div>
       </div>
-      <div class="tl-card">
-        <div class="tl-ix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-          stroke-linecap="round"><path d="M12 3v18"/><path d="M5 8h14"/><path d="M7 16h10"/></svg></div>
-        <h3>Сборы: лот, своп, сервис</h3>
-        <p>Три числа, которые съедают прибыль, и как они раскладываются в расчёте помощника
-          до запуска сценария.</p>
-        <em>5 минут чтения</em>
+      <figure class="tl-figure">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3Givmq2UV4fPBT1uGMBauLpThAj/hf_20261004_103508_e26caac2-369f-4c01-bde5-204d1679aba5.png"
+             alt="Классы торговых активов" loading="lazy" onerror="this.style.display='none'">
+        <figcaption>Классы активов терминала</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="tl-sec" id="platform">
+  <div class="tl-wrap">
+    <div class="tl-eyebrow"><b>06</b> Терминал <i></i></div>
+    <h2 class="tl-h2">Веб-терминал: <em>график, стакан, журнал</em> в одном окне</h2>
+    <div class="tl-split rev">
+      <div class="tl-split-txt">
+        <ul class="tl-fl">
+          <li><s>01</s><div><b>График и таймфреймы</b><span>Девять таймфреймов от M1 до MN,
+            линия и свечи, перекрестие с ценой и временем, масштабирование колесом.</span></div></li>
+          <li><s>02</s><div><b>Сценарный помощник</b><span>Алгоритм ведёт позицию по выбранному сценарию
+            и фиксирует результат дня — строка «Результат дня» попадает в журнал операций.</span></div></li>
+          <li><s>03</s><div><b>Журнал операций и отчёты</b><span>История сделок, пополнений и выводов
+            с фильтром по датам; сводка за сутки уходит в Telegram.</span></div></li>
+          <li><s>04</s><div><b>Уведомления</b><span>Фиксация дохода, открытие и закрытие сессий,
+            риск по сценарию, движение средств — в колокольчике кабинета.</span></div></li>
+          <li><s>05</s><div><b>Служба поддержки внутри кабинета</b><span>Обращение с темой и перепиской,
+            ответ оператора приходит и в кабинет, и на почту.</span></div></li>
+        </ul>
       </div>
-      <div class="tl-card">
-        <div class="tl-ix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-          stroke-linecap="round"><path d="M12 9v4M12 17h.01"/>
-          <path d="M10.3 3.9L2.6 17.5A2 2 0 004.3 20.5h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
-        <h3>Просадка — это норма</h3>
-        <p>Почему баланс уходит ниже старта даже у работающего сценария и какая глубина
-          заложена в каждый режим риска.</p>
-        <em>6 минут чтения</em>
+      <figure class="tl-figure">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3Givmq2UV4fPBT1uGMBauLpThAj/hf_20261004_103507_e6fd2401-5b2f-4e5a-8c95-3ff5201bbcd3.png"
+             alt="Интерфейс терминала" loading="lazy" onerror="this.style.display='none'">
+        <figcaption>Рабочее пространство терминала · иллюстрация</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="tl-sec" id="calc">
+  <div class="tl-wrap">
+    <div class="tl-eyebrow"><b>07</b> Калькулятор трейдера <i></i></div>
+    <h2 class="tl-h2">Посчитайте маржу и стоимость пункта <em>до входа в сделку</em></h2>
+    <p class="tl-lead">Размер позиции и требуемая маржа — первое, что считает трейдер.
+      Калькулятор берёт текущую условную цену инструмента, объём в лотах и плечо счёта.</p>
+    <div class="tl-calc">
+      <div class="tl-calc-in">
+        <div class="tl-field"><label for="tlCI">Инструмент</label><select id="tlCI"></select></div>
+        <div class="tl-field"><label for="tlCL">Объём, лотов</label>
+          <input id="tlCL" type="number" min="0.01" max="100" step="0.01" value="1.00"></div>
+        <div class="tl-field"><label for="tlCV">Кредитное плечо</label>
+          <select id="tlCV">
+            <option value="25">1:25</option><option value="50">1:50</option>
+            <option value="100" selected>1:100</option><option value="200">1:200</option>
+          </select></div>
+        <div class="tl-field"><label for="tlCB">Баланс счёта, $</label>
+          <input id="tlCB" type="number" min="100" max="1000000" step="100" value="5000"></div>
+        <div class="tl-field"><label for="tlCS">Риск на сделку, % от счёта</label>
+          <input id="tlCS" type="number" min="0.1" max="20" step="0.1" value="2"></div>
+      </div>
+      <div class="tl-calc-out">
+        <div class="tl-res"><span>Объём контракта</span><b id="tlRVol">—</b></div>
+        <div class="tl-res"><span>Номинал позиции</span><b id="tlRNot">—</b></div>
+        <div class="tl-res big"><span>Требуемая маржа</span><b id="tlRMar">—</b></div>
+        <div class="tl-res"><span>Стоимость пункта</span><b id="tlRPip">—</b></div>
+        <div class="tl-res"><span>Издержки на спреде</span><b id="tlRSpr">—</b></div>
+        <div class="tl-res"><span>Своп за сутки, long</span><b id="tlRSwp">—</b></div>
+        <p class="tl-note" id="tlRHint"></p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="tl-sec" id="faq" data-sec="achv">
+<section class="tl-sec" id="analytics">
   <div class="tl-wrap">
-    <div class="tl-sec-head">
-      <p class="tl-kicker">Вопросы</p>
-      <h2 class="tl-h2">Коротко о главном</h2>
+    <div class="tl-eyebrow"><b>08</b> Аналитика и обучение <i></i></div>
+    <h2 class="tl-h2">Макрокалендарь, разборы сессий <em>и база знаний</em></h2>
+    <div class="tl-split">
+      <div class="tl-split-txt">
+        <p class="tl-lead" style="margin-top:0">Волатильность почти всегда привязана к публикациям.
+          Календарь показывает время выхода по UTC, важность и предыдущее значение, чтобы вы заранее
+          сняли или сократили позицию.</p>
+        <div class="tl-cal">
+          <div class="tl-cal-row h"><span>Время</span><span>Страна</span><span>Событие</span>
+            <span class="tl-fc">Прогноз</span><span class="tl-fc prev">Пред.</span></div>
+          <div class="tl-cal-row"><time>12:30</time><span class="tl-cc">US</span>
+            <span>Nonfarm Payrolls<span class="tl-imp" style="margin-left:8px"><s class="a"></s><s class="a"></s><s class="a"></s></span></span>
+            <span class="tl-fc">185K</span><span class="tl-fc prev">206K</span></div>
+          <div class="tl-cal-row"><time>12:30</time><span class="tl-cc">US</span>
+            <span>Базовый CPI, м/м<span class="tl-imp" style="margin-left:8px"><s class="a"></s><s class="a"></s><s class="a"></s></span></span>
+            <span class="tl-fc">0.3%</span><span class="tl-fc prev">0.4%</span></div>
+          <div class="tl-cal-row"><time>11:45</time><span class="tl-cc">EU</span>
+            <span>Ставка ЕЦБ<span class="tl-imp" style="margin-left:8px"><s class="a"></s><s class="a"></s><s class="a"></s></span></span>
+            <span class="tl-fc">4.25%</span><span class="tl-fc prev">4.25%</span></div>
+          <div class="tl-cal-row"><time>14:30</time><span class="tl-cc">US</span>
+            <span>Запасы нефти, EIA<span class="tl-imp" style="margin-left:8px"><s class="a"></s><s class="a"></s><s></s></span></span>
+            <span class="tl-fc">−1.2M</span><span class="tl-fc prev">+0.7M</span></div>
+          <div class="tl-cal-row"><time>09:00</time><span class="tl-cc">DE</span>
+            <span>Индекс ZEW<span class="tl-imp" style="margin-left:8px"><s class="a"></s><s></s><s></s></span></span>
+            <span class="tl-fc">42.1</span><span class="tl-fc prev">41.8</span></div>
+        </div>
+        <p class="tl-note">Значения в календаре условные и приведены как образец разметки стенда.</p>
+      </div>
+      <figure class="tl-figure">
+        <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3Givmq2UV4fPBT1uGMBauLpThAj/hf_20261004_103508_4e761316-b4d0-4ce3-a1e7-04c709b75617.png"
+             alt="Рыночная аналитика" loading="lazy" onerror="this.style.display='none'">
+        <figcaption>Макростатистика и волатильность · иллюстрация</figcaption>
+      </figure>
     </div>
+    <div class="tl-mini" style="margin-top:34px">
+      <div><b>Обзор сессии</b><small>разбор утром перед открытием Лондона</small></div>
+      <div><b>Торговые идеи</b><small>уровни, объём риска, сценарий отмены</small></div>
+      <div><b>База знаний</b><small>маржа, свопы, типы ордеров — без воды</small></div>
+      <div><b>Вебинары</b><small>практика управления позицией</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="tl-sec" id="risk">
+  <div class="tl-wrap">
+    <div class="tl-eyebrow"><b>09</b> Управление риском <i></i></div>
+    <h2 class="tl-h2">Плечо увеличивает <em>и прибыль, и убыток</em></h2>
+    <p class="tl-lead">Маржинальная торговля — инструмент с высоким риском. Эти правила площадка
+      считает обязательными, а не рекомендованными.</p>
+    <div class="tl-risk">
+      <article><h4>Риск на сделку 1–2%</h4><p>Доля счёта, которой вы готовы рискнуть в одной позиции.
+        Объём лота считается от стоп-лосса, а не наоборот.</p></article>
+      <article><h4>Стоп-лосс в заявке</h4><p>Выставляется вместе с ордером. Позиция без стопа на
+        новостном выходе может съесть маржу за минуты.</p></article>
+      <article><h4>Margin call 100%, stop out 50%</h4><p>При падении уровня маржи до 50% позиции
+        принудительно закрываются, начиная с самой убыточной.</p></article>
+      <article><h4>Свопы за перенос</h4><p>Удержание позиции дольше дня стоит денег. В среду
+        начисляется тройной своп за предстоящие выходные.</p></article>
+      <article><h4>Расширение спреда</h4><p>На выходе статистики и в тонком рынке спред растёт,
+        а проскальзывание увеличивается. Отложенные ордера срабатывают по доступной цене.</p></article>
+      <article><h4>Только свободные средства</h4><p>На счёте не должно быть денег, которые нужны
+        на жизнь или взяты в долг. Прошлая доходность ничего не гарантирует.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="tl-sec" id="payments">
+  <div class="tl-wrap">
+    <div class="tl-eyebrow"><b>10</b> Пополнение и вывод <i></i></div>
+    <h2 class="tl-h2">Заявка оформляется в кабинете, <em>реквизиты видны в маске</em></h2>
+    <p class="tl-lead">Площадка не хранит номер карты или счёта целиком — в заявке и в истории
+      остаются только последние цифры. Вывод уходит тем же способом, которым был сделан ввод.</p>
+    <div class="tl-pay">
+      <div><b>Банковская карта</b><dl><dt>Сбор</dt><dd>1.5%</dd><dt>Минимум</dt><dd>$10</dd>
+        <dt>Срок</dt><dd>1–3 дня</dd></dl></div>
+      <div><b>СБП по телефону</b><dl><dt>Сбор</dt><dd>1.0%</dd><dt>Минимум</dt><dd>$10</dd>
+        <dt>Срок</dt><dd>до 24 часов</dd></dl></div>
+      <div><b>USDT · TRC-20</b><dl><dt>Сбор</dt><dd>0.5%</dd><dt>Минимум</dt><dd>$20</dd>
+        <dt>Срок</dt><dd>до 2 часов</dd></dl></div>
+      <div><b>Банковский перевод</b><dl><dt>Сбор</dt><dd>2.0%</dd><dt>Минимум</dt><dd>$100</dd>
+        <dt>Срок</dt><dd>2–5 дней</dd></dl></div>
+    </div>
+    <p class="tl-note">Суточный лимит вывода — $50 000. На учебном стенде настоящие переводы не
+      выполняются: заявка меняет только баланс демо-кошелька.</p>
+  </div>
+</section>
+
+<section class="tl-sec" id="faq">
+  <div class="tl-wrap">
+    <div class="tl-eyebrow"><b>11</b> Частые вопросы <i></i></div>
+    <h2 class="tl-h2">Коротко о том, <em>что спрашивают чаще всего</em></h2>
     <div class="tl-faq">
-      <details open><summary>Это настоящий брокер?</summary>
-        <p>Нет. Тюльпан — учебный демонстрационный проект. Площадка не имеет лицензии, не принимает
-          платежи, не хранит деньги и не отправляет ордера на биржу. Всё, что вы видите в кабинете, —
-          симуляция на демо-кошельке.</p></details>
-      <details><summary>Можно ли вывести деньги?</summary>
-        <p>Можно оформить заявку на вывод — она пройдёт весь путь: попадёт в историю операций и в панель
-          администратора. Но перевода не происходит, потому что и самих денег на счёте нет.
-          Реквизиты при этом сохраняются только последними четырьмя знаками.</p></details>
-      <details><summary>Откуда берутся котировки?</summary>
-        <p>Часть инструментов тянется из открытых источников в реальном времени — такие строки помечены
-          «live». Остальные считаются моделью и помечены «модель». Одно за другое не выдаём.</p></details>
-      <details><summary>Что делает помощник?</summary>
-        <p>Он не торгует. Помощник рассчитывает сценарий по выбранным параметрам и ведёт по нему
-          демо-баланс: показывает сделки, прогресс и дневной результат. Остановить сценарий можно
-          в любой момент.</p></details>
-      <details><summary>Зачем нужен единый бот?</summary>
-        <p>Если кошельков несколько, единый бот собирает их в одном окне: доходность за сутки,
-          массовый запуск сценариев, заявки на вывод и отчёт в Telegram.</p></details>
+      <details open><summary><s>01</s>Чем спред отличается от комиссии?</summary>
+        <p>Спред — разница между ask и bid, вы платите его в момент входа. Комиссия — отдельная
+          плата за лот, она есть только на ECN Pro, где спред сырой. Сравнивать схемы надо по сумме:
+          спред в деньгах плюс комиссия за обе стороны сделки.</p></details>
+      <details><summary><s>02</s>Что такое своп и когда он списывается?</summary>
+        <p>Это плата за перенос маржинальной позиции на следующие сутки, она зависит от разницы
+          ставок по двум валютам. Начисление проходит в 00:00 по времени сервера; в среду
+          списывается тройной своп, потому что расчёты по выходным не идут.</p></details>
+      <details><summary><s>03</s>Как считается маржа и когда наступает stop out?</summary>
+        <p>Маржа = номинал позиции ÷ плечо. Уровень маржи = средства ÷ занятая маржа × 100%.
+          При 100% приходит margin call, при 50% позиции закрываются принудительно, начиная
+          с самой убыточной. Посчитать свою маржу можно в калькуляторе выше.</p></details>
+      <details><summary><s>04</s>Market Execution — что это значит на практике?</summary>
+        <p>Заявка исполняется по доступной в рынке цене, а не по той, что вы видели на экране секунду
+          назад. Реквот не будет, но возможно проскальзывание. Ограничить его можно полем
+          «максимальное отклонение» в ордере.</p></details>
+      <details><summary><s>05</s>Почему спред расширяется на новостях?</summary>
+        <p>Поставщики ликвидности убирают заявки из стакана, пока неизвестен результат публикации.
+          Лучший bid и лучший ask расходятся — это и есть расширение. Через несколько минут после
+          выхода данных спред обычно возвращается к обычным значениям.</p></details>
+      <details><summary><s>06</s>Это реальные деньги?</summary>
+        <p>Нет. Это учебный демонстрационный стенд: котировки симулируются, сделки и платежи
+          не выходят за пределы базы данных проекта, никаких реальных средств на нём нет.</p></details>
     </div>
   </div>
 </section>
 
-<section class="tl-cta" data-sec="cta">
-  <div class="tl-wrap">
-    <h2 class="tl-h2" style="margin:0 auto 14px;max-width:18ch">Посмотрите, как это работает изнутри</h2>
-    <p class="tl-sub" style="margin:0 auto 28px">Кошелёк заводится за минуту, деньги не нужны,
-      удалить можно в любой момент.</p>
-    <div class="tl-hero-act">
-      <button class="tl-btn tl-btn-red" data-open="signup">Завести демо-кошелёк</button>
+<section class="tl-cta">
+  <div class="tl-cta-bg">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3Givmq2UV4fPBT1uGMBauLpThAj/hf_20261004_103507_3c2535b4-47b6-4905-a84e-db9f214c0702.png"
+         alt="" loading="lazy" onerror="this.style.display='none'">
+  </div>
+  <div class="tl-wrap tl-cta-in">
+    <h2>Откройте счёт и посмотрите на условия изнутри</h2>
+    <p>Регистрация занимает две минуты: кошелёк, терминал, журнал операций и поддержка
+      доступны сразу после входа.</p>
+    <div class="tl-cta-act">
+      <button class="tl-btn tl-btn-red" data-open="signup">Открыть счёт</button>
       <button class="tl-btn tl-btn-ghost" data-open="login">У меня уже есть счёт</button>
     </div>
   </div>
 </section>
 
-<footer class="tl-foot" data-sec="footer">
+<footer class="tl-foot">
   <div class="tl-wrap">
-    <div class="tl-foot-grid">
+    <div class="tl-foot-top">
       <div class="tl-foot-about">
-        <div class="tl-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#E11D31" stroke-width="1.6" stroke-linecap="round">
-            <path d="M12 12.4c-2.6 0-4.2-2-4.2-5 1.9.5 3.3 1.6 4.2 3.2.9-1.6 2.3-2.7 4.2-3.2 0 3-1.6 5-4.2 5z"/>
-            <path d="M12 12.4V21"/><path d="M12 16.6c-1.9 0-3.2-1-3.9-2.6M12 18.4c1.9 0 3.2-1 3.9-2.6"/>
+        <a class="tl-logo" href="#">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 21V11" stroke="#D81128" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M12 11c0-4 2.2-7.2 4.6-8.6C17.6 5.6 16 10 12 11Z" fill="#FF4257"/>
+            <path d="M12 11C12 7 9.8 3.8 7.4 2.4 6.4 5.6 8 10 12 11Z" fill="#D81128"/>
           </svg>
-          <span class="cfgBrand">Тюльпан</span><i>Markets</i>
-        </div>
-        <p>Учебная площадка о том, как устроены торговые сервисы: от заявки на пополнение
-          до строки «Результат дня» в истории операций.</p>
+          Тюльпан<span>Trading</span>
+        </a>
+        <p>Учебный макет торговой площадки: валютные пары, металлы, индексы и сырьё
+          в одном демонстрационном терминале.</p>
       </div>
-      <div><h4>Площадка</h4><ul>
-        <li><a href="#markets">Котировки</a></li>
-        <li><a href="#accounts">Счета</a></li>
-        <li><a href="#how">Как устроено</a></li>
-        <li><a href="#academy">Академия</a></li></ul></div>
-      <div><h4>Кабинет</h4><ul>
-        <li><a href="#" data-open="signup">Регистрация</a></li>
-        <li><a href="#" data-open="login">Вход</a></li>
-        <li><a href="#" data-demo>Демо-режим</a></li>
-        <li><a href="#faq">Вопросы</a></li></ul></div>
-      <div><h4>Помощь</h4><ul>
+      <div><h5>Торговля</h5><ul>
+        <li><a href="#terms">Торговые условия</a></li>
+        <li><a href="#accounts">Типы счётов</a></li>
+        <li><a href="#execution">Исполнение ордеров</a></li>
+        <li><a href="#instruments">Инструменты</a></li>
+        <li><a href="#calc">Калькулятор трейдера</a></li>
+      </ul></div>
+      <div><h5>Аналитика</h5><ul>
+        <li><a href="#analytics">Макрокалендарь</a></li>
+        <li><a href="#analytics">Обзор сессии</a></li>
+        <li><a href="#risk">Управление риском</a></li>
+        <li><a href="#faq">База знаний</a></li>
+      </ul></div>
+      <div><h5>Счёт</h5><ul>
+        <li><a href="#" data-open="signup">Открыть счёт</a></li>
+        <li><a href="#" data-open="login">Вход в терминал</a></li>
+        <li><a href="#payments">Пополнение и вывод</a></li>
         <li><a href="#" data-demo>Служба поддержки</a></li>
-        <li><a href="#faq">Частые вопросы</a></li>
-        <li><a href="#how">Сценарии помощника</a></li>
-        <li><a href="#academy">Материалы</a></li></ul></div>
+      </ul></div>
     </div>
-    <p class="tl-disc" id="cfgDisclaimer">
-      <b>Предупреждение.</b> Тюльпан — учебный демонстрационный проект, а не брокер и не финансовая
-      организация. Площадка не имеет лицензий, не принимает и не хранит средства, не исполняет
-      ордера на бирже. Бренд, котировки, счета, отзывы и статистика условны, персональные данные
-      не собираются и никуда не передаются. Материалы сайта не являются инвестиционной
-      рекомендацией. Торговля реальными инструментами с кредитным плечом сопряжена с высоким
-      риском потери капитала.
+    <p class="tl-foot-dis">
+      <b>Предупреждение о риске.</b> Торговля с кредитным плечом на валютном и производном рынке
+      связана с высоким риском и может привести к потере внесённых средств. Прошлые результаты не
+      гарантируют будущих. Ничего на этой странице не является индивидуальной инвестиционной
+      рекомендацией.<br>
+      <b>О стенде.</b> Тюльпан — учебный проект-макет, созданный для курсовой работы. Котировки,
+      сделки, начисления, календарь и платежи симулируются внутри проекта; настоящих торговых
+      операций и переводов денег площадка не производит и финансовых услуг не оказывает.
     </p>
   </div>
 </footer>
@@ -568,78 +769,305 @@
   <div id="benefits"></div><div id="stats"></div><div id="accounts-grid"></div>
   <div id="platforms-grid"></div><div id="achv"></div><div id="clsTabs"></div>
   <div id="clsTitle"></div><div id="clsDesc"></div><div id="clsChips"></div><div id="clsList"></div>
+  <div id="markets"></div><div id="qTabs"></div><div id="liveNote"></div>
+  <button id="burger" type="button"></button>
+  <table><tbody id="qBody"></tbody></table>
   <canvas id="spark" width="10" height="10"></canvas>
   <span id="heroPrice"></span><span id="heroChg"></span>
 </div>
 
 <script>
-/* График в первом экране: рисуем сами, чтобы он был в красной гамме.
+/* Главная страница Тюльпана: котировки, таблица условий, калькулятор.
    Данные условные — это демонстрационный стенд, а не поток биржи. */
 (function () {
   "use strict";
-  var cv = document.getElementById("tlChart");
-  if (!cv) return;
-  var px = document.getElementById("tlPrice"), pc = document.getElementById("tlChg");
-  var ctx = cv.getContext("2d");
-  var data = [], v = 1.0835;
-  for (var i = 0; i < 110; i++) { v += (Math.random() - 0.478) * 0.0009; data.push(v); }
+  var root = document.getElementById("site");
+  if (!root) return;
+  var $ = function (id) { return document.getElementById(id); };
 
-  function size() {
-    var r = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-    var w = cv.clientWidth || 700, h = cv.clientHeight || 170;
-    cv.width = Math.round(w * r); cv.height = Math.round(h * r);
-    ctx.setTransform(r, 0, 0, r, 0, 0);
-    return { w: w, h: h };
+  /* ---------- инструменты ---------- */
+  /* d — знаков после запятой, pip — шаг пункта, c — размер контракта,
+     mg — маржинальное требование, sp — типичный спред в пунктах,
+     sl/ss — своп long/short в пунктах за сутки, h — режим торгов. */
+  var I = [
+    { s: "EUR/USD", d: 5, pip: 1e-4, c: 1e5, mg: .005, sp: .2,  sl: -0.78, ss: 0.21, p: 1.08432, h: "fx",  cls: "", u: "100 000 EUR" },
+    { s: "GBP/USD", d: 5, pip: 1e-4, c: 1e5, mg: .005, sp: .4,  sl: -1.12, ss: -0.05, p: 1.27148, h: "fx", cls: "", u: "100 000 GBP" },
+    { s: "USD/JPY", d: 3, pip: .01,  c: 1e5, mg: .005, sp: .3,  sl: 0.42,  ss: -1.34, p: 154.216, h: "fx", cls: "", u: "100 000 USD", q: "JPY" },
+    { s: "AUD/USD", d: 5, pip: 1e-4, c: 1e5, mg: .005, sp: .5,  sl: -0.64, ss: 0.18, p: 0.66182, h: "fx",  cls: "", u: "100 000 AUD" },
+    { s: "USD/CAD", d: 5, pip: 1e-4, c: 1e5, mg: .005, sp: .6,  sl: -0.55, ss: 0.12, p: 1.36418, h: "fx",  cls: "", u: "100 000 USD", q: "CAD" },
+    { s: "XAU/USD", d: 2, pip: .01,  c: 100, mg: .01,  sp: 12,  sl: -4.10, ss: 1.05, p: 2341.62, h: "met", cls: "g", u: "100 унций золота" },
+    { s: "XAG/USD", d: 3, pip: .001, c: 5e3, mg: .01,  sp: 22,  sl: -3.20, ss: 0.80, p: 27.418,  h: "met", cls: "g", u: "5 000 унций серебра" },
+    { s: "UKOIL",   d: 2, pip: .01,  c: 1e3, mg: .02,  sp: 3.0, sl: -2.80, ss: 0.40, p: 82.44,   h: "oil", cls: "", u: "1 000 баррелей" },
+    { s: "US30",    d: 1, pip: 1,    c: 1,   mg: .01,  sp: 1.6, sl: -2.40, ss: -0.90, p: 39218.4, h: "idx", cls: "", u: "1 пункт индекса" },
+    { s: "NAS100",  d: 1, pip: 1,    c: 1,   mg: .01,  sp: 1.0, sl: -1.90, ss: -0.70, p: 18342.6, h: "idx", cls: "", u: "1 пункт индекса" },
+    { s: "GER40",   d: 1, pip: 1,    c: 1,   mg: .01,  sp: 1.2, sl: -1.60, ss: -0.55, p: 18176.2, h: "idx", cls: "", u: "1 пункт индекса" },
+    { s: "BTC/USD", d: 1, pip: 1,    c: 1,   mg: .05,  sp: 28,  sl: -12.0, ss: -4.0, p: 64310.5, h: "24",  cls: "", u: "1 BTC" }
+  ];
+  var BY = {};
+  I.forEach(function (x) {
+    BY[x.s] = x;
+    x.start = x.p;
+    x.ser = [];
+    var v = x.p, k = x.p * (x.h === "24" ? .0016 : x.h === "fx" ? .00035 : .0009);
+    for (var i = 0; i < 120; i++) { v += (Math.random() - .49) * k * 2; x.ser.push(v); }
+    x.p = v;
+  });
+  var HOURS = {
+    fx:  "Пн 22:05 – Пт 21:55",
+    met: "01:05 – 23:55, Пн–Пт",
+    oil: "01:00 – 22:55, Пн–Пт",
+    idx: "07:00 – 20:55, Пн–Пт",
+    "24": "круглосуточно, 7 дней"
+  };
+  function open_(h, now) {
+    var d = now.getUTCDay(), t = now.getUTCHours() + now.getUTCMinutes() / 60;
+    if (h === "24") return true;
+    if (d === 6) return false;
+    if (d === 0) return h === "fx" && t >= 22.08;
+    if (d === 5 && t >= 21.92) return false;
+    if (h === "fx") return true;
+    if (h === "met") return t >= 1.08 && t <= 23.92;
+    if (h === "oil") return t >= 1 && t <= 22.92;
+    return t >= 7 && t <= 20.92;
+  }
+  var fm = function (x, d) { return x.toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g, " "); };
+  var pf = function (x) { return x.p.toFixed(x.d); };
+  var usd = function (v, d) {
+    var n = Math.abs(v);
+    return (v < 0 ? "−$" : "$") + fm(n, d == null ? 2 : d);
+  };
+  /* стоимость пункта одного лота в долларах */
+  function pipUsd(x) { var v = x.c * x.pip; return x.q ? v / x.p : v; }
+
+  /* ---------- сессии и часы ---------- */
+  var SES = { syd: [21, 6], tok: [0, 9], lon: [7, 16], ny: [12, 21] };
+  function clock() {
+    var now = new Date();
+    var hh = String(now.getUTCHours()), mm = String(now.getUTCMinutes());
+    var el = $("tlUtc");
+    var wd = now.getUTCDay(), t = now.getUTCHours() + now.getUTCMinutes() / 60;
+    var we = wd === 6 || (wd === 0 && t < 22.08);
+    if (el) el.textContent = "UTC " + (hh.length < 2 ? "0" + hh : hh) + ":" + (mm.length < 2 ? "0" + mm : mm)
+      + "";
+    var we1 = $("tlWe");
+    if (we1) we1.textContent = we ? "выходные · валютный рынок закрыт" : "";
+    var list = root.querySelectorAll("#tlSes li");
+    for (var i = 0; i < list.length; i++) {
+      var r = SES[list[i].getAttribute("data-ses")], on;
+      if (wd === 6 || wd === 0) on = false;
+      else on = r[0] < r[1] ? (t >= r[0] && t < r[1]) : (t >= r[0] || t < r[1]);
+      list[i].className = on ? "on" : "";
+    }
+  }
+
+  /* ---------- таблица торговых условий ---------- */
+  function terms() {
+    var tb = $("tlTerms");
+    if (!tb) return;
+    var now = new Date(), out = "";
+    I.forEach(function (x) {
+      var on = open_(x.h, now);
+      out += '<tr><td><span class="tl-inst ' + x.cls + '"><s></s>' + x.s
+        + ' <em>' + (x.h === "24" ? "крипто" : x.h === "idx" ? "индекс" : x.h === "met" ? "металл"
+          : x.h === "oil" ? "сырьё" : "валюта") + '</em></span></td>'
+        + '<td class="tl-num">' + x.sp.toFixed(1) + '</td>'
+        + '<td class="tl-num ' + (x.sl < 0 ? "tl-down" : "tl-up") + '">' + x.sl.toFixed(2) + '</td>'
+        + '<td class="tl-num ' + (x.ss < 0 ? "tl-down" : "tl-up") + '">' + (x.ss > 0 ? "+" : "") + x.ss.toFixed(2) + '</td>'
+        + '<td class="tl-num">' + (x.mg * 100).toFixed(1) + '%</td>'
+        + '<td class="tl-num">0.01 / 0.01</td>'
+        + '<td class="tl-num" style="color:var(--tl-mut)">' + HOURS[x.h] + '</td>'
+        + '<td><span class="' + (on ? "tl-sess-on" : "tl-sess-off") + '">'
+        + (on ? "торги идут" : "закрыто") + '</span></td></tr>';
+    });
+    tb.innerHTML = out;
+  }
+
+  /* ---------- бегущая строка ---------- */
+  function tapeBuild() {
+    var t = $("tlTape");
+    if (!t) return;
+    var one = I.map(function (x) {
+      return '<i data-t="' + x.s + '"><u>' + x.s + '</u><b class="tl-num">' + pf(x) + '</b>'
+        + '<span class="tl-num"></span></i>';
+    }).join("");
+    t.innerHTML = one + one;
+  }
+  function tapeTick() {
+    var items = root.querySelectorAll("#tlTape i");
+    for (var i = 0; i < items.length; i++) {
+      var x = BY[items[i].getAttribute("data-t")];
+      if (!x) continue;
+      var chg = (x.p - x.start) / x.start * 100;
+      items[i].querySelector("b").textContent = pf(x);
+      var sp = items[i].querySelector("span");
+      sp.textContent = (chg >= 0 ? "+" : "−") + Math.abs(chg).toFixed(2) + "%";
+      sp.className = "tl-num " + (chg >= 0 ? "tl-up" : "tl-down");
+    }
+  }
+
+  /* ---------- панель котировки с графиком ---------- */
+  var cur = I[0];
+  var cv = $("tlChart"), cx = cv && cv.getContext("2d");
+  function head() {
+    var sprP = cur.sp * cur.pip, bid = cur.p, ask = cur.p + sprP;
+    var up = cur.ser[cur.ser.length - 1] >= cur.ser[cur.ser.length - 2];
+    $("tlSym").textContent = cur.s;
+    var b = $("tlBid"), a = $("tlAsk");
+    b.textContent = bid.toFixed(cur.d); a.textContent = ask.toFixed(cur.d);
+    b.className = up ? "tl-up" : "tl-down";
+    a.className = up ? "tl-up" : "tl-down";
+    $("tlSpr").textContent = cur.sp.toFixed(1);
+    var live = open_(cur.h, new Date()), dot = $("tlDot"), st = $("tlState");
+    if (dot) dot.style.background = live ? "#2FBF8F" : "#5B4A4E";
+    if (st) st.textContent = live ? "M15 · торги идут · поток условный" : "M15 · рынок закрыт · последняя цена";
   }
   function draw() {
-    var s = size(), w = s.w, h = s.h, pad = 8;
-    ctx.clearRect(0, 0, w, h);
-    var min = Math.min.apply(null, data), max = Math.max.apply(null, data), rng = (max - min) || 1;
-    var X = function (i) { return pad + i * (w - pad * 2) / (data.length - 1); };
-    var Y = function (p) { return h - pad - ((p - min) / rng) * (h - pad * 2); };
-    var up = data[data.length - 1] >= data[0];
-    var line = up ? "#FF4D5E" : "#FF8A5B";
-
-    ctx.strokeStyle = "rgba(225,29,49,.10)"; ctx.lineWidth = 1;
+    if (!cx) return;
+    var r = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    var w = cv.clientWidth || 560, h = cv.clientHeight || 132;
+    cv.width = Math.round(w * r); cv.height = Math.round(h * r);
+    cx.setTransform(r, 0, 0, r, 0, 0);
+    cx.clearRect(0, 0, w, h);
+    var dt = cur.ser, pad = 10;
+    var mn = Math.min.apply(null, dt), mx = Math.max.apply(null, dt), rg = (mx - mn) || 1;
+    var X = function (i) { return pad + i * (w - pad * 2) / (dt.length - 1); };
+    var Y = function (v) { return h - pad - ((v - mn) / rg) * (h - pad * 2); };
+    cx.strokeStyle = "rgba(255,255,255,.05)"; cx.lineWidth = 1;
     for (var g = 1; g < 4; g++) {
       var gy = Math.round(h / 4 * g) + .5;
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+      cx.beginPath(); cx.moveTo(0, gy); cx.lineTo(w, gy); cx.stroke();
     }
-    var fill = ctx.createLinearGradient(0, 0, 0, h);
-    fill.addColorStop(0, "rgba(225,29,49,.30)");
-    fill.addColorStop(1, "rgba(225,29,49,0)");
-    ctx.beginPath(); ctx.moveTo(X(0), Y(data[0]));
-    data.forEach(function (p, i) { ctx.lineTo(X(i), Y(p)); });
-    ctx.lineTo(X(data.length - 1), h); ctx.lineTo(X(0), h); ctx.closePath();
-    ctx.fillStyle = fill; ctx.fill();
-
-    ctx.beginPath(); ctx.moveTo(X(0), Y(data[0]));
-    data.forEach(function (p, i) { ctx.lineTo(X(i), Y(p)); });
-    ctx.save();
-    ctx.shadowColor = "rgba(225,29,49,.55)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 3;
-    ctx.strokeStyle = line; ctx.lineWidth = 2.2; ctx.lineJoin = "round"; ctx.lineCap = "round";
-    ctx.stroke(); ctx.restore();
-
-    var lx = X(data.length - 1), ly = Y(data[data.length - 1]);
-    ctx.beginPath(); ctx.arc(lx, ly, 9, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(225,29,49,.18)"; ctx.fill();
-    ctx.beginPath(); ctx.arc(lx, ly, 3.4, 0, Math.PI * 2);
-    ctx.fillStyle = line; ctx.fill();
-
-    var last = data[data.length - 1], first = data[0];
-    var ch = (last - first) / first * 100;
-    if (px) px.textContent = last.toFixed(5);
-    if (pc) {
-      pc.textContent = (ch >= 0 ? "+" : "") + ch.toFixed(2) + "%";
-      pc.className = "tl-num" + (ch >= 0 ? "" : " dn");
-    }
+    var fill = cx.createLinearGradient(0, 0, 0, h);
+    fill.addColorStop(0, "rgba(216,17,40,.34)");
+    fill.addColorStop(1, "rgba(216,17,40,0)");
+    cx.beginPath(); cx.moveTo(X(0), Y(dt[0]));
+    for (var i = 1; i < dt.length; i++) cx.lineTo(X(i), Y(dt[i]));
+    cx.lineTo(X(dt.length - 1), h); cx.lineTo(X(0), h); cx.closePath();
+    cx.fillStyle = fill; cx.fill();
+    cx.beginPath(); cx.moveTo(X(0), Y(dt[0]));
+    for (i = 1; i < dt.length; i++) cx.lineTo(X(i), Y(dt[i]));
+    cx.strokeStyle = "#FF4257"; cx.lineWidth = 1.7;
+    cx.lineJoin = "round"; cx.stroke();
+    var lx = X(dt.length - 1), ly = Y(dt[dt.length - 1]);
+    cx.setLineDash([3, 4]); cx.strokeStyle = "rgba(255,66,87,.45)"; cx.lineWidth = 1;
+    cx.beginPath(); cx.moveTo(0, ly + .5); cx.lineTo(w, ly + .5); cx.stroke();
+    cx.setLineDash([]);
+    cx.fillStyle = "#FF4257"; cx.beginPath(); cx.arc(lx, ly, 3, 0, 6.2832); cx.fill();
   }
-  draw();
+  root.querySelectorAll("#tlChips .tl-chip").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var x = BY[b.getAttribute("data-q")];
+      if (!x) return;
+      cur = x;
+      root.querySelectorAll("#tlChips .tl-chip").forEach(function (o) { o.className = "tl-chip"; });
+      b.className = "tl-chip on";
+      head(); draw();
+    });
+  });
+
+  /* ---------- инструменты по классам ---------- */
+  var CL = [
+    { k: "Валюты", n: 48, t: "Мажоры, кроссы и экзотика с плавающим спредом. Самая узкая цена — "
+      + "в европейскую и американскую сессию, когда ликвидность максимальна.",
+      p: ["EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "AUD/USD", "NZD/USD", "USD/CAD", "EUR/GBP",
+          "EUR/JPY", "GBP/JPY", "AUD/JPY", "USD/TRY", "USD/MXN", "USD/ZAR"],
+      f: [["Инструментов", "48"], ["Макс. плечо", "1:200"], ["Спред от", "0.0 пункта"],
+          ["Маржа", "0.5%"], ["Режим", "24/5"]] },
+    { k: "Металлы", n: 6, t: "Золото и серебро к доллару и евро, платина и палладий. "
+      + "Классический защитный актив: реагирует на ставки, доходности и индекс доллара.",
+      p: ["XAU/USD", "XAG/USD", "XAU/EUR", "XAG/EUR", "XPT/USD", "XPD/USD"],
+      f: [["Инструментов", "6"], ["Макс. плечо", "1:100"], ["Спред от", "12 пунктов"],
+          ["Маржа", "1.0%"], ["Режим", "01:05 – 23:55"]] },
+    { k: "Энергоносители", n: 4, t: "Нефть Brent и WTI, природный газ и бензин. "
+      + "Высокая волатильность: запасы EIA в середине недели регулярно двигают цену на проценты.",
+      p: ["UKOIL", "USOIL", "NGAS", "GASOLINE"],
+      f: [["Инструментов", "4"], ["Макс. плечо", "1:50"], ["Спред от", "3.0 пункта"],
+          ["Маржа", "2.0%"], ["Режим", "01:00 – 22:55"]] },
+    { k: "Индексы", n: 14, t: "Фьючерсные контракты на индексы США, Европы и Азии. "
+      + "Торгуются в часы своей биржи, маржа считается от стоимости пункта индекса.",
+      p: ["US30", "NAS100", "SPX500", "US2000", "GER40", "UK100", "FRA40", "EU50", "JP225", "HK50", "AUS200"],
+      f: [["Инструментов", "14"], ["Макс. плечо", "1:100"], ["Спред от", "1.0 пункта"],
+          ["Маржа", "1.0%"], ["Режим", "по часам биржи"]] },
+    { k: "Акции", n: 60, t: "Контракты на разницу по крупнейшим бумагам американского рынка. "
+      + "Дивидендные корректировки отражаются в журнале операций отдельной строкой.",
+      p: ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "META", "GOOGL", "NFLX", "AMD", "INTC", "KO", "JPM"],
+      f: [["Инструментов", "60"], ["Макс. плечо", "1:20"], ["Спред от", "0.08%"],
+          ["Маржа", "5.0%"], ["Режим", "13:30 – 20:00"]] },
+    { k: "Крипто", n: 12, t: "Основные криптовалюты к доллару без выходных. "
+      + "Спред и проскальзывание заметно выше, чем на валютном рынке, — объём позиции считайте от стопа.",
+      p: ["BTC/USD", "ETH/USD", "XRP/USD", "SOL/USD", "LTC/USD", "ADA/USD", "DOGE/USD", "BNB/USD"],
+      f: [["Инструментов", "12"], ["Макс. плечо", "1:20"], ["Спред от", "28 пунктов"],
+          ["Маржа", "5.0%"], ["Режим", "24/7"]] }
+  ];
+  function instTabs(ix) {
+    var tabs = $("tlITabs");
+    if (!tabs) return;
+    tabs.innerHTML = CL.map(function (c, i) {
+      return '<button class="tl-tab' + (i === ix ? " on" : "") + '" data-i="' + i + '">'
+        + c.k + '<u>' + c.n + '</u></button>';
+    }).join("");
+    var c = CL[ix];
+    $("tlIDesc").textContent = c.t;
+    $("tlIPills").innerHTML = c.p.map(function (s) { return "<span>" + s + "</span>"; }).join("");
+    $("tlIFacts").innerHTML = c.f.map(function (f) {
+      return "<div><span>" + f[0] + "</span><b>" + f[1] + "</b></div>";
+    }).join("");
+    tabs.querySelectorAll(".tl-tab").forEach(function (b) {
+      b.addEventListener("click", function () { instTabs(+b.getAttribute("data-i")); });
+    });
+  }
+
+  /* ---------- калькулятор ---------- */
+  function calcInit() {
+    var sel = $("tlCI");
+    if (!sel) return;
+    sel.innerHTML = I.map(function (x) { return '<option value="' + x.s + '">' + x.s + "</option>"; }).join("");
+    ["tlCI", "tlCL", "tlCV", "tlCB", "tlCS"].forEach(function (id) {
+      var el = $(id);
+      if (el) { el.addEventListener("input", calc); el.addEventListener("change", calc); }
+    });
+    calc();
+  }
+  function calc() {
+    var x = BY[$("tlCI").value] || I[0];
+    var lots = Math.min(100, Math.max(.01, parseFloat($("tlCL").value) || .01));
+    var lev = parseFloat($("tlCV").value) || 100;
+    var bal = Math.max(100, parseFloat($("tlCB").value) || 100);
+    var rsk = Math.min(20, Math.max(.1, parseFloat($("tlCS").value) || 1));
+    var base = x.s.split("/")[0];
+    var nominal = (base === "USD" ? lots * x.c : lots * x.c * x.p);
+    var need = nominal * Math.max(1 / lev, x.mg);
+    var pv = pipUsd(x) * lots;
+    var sprCost = x.sp * pv;
+    var swap = x.sl * pv;
+    var risk = bal * rsk / 100;
+    var stop = pv > 0 ? risk / pv : 0;
+    $("tlRVol").textContent = (lots * x.c >= 1000 ? fm(lots * x.c, 0) : (lots * x.c).toFixed(2)) + " ед.";
+    $("tlRNot").textContent = usd(nominal, 0);
+    $("tlRMar").textContent = usd(need, 2);
+    $("tlRPip").textContent = usd(pv, 2);
+    $("tlRSpr").textContent = usd(-sprCost, 2);
+    $("tlRSwp").textContent = usd(swap, 2);
+    $("tlRHint").textContent = "Один лот — " + x.u + ". Маржинальное требование инструмента "
+      + (x.mg * 100).toFixed(1) + "%, поэтому при плече 1:" + lev + " берётся большее из двух. "
+      + "При риске " + rsk.toFixed(1) + "% (" + usd(risk, 2) + ") стоп-лосс на этом объёме — "
+      + "не дальше " + stop.toFixed(stop < 20 ? 1 : 0) + " пункта от входа.";
+  }
+
+  /* ---------- общий такт ---------- */
+  function tick() {
+    I.forEach(function (x) {
+      var k = x.p * (x.h === "24" ? .0016 : x.h === "fx" ? .00035 : .0009);
+      var v = x.ser[x.ser.length - 1] + (Math.random() - .49) * k * 2;
+      x.ser.push(v); x.ser.shift(); x.p = v;
+    });
+    head(); draw(); tapeTick(); calc();
+  }
+
+  terms(); tapeBuild(); tapeTick(); head(); draw(); instTabs(0); calcInit(); clock();
+  setInterval(tick, 1700);
+  setInterval(clock, 20000);
+  setInterval(terms, 60000);
   window.addEventListener("resize", draw);
-  setInterval(function () {
-    data.push(data[data.length - 1] + (Math.random() - 0.478) * 0.0009);
-    data.shift();
-    draw();
-  }, 1800);
 })();
 </script>
