@@ -36,9 +36,9 @@ function siteUrl(req) {
    при отдаче страницы, в письмах и в названиях площадок. Когда имя поправят в
    самом HTML, замена просто перестанет что-либо находить. */
 const RENAME = {
-  bw: [['BullWaves', 'Aveho'], ['BULLWAVES', 'AVEHO'], ['bullwaves', 'aveho']],
-  nx: [['FxPro', 'Тюльпан'], ['FXPRO', 'ТЮЛЬПАН'], ['fxpro', 'тюльпан'],
-       ['Nordis', 'Тюльпан'], ['NORDIS', 'ТЮЛЬПАН'], ['nordis', 'тюльпан']]
+  bw: [['BullWaves', 'BullWaves'], ['BULLWAVES', 'BULLWAVES'], ['bullwaves', 'bullwaves']],
+  nx: [['FxPro', 'FxPro'], ['FXPRO', 'FXPRO'], ['fxpro', 'fxpro'],
+       ['Nordis', 'FxPro'], ['NORDIS', 'FXPRO'], ['nordis', 'fxpro']]
 };
 function rename(text) {
   const map = RENAME[SITE_TAG] || [];
