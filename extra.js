@@ -58,8 +58,10 @@ function readPage(name) {
   const file = path.join(CTX.pub, name);
   let st;
   try { st = fs.statSync(file); } catch (e) { return null; }
+  let land = 0;
+  try { land = fs.statSync(path.join(CTX.pub, 'landing.html')).mtimeMs; } catch (e) {}
   const was = _page.get(name);
-  if (was && was.mtime === st.mtimeMs) return was.html;
+  if (was && was.mtime === st.mtimeMs && was.land === land) return was.html;
   let html = fs.readFileSync(file, 'utf8');
   const tags = (INJECT[name] || [])
     .filter(src => html.indexOf('"' + src + '"') < 0)
@@ -68,10 +70,28 @@ function readPage(name) {
   if (tags) {
     html = html.indexOf('</body>') >= 0 ? html.replace('</body>', tags + '\n</body>') : html + tags;
   }
+  if (name === 'index.html') html = swapLanding(html);
   html = rename(html);
-  _page.set(name, { mtime: st.mtimeMs, html });
+  _page.set(name, { mtime: st.mtimeMs, land, html });
   return html;
 }
+/* ---------- своя главная страница ---------- */
+/* Если рядом лежит landing.html, подставляем его внутрь блока #site вместо
+   прежней главной. Личный кабинет (#app) и его скрипт не затрагиваются. */
+function swapLanding(html) {
+  let land;
+  try { land = fs.readFileSync(path.join(CTX.pub, 'landing.html'), 'utf8'); }
+  catch (e) { return html; }
+  const open = '<div id="site">';
+  const i = html.indexOf(open);
+  const j = html.indexOf('<div id="app"', i);
+  if (i < 0 || j < 0) return html;
+  const start = i + open.length;
+  const end = html.lastIndexOf('</div>', j);   /* закрывающий тег блока главной */
+  if (end <= start) return html;
+  return html.slice(0, start) + '\n' + land + '\n' + html.slice(end);
+}
+
 function sendPage(res, name) {
   const html = readPage(name || 'index.html');
   if (html === null) return res.status(404).send('Страница не найдена');
