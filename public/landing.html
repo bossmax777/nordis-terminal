@@ -1,0 +1,645 @@
+<!-- Главная страница Тюльпана. Отдельный файл: сервер подставляет его внутрь
+     блока #site вместо прежней главной. Кабинет (#app) не затрагивается.
+     Все стили и классы с префиксом tl- и областью #site, чтобы ничего
+     не пересекалось с разметкой кабинета. -->
+<style id="tlCss">
+#site{--tl-bg:#0A0608;--tl-bg2:#120A0D;--tl-card:#180D11;--tl-card2:#201116;
+  --tl-line:#32181F;--tl-line2:#4A2029;--tl-red:#E11D31;--tl-red2:#FF4D5E;--tl-red-dim:#8E0D1B;
+  --tl-text:#F7EDEF;--tl-muted:#AD8E95;--tl-dim:#7C6168;--tl-up:#36D399;--tl-down:#FF5A66;
+  background:var(--tl-bg);color:var(--tl-text);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+#site *{box-sizing:border-box}
+#site{overflow-x:clip}
+#site .tl-wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+#site .tl-num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+#site a{color:inherit;text-decoration:none}
+
+/* ---------- кнопки ---------- */
+#site .tl-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  border:1px solid transparent;border-radius:3px;cursor:pointer;font:inherit;font-size:14px;
+  font-weight:600;letter-spacing:.2px;padding:13px 22px;transition:.16s;white-space:nowrap}
+#site .tl-btn-red{background:var(--tl-red);color:#fff;box-shadow:0 0 0 0 rgba(225,29,49,.5)}
+#site .tl-btn-red:hover{background:#F32438;box-shadow:0 8px 26px -10px rgba(225,29,49,.9)}
+#site .tl-btn-ghost{background:transparent;border-color:var(--tl-line2);color:var(--tl-text)}
+#site .tl-btn-ghost:hover{border-color:var(--tl-red);color:var(--tl-red2)}
+#site .tl-btn-sm{padding:9px 16px;font-size:13px}
+
+/* ---------- шапка ---------- */
+#site .tl-head{position:sticky;top:0;z-index:30;background:rgba(10,6,8,.86);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--tl-line)}
+#site .tl-head-in{display:flex;align-items:center;gap:30px;height:68px}
+#site .tl-logo{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;letter-spacing:-.3px}
+#site .tl-logo svg{width:24px;height:24px;flex:none}
+#site .tl-logo i{font-style:normal;color:var(--tl-dim);font-weight:400;font-size:12px;
+  letter-spacing:2.4px;text-transform:uppercase;margin-left:2px}
+#site .tl-nav{display:flex;gap:26px;margin-left:12px;font-size:13.5px;color:var(--tl-muted)}
+#site .tl-nav a{position:relative;padding:4px 0;transition:.15s}
+#site .tl-nav a:hover{color:var(--tl-text)}
+#site .tl-nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
+  background:var(--tl-red);transition:right .2s}
+#site .tl-nav a:hover::after{right:0}
+#site .tl-head-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+#site .tl-lang{font-size:12px;color:var(--tl-dim);letter-spacing:1px;padding-right:6px}
+#site #burger{display:none;background:none;border:1px solid var(--tl-line2);color:var(--tl-text);
+  width:38px;height:38px;border-radius:3px;font-size:17px;cursor:pointer}
+
+/* ---------- первый экран ---------- */
+#site .tl-hero{position:relative;padding:92px 0 64px;overflow:hidden;text-align:center}
+#site .tl-hero::before{content:"";position:absolute;inset:-40% 20% auto;height:720px;
+  background:radial-gradient(60% 50% at 50% 0,rgba(225,29,49,.22),transparent 70%);pointer-events:none}
+#site .tl-hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--tl-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--tl-line) 1px,transparent 1px);
+  background-size:68px 68px;opacity:.5;
+  mask-image:radial-gradient(70% 60% at 50% 20%,#000,transparent 75%);
+  -webkit-mask-image:radial-gradient(70% 60% at 50% 20%,#000,transparent 75%)}
+#site .tl-hero>*{position:relative;z-index:1}
+#site .tl-eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--tl-line2);
+  border-radius:40px;padding:6px 15px 6px 10px;font-size:11.5px;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--tl-muted);margin-bottom:28px}
+#site .tl-eyebrow b{display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--tl-red);box-shadow:0 0 0 4px rgba(225,29,49,.18)}
+#site .tl-h1{font-size:clamp(34px,5.4vw,66px);line-height:1.04;font-weight:700;
+  letter-spacing:-2px;margin:0 auto 22px;max-width:16ch}
+#site .tl-h1 em{font-style:normal;color:var(--tl-red2);
+  text-shadow:0 0 44px rgba(225,29,49,.45)}
+#site .tl-lead{font-size:clamp(15px,1.6vw,18px);line-height:1.62;color:var(--tl-muted);
+  max-width:60ch;margin:0 auto 32px}
+#site .tl-hero-act{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+#site .tl-hero-note{margin:22px auto 0;font-size:11.5px;line-height:1.6;color:var(--tl-dim);max-width:62ch}
+
+/* ---------- панель с графиком ---------- */
+#site .tl-panel{margin-top:54px;border:1px solid var(--tl-line);border-radius:6px;
+  background:linear-gradient(180deg,var(--tl-card2),var(--tl-card));
+  display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);text-align:left;overflow:hidden}
+#site .tl-panel-l{padding:22px 24px 10px;border-right:1px solid var(--tl-line)}
+#site .tl-panel-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+#site .tl-panel-top b{font-size:15px;letter-spacing:.4px}
+#site .tl-panel-top span{font-size:11.5px;color:var(--tl-dim);letter-spacing:1.2px;text-transform:uppercase}
+#site .tl-price{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+#site .tl-price b{font-size:34px;font-weight:600;letter-spacing:-1px}
+#site .tl-price i{font-style:normal;font-size:14px;font-weight:600;color:var(--tl-up)}
+#site .tl-panel canvas{width:100%;height:170px;display:block}
+#site .tl-price i.dn{color:var(--tl-down)}
+#site .tl-panel-r{display:grid;grid-template-rows:repeat(3,1fr)}
+#site .tl-stat{padding:18px 22px;border-bottom:1px solid var(--tl-line)}
+#site .tl-stat:last-child{border-bottom:0}
+#site .tl-stat b{display:block;font-size:24px;font-weight:600;letter-spacing:-.6px;margin-bottom:3px}
+#site .tl-stat span{font-size:12px;color:var(--tl-muted);line-height:1.5}
+#site .tl-stat em{font-style:normal;color:var(--tl-red2)}
+
+/* ---------- бегущая строка ---------- */
+#site .tl-tape{border-top:1px solid var(--tl-line);border-bottom:1px solid var(--tl-line);
+  background:var(--tl-bg2);overflow:hidden;margin-top:10px}
+#site .tl-tape-row{display:flex;width:max-content;animation:tlTape 46s linear infinite}
+#site .tl-tape-row span{display:inline-flex;align-items:center;gap:9px;padding:13px 26px;
+  font-size:12.5px;color:var(--tl-muted);border-right:1px solid var(--tl-line);white-space:nowrap}
+#site .tl-tape-row span b{color:var(--tl-text);font-weight:600;letter-spacing:.3px}
+#site .tl-tape-row span i{font-style:normal;font-weight:600}
+#site .tl-tape-row span i.up{color:var(--tl-up)}
+#site .tl-tape-row span i.dn{color:var(--tl-down)}
+@keyframes tlTape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){#site .tl-tape-row{animation:none}}
+
+/* ---------- общие секции ---------- */
+#site .tl-sec{padding:84px 0;border-bottom:1px solid var(--tl-line)}
+#site .tl-kicker{font-size:11.5px;letter-spacing:2.4px;text-transform:uppercase;
+  color:var(--tl-red2);margin:0 0 14px}
+#site .tl-h2{font-size:clamp(25px,3.2vw,38px);line-height:1.12;letter-spacing:-1.1px;
+  font-weight:700;margin:0 0 14px;max-width:22ch}
+#site .tl-sub{font-size:14.5px;line-height:1.65;color:var(--tl-muted);max-width:62ch;margin:0}
+#site .tl-sec-head{margin-bottom:46px}
+
+/* ---------- шаги ---------- */
+#site .tl-steps{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:56px;align-items:start}
+#site .tl-step{position:relative;padding:0 0 34px 56px;border-left:1px solid var(--tl-line2)}
+#site .tl-step:last-child{padding-bottom:0;border-left-color:transparent}
+#site .tl-step::before{content:attr(data-n);position:absolute;left:-19px;top:-4px;width:38px;height:38px;
+  border-radius:50%;background:var(--tl-bg);border:1px solid var(--tl-red);color:var(--tl-red2);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.5px}
+#site .tl-step h3{margin:4px 0 8px;font-size:17.5px;letter-spacing:-.3px}
+#site .tl-step p{margin:0;font-size:14px;line-height:1.65;color:var(--tl-muted)}
+
+/* ---------- котировки ---------- */
+#site .tl-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+#site .tl-chips .tab{background:transparent;border:1px solid var(--tl-line2);color:var(--tl-muted);
+  border-radius:3px;padding:7px 14px;font:inherit;font-size:12.5px;cursor:pointer;transition:.15s}
+#site .tl-chips .tab:hover{color:var(--tl-text)}
+#site .tl-chips .tab.on{background:var(--tl-red);border-color:var(--tl-red);color:#fff}
+#site .tl-board{border:1px solid var(--tl-line);border-radius:6px;overflow:hidden;background:var(--tl-card)}
+#site .tl-board-top{display:flex;align-items:center;gap:12px;padding:12px 18px;
+  border-bottom:1px solid var(--tl-line);background:var(--tl-bg2);font-size:12px;color:var(--tl-dim);
+  letter-spacing:1.4px;text-transform:uppercase}
+#site .tl-board-top b{width:7px;height:7px;border-radius:50%;background:var(--tl-up);
+  box-shadow:0 0 0 4px rgba(54,211,153,.14)}
+#site .tl-scroll{overflow-x:auto}
+#site .tl-board table{width:100%;border-collapse:collapse;min-width:720px}
+#site .tl-board th{text-align:right;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--tl-dim);font-weight:500;padding:13px 18px;border-bottom:1px solid var(--tl-line)}
+#site .tl-board th:first-child{text-align:left}
+#site .tl-board td{padding:13px 18px;border-bottom:1px solid var(--tl-line);font-size:14px;text-align:right}
+#site .tl-board td:first-child{text-align:left}
+#site .tl-board tr:last-child td{border-bottom:0}
+#site .tl-board tr:hover td{background:rgba(225,29,49,.05)}
+#site .tl-board .sym{display:flex;align-items:center;gap:11px}
+#site .tl-board .sym-ic{width:30px;height:30px;border-radius:3px;background:var(--tl-card2);
+  border:1px solid var(--tl-line2);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--tl-red2);flex:none}
+#site .tl-board .sym b{display:block;font-size:13.5px;font-weight:600;letter-spacing:.3px}
+#site .tl-board .sym small{display:block;font-size:11.5px;color:var(--tl-dim);margin-top:1px}
+#site .tl-board .src{font-style:normal;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--tl-dim);border:1px solid var(--tl-line2);border-radius:2px;padding:1px 5px;margin-left:6px}
+#site .tl-board .src.on{color:var(--tl-up);border-color:rgba(54,211,153,.4)}
+#site .tl-board .up{color:var(--tl-up)}
+#site .tl-board .down{color:var(--tl-down)}
+#site .tl-board .q-trade{cursor:pointer;color:var(--tl-red2);font-size:12.5px;font-weight:600;
+  border-bottom:1px solid rgba(255,77,94,.35);padding-bottom:1px}
+#site .tl-board-note{padding:12px 18px;font-size:11.5px;color:var(--tl-dim);line-height:1.55;
+  border-top:1px solid var(--tl-line);background:var(--tl-bg2)}
+
+/* ---------- счета ---------- */
+#site .tl-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
+  background:var(--tl-line);border:1px solid var(--tl-line);border-radius:6px;overflow:hidden}
+#site .tl-plan{background:var(--tl-card);padding:28px 24px;display:flex;flex-direction:column}
+#site .tl-plan.on{background:linear-gradient(180deg,rgba(225,29,49,.14),var(--tl-card))}
+#site .tl-plan h3{margin:0 0 4px;font-size:19px;letter-spacing:-.4px}
+#site .tl-plan .tl-tag{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tl-red2);
+  margin-bottom:18px;display:block;min-height:14px}
+#site .tl-plan dl{margin:0 0 22px;display:grid;gap:11px}
+#site .tl-plan .tl-row{display:flex;justify-content:space-between;gap:14px;font-size:13.5px;
+  padding-bottom:10px;border-bottom:1px dashed var(--tl-line2)}
+#site .tl-plan .tl-row span{color:var(--tl-muted)}
+#site .tl-plan .tl-row b{font-weight:600;letter-spacing:.2px}
+#site .tl-plan .tl-btn{margin-top:auto;width:100%}
+
+/* ---------- цифры ---------- */
+#site .tl-facts{background:linear-gradient(90deg,var(--tl-red-dim),#5E0A14 60%,var(--tl-bg2));
+  border-bottom:1px solid var(--tl-line)}
+#site .tl-facts-in{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;padding:46px 0}
+#site .tl-fact b{display:block;font-size:clamp(26px,3.4vw,38px);font-weight:700;letter-spacing:-1.4px;line-height:1}
+#site .tl-fact span{display:block;margin-top:8px;font-size:12.5px;line-height:1.5;color:rgba(255,235,238,.72)}
+
+/* ---------- академия ---------- */
+#site .tl-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+#site .tl-card{border:1px solid var(--tl-line);border-radius:6px;background:var(--tl-card);
+  padding:26px 22px;transition:.18s}
+#site .tl-card:hover{border-color:var(--tl-line2);transform:translateY(-2px)}
+#site .tl-card .tl-ix{width:40px;height:40px;border-radius:3px;border:1px solid var(--tl-line2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--tl-red2)}
+#site .tl-card .tl-ix svg{width:19px;height:19px}
+#site .tl-card h3{margin:0 0 9px;font-size:16.5px;letter-spacing:-.3px}
+#site .tl-card p{margin:0 0 14px;font-size:13.5px;line-height:1.62;color:var(--tl-muted)}
+#site .tl-card em{font-style:normal;font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--tl-dim)}
+
+/* ---------- вопросы ---------- */
+#site .tl-faq{display:grid;gap:0;border-top:1px solid var(--tl-line)}
+#site .tl-faq details{border-bottom:1px solid var(--tl-line)}
+#site .tl-faq summary{list-style:none;cursor:pointer;padding:22px 44px 22px 0;position:relative;
+  font-size:16px;font-weight:600;letter-spacing:-.2px}
+#site .tl-faq summary::-webkit-details-marker{display:none}
+#site .tl-faq summary::after{content:"+";position:absolute;right:8px;top:19px;font-size:21px;
+  font-weight:400;color:var(--tl-red2);transition:.2s}
+#site .tl-faq details[open] summary::after{content:"−"}
+#site .tl-faq p{margin:0 0 24px;font-size:14px;line-height:1.7;color:var(--tl-muted);max-width:76ch}
+
+/* ---------- призыв ---------- */
+#site .tl-cta{position:relative;padding:92px 0;text-align:center;overflow:hidden}
+#site .tl-cta::before{content:"";position:absolute;inset:auto 25% -60%;height:420px;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(225,29,49,.3),transparent 70%)}
+#site .tl-cta>*{position:relative}
+
+/* ---------- футер ---------- */
+#site .tl-foot{background:var(--tl-bg2);padding:58px 0 34px}
+#site .tl-foot-grid{display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:34px;margin-bottom:38px}
+#site .tl-foot h4{margin:0 0 14px;font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--tl-dim)}
+#site .tl-foot ul{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:13.5px;color:var(--tl-muted)}
+#site .tl-foot ul a:hover{color:var(--tl-red2)}
+#site .tl-foot-about p{margin:14px 0 0;font-size:13px;line-height:1.65;color:var(--tl-muted);max-width:42ch}
+#site .tl-disc{border-top:1px solid var(--tl-line);padding-top:22px;font-size:11.5px;line-height:1.7;
+  color:var(--tl-dim)}
+#site .tl-disc b{color:var(--tl-muted);font-weight:600}
+
+@media (max-width:980px){
+  #site .tl-nav{display:none}
+  #site #burger{display:inline-flex;align-items:center;justify-content:center}
+  #site .tl-panel{grid-template-columns:minmax(0,1fr)}
+  #site .tl-panel-l{border-right:0;border-bottom:1px solid var(--tl-line)}
+  #site .tl-panel-r{grid-template-rows:none;grid-template-columns:repeat(3,1fr)}
+  #site .tl-stat{border-bottom:0;border-right:1px solid var(--tl-line)}
+  #site .tl-stat:last-child{border-right:0}
+  #site .tl-steps{grid-template-columns:minmax(0,1fr);gap:34px}
+  #site .tl-plans,#site .tl-cards{grid-template-columns:minmax(0,1fr)}
+  #site .tl-facts-in{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+  #site .tl-foot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  #site{overflow-x:hidden}
+  #site .tl-wrap{padding:0 16px}
+  #site .tl-sec{padding:58px 0}
+  #site .tl-hero{padding:62px 0 44px}
+  #site .tl-head-in{height:60px;gap:12px}
+  #site .tl-logo{font-size:17px}
+  #site .tl-logo i,#site .tl-lang{display:none}
+  #site .tl-head-right{gap:8px}
+  #site .tl-head-right .tl-btn-ghost{display:none}
+  #site .tl-head-right .tl-btn{padding:9px 13px;font-size:12.5px}
+  #site .tl-panel-r{grid-template-columns:minmax(0,1fr)}
+  #site .tl-stat{border-right:0;border-bottom:1px solid var(--tl-line)}
+  #site .tl-hero-act .tl-btn{width:100%}
+  #site .tl-facts-in{grid-template-columns:minmax(0,1fr);gap:22px;padding:36px 0}
+  #site .tl-foot-grid{grid-template-columns:minmax(0,1fr);gap:26px}
+  #site .tl-step{padding-left:44px}
+  #site .tl-faq summary{font-size:15px;padding-right:36px}
+}
+</style>
+
+<header class="tl-head">
+  <div class="tl-wrap tl-head-in">
+    <a href="#" class="tl-logo" aria-label="Тюльпан">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#E11D31" stroke-width="1.6" stroke-linecap="round">
+        <path d="M12 12.4c-2.6 0-4.2-2-4.2-5 1.9.5 3.3 1.6 4.2 3.2.9-1.6 2.3-2.7 4.2-3.2 0 3-1.6 5-4.2 5z"/>
+        <path d="M12 12.4V21"/><path d="M12 16.6c-1.9 0-3.2-1-3.9-2.6M12 18.4c1.9 0 3.2-1 3.9-2.6"/>
+      </svg>
+      <span class="cfgBrand">Тюльпан</span><i>Markets</i>
+    </a>
+    <nav class="tl-nav">
+      <a href="#markets">Котировки</a>
+      <a href="#how">Как устроено</a>
+      <a href="#accounts">Счета</a>
+      <a href="#academy">Академия</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <div class="tl-head-right">
+      <span class="tl-lang">RU</span>
+      <button class="tl-btn tl-btn-ghost tl-btn-sm" data-open="login">Войти</button>
+      <button class="tl-btn tl-btn-red tl-btn-sm" data-open="signup">Открыть счёт</button>
+      <button id="burger" aria-label="К котировкам">≡</button>
+    </div>
+  </div>
+</header>
+
+<section class="tl-hero" data-sec="hero">
+  <div class="tl-wrap">
+    <span class="tl-eyebrow"><b></b> Демонстрационный стенд · не брокер</span>
+    <h1 class="tl-h1" id="cfgH1">Терминал, который<br><em>ничего не прячет</em></h1>
+    <p class="tl-lead">Тюльпан — учебная торговая площадка. Живые котировки, честно посчитанные
+      сборы и сценарии помощника, которые видно от первой сделки до итога дня. Без реальных
+      денег и без мелкого шрифта.</p>
+    <div class="tl-hero-act">
+      <button class="tl-btn tl-btn-red" data-open="signup">Завести демо-кошелёк</button>
+      <button class="tl-btn tl-btn-ghost" data-demo>Посмотреть кабинет</button>
+    </div>
+    <p class="tl-hero-note">Учебный демонстрационный проект. Сервис не является брокером,
+      не принимает платежи и не отправляет ордера на биржу: счета, сделки и суммы условны.</p>
+
+    <div class="tl-panel">
+      <div class="tl-panel-l">
+        <div class="tl-panel-top"><b>EUR/USD</b><span>5 минут · поток котировок</span></div>
+        <div class="tl-price">
+          <b class="tl-num" id="tlPrice">1.08412</b>
+          <i class="tl-num" id="tlChg">+0.23%</i>
+        </div>
+        <canvas id="tlChart" aria-label="График EUR/USD"></canvas>
+      </div>
+      <div class="tl-panel-r">
+        <div class="tl-stat"><b class="tl-num">0.0 <em>пт</em></b>
+          <span>Спред на демо-счёте: цена берётся из потока, наценки сверху нет</span></div>
+        <div class="tl-stat"><b class="tl-num">21:00 <em>CST</em></b>
+          <span>Итог торгового дня записывается в историю по будням</span></div>
+        <div class="tl-stat"><b class="tl-num">2 <em>площадки</em></b>
+          <span>Один кошелёк виден и в кабинете, и в едином боте</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tl-tape" aria-hidden="true">
+  <div class="tl-tape-row">
+    <span><b>XAU/USD</b> 2 412.60 <i class="up">+0.42%</i></span>
+    <span><b>EUR/USD</b> 1.08412 <i class="up">+0.23%</i></span>
+    <span><b>BTC/USD</b> 67 240 <i class="dn">−1.18%</i></span>
+    <span><b>US500</b> 5 486.2 <i class="up">+0.31%</i></span>
+    <span><b>USOIL</b> 78.94 <i class="dn">−0.64%</i></span>
+    <span><b>USD/JPY</b> 157.82 <i class="up">+0.11%</i></span>
+    <span><b>XAG/USD</b> 31.07 <i class="up">+0.88%</i></span>
+    <span><b>GBP/USD</b> 1.27340 <i class="dn">−0.09%</i></span>
+    <span><b>XAU/USD</b> 2 412.60 <i class="up">+0.42%</i></span>
+    <span><b>EUR/USD</b> 1.08412 <i class="up">+0.23%</i></span>
+    <span><b>BTC/USD</b> 67 240 <i class="dn">−1.18%</i></span>
+    <span><b>US500</b> 5 486.2 <i class="up">+0.31%</i></span>
+    <span><b>USOIL</b> 78.94 <i class="dn">−0.64%</i></span>
+    <span><b>USD/JPY</b> 157.82 <i class="up">+0.11%</i></span>
+    <span><b>XAG/USD</b> 31.07 <i class="up">+0.88%</i></span>
+    <span><b>GBP/USD</b> 1.27340 <i class="dn">−0.09%</i></span>
+  </div>
+</div>
+
+<section class="tl-sec" id="how" data-sec="benefits">
+  <div class="tl-wrap tl-steps">
+    <div class="tl-sec-head" style="margin:0">
+      <p class="tl-kicker">Как устроено</p>
+      <h2 class="tl-h2">Три шага от регистрации до итога дня</h2>
+      <p class="tl-sub">Никаких скрытых этапов: всё, что делает площадка, видно в кабинете
+        и записывается в историю операций.</p>
+    </div>
+    <div>
+      <div class="tl-step" data-n="01">
+        <h3>Кошелёк за минуту</h3>
+        <p>Почта и пароль — и у вас демо-кошелёк с номером счёта. Баланс нулевой: пополнение
+          оформляется заявкой и проводится вручную, чтобы было видно весь путь заявки.</p>
+      </div>
+      <div class="tl-step" data-n="02">
+        <h3>Сценарий вместо обещаний</h3>
+        <p>Выбираете инструмент, горизонт и режим риска — помощник показывает расчёт до запуска:
+          валовую прибыль, сборы площадки и допустимую просадку. Цифры не меняются задним числом.</p>
+      </div>
+      <div class="tl-step" data-n="03">
+        <h3>Итог дня в 21:00</h3>
+        <p>По будням площадка сама дописывает строку «Результат дня» в историю операций —
+          с плюсом или с минусом, как получилось. То же самое уходит в отчёт единого бота.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tl-sec" id="markets" data-sec="markets">
+  <div class="tl-wrap">
+    <div class="tl-sec-head">
+      <p class="tl-kicker">Котировки</p>
+      <h2 class="tl-h2">Поток цен, а не красивая картинка</h2>
+      <p class="tl-sub">Где получается — тянем реальный поток, где нет — честно подписываем
+        «модель». Подмены одного другим не бывает.</p>
+    </div>
+    <div class="tl-chips" id="qTabs"></div>
+    <div class="tl-board">
+      <div class="tl-board-top"><b></b> Торговый экран · обновление каждые несколько секунд</div>
+      <div class="tl-scroll">
+        <table>
+          <thead><tr>
+            <th>Инструмент</th><th>Bid</th><th>Ask</th><th>Изм. за день</th><th>Спред</th><th></th>
+          </tr></thead>
+          <tbody id="qBody"></tbody>
+        </table>
+      </div>
+      <p class="tl-board-note" id="liveNote"></p>
+    </div>
+  </div>
+</section>
+
+<section class="tl-sec" id="accounts" data-sec="accounts">
+  <div class="tl-wrap">
+    <div class="tl-sec-head">
+      <p class="tl-kicker">Счета</p>
+      <h2 class="tl-h2">Три учебных счёта с разной глубиной</h2>
+      <p class="tl-sub">Отличаются не «статусом», а тем, какие инструменты и отчёты открыты.
+        Перейти с одного на другой можно в любой момент — это демо.</p>
+    </div>
+    <div class="tl-plans">
+      <div class="tl-plan">
+        <h3>Старт</h3><span class="tl-tag">для первого знакомства</span>
+        <dl>
+          <div class="tl-row"><span>Стартовый баланс</span><b class="tl-num">$0</b></div>
+          <div class="tl-row"><span>Инструменты</span><b>валюты, золото</b></div>
+          <div class="tl-row"><span>Плечо</span><b class="tl-num">1:100</b></div>
+          <div class="tl-row"><span>Сценарии помощника</span><b>один активный</b></div>
+          <div class="tl-row"><span>Отчёт за сутки</span><b>в кабинете</b></div>
+        </dl>
+        <button class="tl-btn tl-btn-ghost" data-open="signup">Выбрать «Старт»</button>
+      </div>
+      <div class="tl-plan on">
+        <h3>База</h3><span class="tl-tag">чаще всего берут этот</span>
+        <dl>
+          <div class="tl-row"><span>Стартовый баланс</span><b class="tl-num">$0</b></div>
+          <div class="tl-row"><span>Инструменты</span><b>+ индексы, нефть</b></div>
+          <div class="tl-row"><span>Плечо</span><b class="tl-num">1:200</b></div>
+          <div class="tl-row"><span>Сценарии помощника</span><b>до трёх сразу</b></div>
+          <div class="tl-row"><span>Отчёт за сутки</span><b>кабинет + Telegram</b></div>
+        </dl>
+        <button class="tl-btn tl-btn-red" data-open="signup">Выбрать «Базу»</button>
+      </div>
+      <div class="tl-plan">
+        <h3>Про</h3><span class="tl-tag">для единого бота</span>
+        <dl>
+          <div class="tl-row"><span>Стартовый баланс</span><b class="tl-num">$0</b></div>
+          <div class="tl-row"><span>Инструменты</span><b>весь список</b></div>
+          <div class="tl-row"><span>Плечо</span><b class="tl-num">1:500</b></div>
+          <div class="tl-row"><span>Сценарии помощника</span><b>массовый запуск</b></div>
+          <div class="tl-row"><span>Отчёт за сутки</span><b>+ ключ REST API</b></div>
+        </dl>
+        <button class="tl-btn tl-btn-ghost" data-open="signup">Выбрать «Про»</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tl-facts" data-sec="stats">
+  <div class="tl-wrap tl-facts-in">
+    <div class="tl-fact"><b class="tl-num">8</b><span>инструментов в сценариях помощника</span></div>
+    <div class="tl-fact"><b class="tl-num">21:00</b><span>по Китаю фиксируется итог дня</span></div>
+    <div class="tl-fact"><b class="tl-num">5/7</b><span>дней в неделю считается торговое время</span></div>
+    <div class="tl-fact"><b class="tl-num">0 ₽</b><span>стоит всё: это учебный стенд</span></div>
+  </div>
+</section>
+
+<section class="tl-sec" id="academy" data-sec="platforms">
+  <div class="tl-wrap">
+    <div class="tl-sec-head">
+      <p class="tl-kicker">Академия</p>
+      <h2 class="tl-h2">Разбираем то, что обычно прячут в сноски</h2>
+      <p class="tl-sub">Короткие материалы о том, как читать отчёты площадки и откуда берутся
+        цифры в кабинете.</p>
+    </div>
+    <div class="tl-cards">
+      <div class="tl-card">
+        <div class="tl-ix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round"><path d="M3 17l5-6 4 4 7-9"/><path d="M3 21h18"/></svg></div>
+        <h3>Откуда берётся «результат дня»</h3>
+        <p>Как площадка считает дневную дельту по сценарию, почему в выходные она нулевая
+          и что именно попадает в строку истории.</p>
+        <em>7 минут чтения</em>
+      </div>
+      <div class="tl-card">
+        <div class="tl-ix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round"><path d="M12 3v18"/><path d="M5 8h14"/><path d="M7 16h10"/></svg></div>
+        <h3>Сборы: лот, своп, сервис</h3>
+        <p>Три числа, которые съедают прибыль, и как они раскладываются в расчёте помощника
+          до запуска сценария.</p>
+        <em>5 минут чтения</em>
+      </div>
+      <div class="tl-card">
+        <div class="tl-ix"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round"><path d="M12 9v4M12 17h.01"/>
+          <path d="M10.3 3.9L2.6 17.5A2 2 0 004.3 20.5h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></div>
+        <h3>Просадка — это норма</h3>
+        <p>Почему баланс уходит ниже старта даже у работающего сценария и какая глубина
+          заложена в каждый режим риска.</p>
+        <em>6 минут чтения</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tl-sec" id="faq" data-sec="achv">
+  <div class="tl-wrap">
+    <div class="tl-sec-head">
+      <p class="tl-kicker">Вопросы</p>
+      <h2 class="tl-h2">Коротко о главном</h2>
+    </div>
+    <div class="tl-faq">
+      <details open><summary>Это настоящий брокер?</summary>
+        <p>Нет. Тюльпан — учебный демонстрационный проект. Площадка не имеет лицензии, не принимает
+          платежи, не хранит деньги и не отправляет ордера на биржу. Всё, что вы видите в кабинете, —
+          симуляция на демо-кошельке.</p></details>
+      <details><summary>Можно ли вывести деньги?</summary>
+        <p>Можно оформить заявку на вывод — она пройдёт весь путь: попадёт в историю операций и в панель
+          администратора. Но перевода не происходит, потому что и самих денег на счёте нет.
+          Реквизиты при этом сохраняются только последними четырьмя знаками.</p></details>
+      <details><summary>Откуда берутся котировки?</summary>
+        <p>Часть инструментов тянется из открытых источников в реальном времени — такие строки помечены
+          «live». Остальные считаются моделью и помечены «модель». Одно за другое не выдаём.</p></details>
+      <details><summary>Что делает помощник?</summary>
+        <p>Он не торгует. Помощник рассчитывает сценарий по выбранным параметрам и ведёт по нему
+          демо-баланс: показывает сделки, прогресс и дневной результат. Остановить сценарий можно
+          в любой момент.</p></details>
+      <details><summary>Зачем нужен единый бот?</summary>
+        <p>Если кошельков несколько, единый бот собирает их в одном окне: доходность за сутки,
+          массовый запуск сценариев, заявки на вывод и отчёт в Telegram.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="tl-cta" data-sec="cta">
+  <div class="tl-wrap">
+    <h2 class="tl-h2" style="margin:0 auto 14px;max-width:18ch">Посмотрите, как это работает изнутри</h2>
+    <p class="tl-sub" style="margin:0 auto 28px">Кошелёк заводится за минуту, деньги не нужны,
+      удалить можно в любой момент.</p>
+    <div class="tl-hero-act">
+      <button class="tl-btn tl-btn-red" data-open="signup">Завести демо-кошелёк</button>
+      <button class="tl-btn tl-btn-ghost" data-open="login">У меня уже есть счёт</button>
+    </div>
+  </div>
+</section>
+
+<footer class="tl-foot" data-sec="footer">
+  <div class="tl-wrap">
+    <div class="tl-foot-grid">
+      <div class="tl-foot-about">
+        <div class="tl-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E11D31" stroke-width="1.6" stroke-linecap="round">
+            <path d="M12 12.4c-2.6 0-4.2-2-4.2-5 1.9.5 3.3 1.6 4.2 3.2.9-1.6 2.3-2.7 4.2-3.2 0 3-1.6 5-4.2 5z"/>
+            <path d="M12 12.4V21"/><path d="M12 16.6c-1.9 0-3.2-1-3.9-2.6M12 18.4c1.9 0 3.2-1 3.9-2.6"/>
+          </svg>
+          <span class="cfgBrand">Тюльпан</span><i>Markets</i>
+        </div>
+        <p>Учебная площадка о том, как устроены торговые сервисы: от заявки на пополнение
+          до строки «Результат дня» в истории операций.</p>
+      </div>
+      <div><h4>Площадка</h4><ul>
+        <li><a href="#markets">Котировки</a></li>
+        <li><a href="#accounts">Счета</a></li>
+        <li><a href="#how">Как устроено</a></li>
+        <li><a href="#academy">Академия</a></li></ul></div>
+      <div><h4>Кабинет</h4><ul>
+        <li><a href="#" data-open="signup">Регистрация</a></li>
+        <li><a href="#" data-open="login">Вход</a></li>
+        <li><a href="#" data-demo>Демо-режим</a></li>
+        <li><a href="#faq">Вопросы</a></li></ul></div>
+      <div><h4>Помощь</h4><ul>
+        <li><a href="#" data-demo>Служба поддержки</a></li>
+        <li><a href="#faq">Частые вопросы</a></li>
+        <li><a href="#how">Сценарии помощника</a></li>
+        <li><a href="#academy">Материалы</a></li></ul></div>
+    </div>
+    <p class="tl-disc" id="cfgDisclaimer">
+      <b>Предупреждение.</b> Тюльпан — учебный демонстрационный проект, а не брокер и не финансовая
+      организация. Площадка не имеет лицензий, не принимает и не хранит средства, не исполняет
+      ордера на бирже. Бренд, котировки, счета, отзывы и статистика условны, персональные данные
+      не собираются и никуда не передаются. Материалы сайта не являются инвестиционной
+      рекомендацией. Торговля реальными инструментами с кредитным плечом сопряжена с высоким
+      риском потери капитала.
+    </p>
+  </div>
+</footer>
+
+<!-- Скрытые узлы: прежний скрипт страницы заполняет их блоками старой главной.
+     Разметку мы заменили, поэтому держим их пустыми и невидимыми — иначе скрипт
+     обратится к несуществующим элементам и кабинет перестанет работать. -->
+<div id="tlSink" hidden aria-hidden="true" style="display:none">
+  <div id="benefits"></div><div id="stats"></div><div id="accounts-grid"></div>
+  <div id="platforms-grid"></div><div id="achv"></div><div id="clsTabs"></div>
+  <div id="clsTitle"></div><div id="clsDesc"></div><div id="clsChips"></div><div id="clsList"></div>
+  <canvas id="spark" width="10" height="10"></canvas>
+  <span id="heroPrice"></span><span id="heroChg"></span>
+</div>
+
+<script>
+/* График в первом экране: рисуем сами, чтобы он был в красной гамме.
+   Данные условные — это демонстрационный стенд, а не поток биржи. */
+(function () {
+  "use strict";
+  var cv = document.getElementById("tlChart");
+  if (!cv) return;
+  var px = document.getElementById("tlPrice"), pc = document.getElementById("tlChg");
+  var ctx = cv.getContext("2d");
+  var data = [], v = 1.0835;
+  for (var i = 0; i < 110; i++) { v += (Math.random() - 0.478) * 0.0009; data.push(v); }
+
+  function size() {
+    var r = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    var w = cv.clientWidth || 700, h = cv.clientHeight || 170;
+    cv.width = Math.round(w * r); cv.height = Math.round(h * r);
+    ctx.setTransform(r, 0, 0, r, 0, 0);
+    return { w: w, h: h };
+  }
+  function draw() {
+    var s = size(), w = s.w, h = s.h, pad = 8;
+    ctx.clearRect(0, 0, w, h);
+    var min = Math.min.apply(null, data), max = Math.max.apply(null, data), rng = (max - min) || 1;
+    var X = function (i) { return pad + i * (w - pad * 2) / (data.length - 1); };
+    var Y = function (p) { return h - pad - ((p - min) / rng) * (h - pad * 2); };
+    var up = data[data.length - 1] >= data[0];
+    var line = up ? "#FF4D5E" : "#FF8A5B";
+
+    ctx.strokeStyle = "rgba(225,29,49,.10)"; ctx.lineWidth = 1;
+    for (var g = 1; g < 4; g++) {
+      var gy = Math.round(h / 4 * g) + .5;
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+    var fill = ctx.createLinearGradient(0, 0, 0, h);
+    fill.addColorStop(0, "rgba(225,29,49,.30)");
+    fill.addColorStop(1, "rgba(225,29,49,0)");
+    ctx.beginPath(); ctx.moveTo(X(0), Y(data[0]));
+    data.forEach(function (p, i) { ctx.lineTo(X(i), Y(p)); });
+    ctx.lineTo(X(data.length - 1), h); ctx.lineTo(X(0), h); ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill();
+
+    ctx.beginPath(); ctx.moveTo(X(0), Y(data[0]));
+    data.forEach(function (p, i) { ctx.lineTo(X(i), Y(p)); });
+    ctx.save();
+    ctx.shadowColor = "rgba(225,29,49,.55)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 3;
+    ctx.strokeStyle = line; ctx.lineWidth = 2.2; ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.stroke(); ctx.restore();
+
+    var lx = X(data.length - 1), ly = Y(data[data.length - 1]);
+    ctx.beginPath(); ctx.arc(lx, ly, 9, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(225,29,49,.18)"; ctx.fill();
+    ctx.beginPath(); ctx.arc(lx, ly, 3.4, 0, Math.PI * 2);
+    ctx.fillStyle = line; ctx.fill();
+
+    var last = data[data.length - 1], first = data[0];
+    var ch = (last - first) / first * 100;
+    if (px) px.textContent = last.toFixed(5);
+    if (pc) {
+      pc.textContent = (ch >= 0 ? "+" : "") + ch.toFixed(2) + "%";
+      pc.className = "tl-num" + (ch >= 0 ? "" : " dn");
+    }
+  }
+  draw();
+  window.addEventListener("resize", draw);
+  setInterval(function () {
+    data.push(data[data.length - 1] + (Math.random() - 0.478) * 0.0009);
+    data.shift();
+    draw();
+  }, 1800);
+})();
+</script>
