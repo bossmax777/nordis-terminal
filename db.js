@@ -70,6 +70,30 @@ CREATE TABLE IF NOT EXISTS sessions_nordis (
   expires_at  TIMESTAMPTZ NOT NULL
 );
 CREATE INDEX IF NOT EXISTS sessions_nordis_user_idx ON sessions_nordis(user_id);
+ALTER TABLE users_nordis ADD COLUMN IF NOT EXISTS notes JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE users_nordis ADD COLUMN IF NOT EXISTS reset_token TEXT NOT NULL DEFAULT '';
+ALTER TABLE users_nordis ADD COLUMN IF NOT EXISTS reset_exp TIMESTAMPTZ;
+ALTER TABLE users_nordis ADD COLUMN IF NOT EXISTS tg_chat TEXT NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS users_nordis_reset_idx ON users_nordis(reset_token);
+/* обращения в службу поддержки: одна таблица на обе площадки, площадка в поле site */
+CREATE TABLE IF NOT EXISTS tickets (
+  id          BIGSERIAL PRIMARY KEY,
+  site        TEXT NOT NULL DEFAULT 'bw',
+  user_id     BIGINT,
+  email       TEXT NOT NULL DEFAULT '',
+  acct        TEXT NOT NULL DEFAULT '',
+  name        TEXT NOT NULL DEFAULT '',
+  topic       TEXT NOT NULL DEFAULT 'other',
+  subject     TEXT NOT NULL DEFAULT '',
+  status      TEXT NOT NULL DEFAULT 'open',
+  msgs        JSONB NOT NULL DEFAULT '[]'::jsonb,
+  unread_user INT NOT NULL DEFAULT 0,
+  unread_adm  INT NOT NULL DEFAULT 0,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS tickets_site_idx ON tickets(site, status, updated_at DESC);
+CREATE INDEX IF NOT EXISTS tickets_user_idx ON tickets(site, user_id);
 /* первый запуск: переносим уже заведённые кошельки, дальше площадки живут отдельно */
 INSERT INTO users_nordis
 SELECT * FROM users
