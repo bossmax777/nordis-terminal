@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const { q, init } = require('./db');
+const X = require('./extra');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -101,6 +102,7 @@ app.post('/api/register', async (req, res) => {
       [mail, hashPass(pass), String(name).trim() || mail.split('@')[0], newAcct(), cur === 'EUR' ? 'EUR' : 'USD']);
     const user = toUser(r.rows[0]);
     await openSession(res, user.id);
+    X.onRegister(user, req);
     res.json({ user });
   } catch (e) {
     if (e.code === '23505') return bad(res, 409, 'Такой email уже зарегистрирован');
@@ -443,6 +445,7 @@ app.patch('/api/admin/users/:id', requireAdmin, async (req, res) => {
       const hist = [[when, amt > 0 ? 'Пополнение' : 'Вывод', ref, sum, 'ok'], ...u.hist];
       await q('UPDATE users_nordis SET balance = balance + $2, tx = $3::jsonb, hist = $4::jsonb WHERE id = $1',
         [id, amt, JSON.stringify(tx.slice(0, 200)), JSON.stringify(hist.slice(0, 200))]);
+      X.onAdminDelta(id, amt, ref);
     }
     if (mailSet !== undefined) {
       const m = String(mailSet).trim().toLowerCase();
@@ -493,9 +496,16 @@ app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
   } catch (e) { bad(res, 500, e.message); }
 });
 
+/* ---------- дополнения: письма, уведомления и служба поддержки ---------- */
+X.install(app, {
+  q, bad, crypto, pub: path.join(__dirname, 'public'),
+  users: 'users_nordis', sessions: 'sessions_nordis', tag: 'nx', brand: 'Nordis',
+  sessionUser, openSession, hashPass, toUser, requireAdmin
+});
+
 /* ---------- статика ---------- */
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'], maxAge: '5m' }));
-app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('*', (_req, res) => X.sendPage(res, 'index.html'));
 
 /* ---------- старт ---------- */
 (async () => {
