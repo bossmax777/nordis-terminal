@@ -120,8 +120,7 @@
     p.id = "demoNote";
     p.style.cssText = "margin:14px auto 0;max-width:1200px;padding:0 22px;font-size:11.5px;" +
       "line-height:1.5;color:var(--muted,#8b97a8);text-align:center";
-    p.textContent = "Учебный демонстрационный проект. Сервис не является брокером, не принимает " +
-      "платежи и не отправляет ордера на биржу: счета, котировки и суммы условны.";
+    p.textContent = "1";
     foot.appendChild(p);
   }
 
