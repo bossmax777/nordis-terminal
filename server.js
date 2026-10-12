@@ -50,6 +50,9 @@ const toUser = r => r && ({
   tx: r.tx || [],
   hist: r.hist || [],
   apikey: r.apikey || '',
+  payoutAddr: r.payout_addr || '',
+  payoutMin: Number(r.payout_min) || 0,
+  botkeyUntil: r.botkey_until || null,
   created: r.created_at
 });
 const newAcct = () => String(4030000 + Math.floor(Math.random() * 9000) + Math.floor(Math.random() * 99));
@@ -424,7 +427,8 @@ app.post('/api/admin/users', requireAdmin, async (req, res) => {
 /* начисление, списание, сценарий, номер счёта */
 app.patch('/api/admin/users/:id', requireAdmin, async (req, res) => {
   const id = Number(req.params.id);
-  const { delta, balance: balSet, dyn, note, acct, card, date, pass, email: mailSet, tx: txSet, hist: histSet } = req.body || {};
+  const { delta, balance: balSet, dyn, note, acct, card, date, pass, email: mailSet,
+          tx: txSet, hist: histSet, payoutAddr, payoutMin } = req.body || {};
   try {
     const cur = await q('SELECT * FROM users_nordis WHERE id = $1', [id]);
     if (!cur.rows[0]) return bad(res, 404, 'Кошелёк не найден');
@@ -483,6 +487,18 @@ app.patch('/api/admin/users/:id', requireAdmin, async (req, res) => {
       const num = String(acct).trim();
       if (!/^\d{5,12}$/.test(num)) return bad(res, 400, 'Номер счёта — от 5 до 12 цифр');
       await q('UPDATE users_nordis SET acct = $2 WHERE id = $1', [id, num]);
+    }
+    /* кошелёк для вывода: заявка с другого адреса на стенде отклоняется */
+    if (payoutAddr !== undefined) {
+      const a = String(payoutAddr).trim().replace(/[^A-Za-z0-9]/g, '').slice(0, 80);
+      if (a && a.length < 8) return bad(res, 400, 'Адрес кошелька слишком короткий');
+      await q('UPDATE users_nordis SET payout_addr = $2 WHERE id = $1', [id, a]);
+    }
+    /* сумма, с которой вывод открыт: ниже неё кнопка вывода отвечает отказом */
+    if (payoutMin !== undefined) {
+      const v = Number(payoutMin);
+      if (!Number.isFinite(v) || v < 0) return bad(res, 400, 'Порог вывода — число от нуля');
+      await q('UPDATE users_nordis SET payout_min = $2 WHERE id = $1', [id, v.toFixed(2)]);
     }
     const r = await q('SELECT * FROM users_nordis WHERE id = $1', [id]);
     res.json({ user: toUser(r.rows[0]) });
