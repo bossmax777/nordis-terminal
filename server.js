@@ -595,7 +595,8 @@ app.post('/api/admin/mass-day', requireAdmin, async (req, res) => {
     for (const row of r.rows) {
       const u = toUser(row);
       /* повторный запуск за ту же дату ничего не задваивает */
-      if ((u.tx || []).some(t => t && t[0] === when && String(t[1]) === MASS_TITLE)) { skipped++; continue; }
+      if ((u.tx || []).some(t => t && t[0] === when
+        && String(t[1] || '').indexOf('Итог торгового дня') === 0)) { skipped++; continue; }
       const before = Number(u.balance) || 0;
       let amt = +(before * p / 100).toFixed(2);
       if (down) amt = -Math.min(amt, before);     /* в минус, но не ниже нуля */
@@ -636,8 +637,11 @@ app.post('/api/admin/mass-day/undo', requireAdmin, async (req, res) => {
       const u = toUser(cur.rows[0]);
       const amt = Number(it.amount) || 0;
       const sum = massSum(amt);
-      const tx = massDrop(u.tx, t => t && t[0] === when && String(t[1]) === MASS_TITLE && String(t[2]) === sum);
-      const hist = massDrop(u.hist, t => t && t[0] === when && String(t[1]) === 'Результат дня' && String(t[3]) === sum);
+      /* фиксация с пульта пишет пару в заголовок, поэтому сверяем по началу строки */
+      const tx = massDrop(u.tx, t => t && t[0] === when
+        && String(t[1] || '').indexOf('Итог торгового дня') === 0 && String(t[2]) === sum);
+      const hist = massDrop(u.hist, t => t && t[0] === when
+        && String(t[1]) === 'Результат дня' && String(t[3]) === sum);
       const bal = Math.max(0, (Number(u.balance) || 0) - amt);
       await q('UPDATE users_nordis SET balance = $2, tx = $3::jsonb, hist = $4::jsonb WHERE id = $1',
         [u.id, bal.toFixed(2), JSON.stringify(tx), JSON.stringify(hist)]);
