@@ -649,6 +649,69 @@ function massShift(u, delta) {
   if (out.to !== undefined) out.to = +(Number(out.to) + delta).toFixed(2);
   return out;
 }
+/* ---------- итог дня списком: своя сумма каждому кошельку ----------
+   Разноска одним процентом годится, когда день одинаковый у всех. Когда часть
+   кошельков работала по золоту, часть по крипте, а часть по акциям, суммы
+   разные — их вносим списком «номер кошелька сумма» с выбором пары. Строка
+   уходит в кабинет как «Итог торгового дня · ПАРА», поэтому отчёт за день
+   видит и сумму, и инструмент, а отменяется пачка целиком. */
+const MASS_PAIRS = ['XAU/USD', 'BTC/USD', 'ETH/USD', 'SOL/USD', 'XRP/USD',
+                    'AAPL', 'TSLA', 'NVDA', 'MSFT'];
+app.post('/api/admin/mass-rows', requireAdmin, async (req, res) => {
+  const b = req.body || {};
+  const date = String(b.date || '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return bad(res, 400, 'Укажите дату в виде ГГГГ-ММ-ДД');
+  const pair = MASS_PAIRS.indexOf(String(b.pair || '')) >= 0 ? String(b.pair) : 'XAU/USD';
+  const list = (Array.isArray(b.items) ? b.items : []).slice(0, 500);
+  if (!list.length) return bad(res, 400, 'Не выбран ни один кошелёк');
+  const dry = !!b.dry;
+  const when = massRu(date);
+  try {
+    const items = [], skip = [];
+    for (const it of list) {
+      const acct = String((it && it.acct) || '').replace(/\D/g, '');
+      const amt = Math.round((Number(String((it && it.amount) !== undefined ? it.amount : '')
+        .toString().replace(/\s|\u00a0/g, '').replace(',', '.')) || 0) * 100) / 100;
+      if (!acct || !isFinite(amt) || amt === 0) {
+        skip.push({ acct: acct || String((it && it.acct) || ''), error: 'не разобрал строку' }); continue;
+      }
+      const r = await q('SELECT * FROM users_nordis WHERE acct = $1 LIMIT 1', [acct]);
+      if (!r.rows[0]) { skip.push({ acct, error: 'кошелька нет на этой площадке' }); continue; }
+      const u = toUser(r.rows[0]);
+      const before = Number(u.balance) || 0;
+      if (amt < 0 && Math.abs(amt) > before) { skip.push({ acct, error: 'на кошельке меньше этой суммы' }); continue; }
+      /* повторная запись за ту же дату ничего не задваивает */
+      if ((u.tx || []).some(t => t && t[0] === when
+        && String(t[1] || '').indexOf('Итог торгового дня') === 0)) {
+        skip.push({ acct, error: 'итог за эту дату уже стоял' }); continue;
+      }
+      if (dry) { items.push({ id: u.id, acct, name: u.name || '', amount: amt, before }); continue; }
+      const sum = massSum(amt);
+      const tx = [[when, 'Итог торгового дня · ' + pair, sum, 'ok', amt >= 0 ? 'Прибыль' : 'Убыток'],
+        ...(u.tx || [])];
+      const hist = [[when, 'Результат дня', pair, sum, 'ok'], ...(u.hist || [])];
+      const dynRow = massShift(u, amt);
+      if (dynRow) {
+        await q('UPDATE users_nordis SET balance = $2, tx = $3::jsonb, hist = $4::jsonb, dyn = $5::jsonb WHERE id = $1',
+          [u.id, (before + amt).toFixed(2), JSON.stringify(tx.slice(0, 200)), JSON.stringify(hist.slice(0, 200)),
+           JSON.stringify(dynRow)]);
+      } else {
+        await q('UPDATE users_nordis SET balance = $2, tx = $3::jsonb, hist = $4::jsonb WHERE id = $1',
+          [u.id, (before + amt).toFixed(2), JSON.stringify(tx.slice(0, 200)), JSON.stringify(hist.slice(0, 200))]);
+      }
+      items.push({ id: u.id, acct, name: u.name || '', amount: amt, before, pair });
+    }
+    const total = +items.reduce((s2, x) => s2 + x.amount, 0).toFixed(2);
+    if (dry) return res.json({ ok: true, dry: true, pair, applied: items.length, total, items, skipped: skip });
+    if (!items.length) return res.json({ ok: true, batch: 0, applied: 0, total: 0, items: [], skipped: skip });
+    const bt = await q(
+      'INSERT INTO mass_days (site, day, pct, dir, items) VALUES ($1,$2,$3,$4,$5::jsonb) RETURNING id',
+      [MASS_SITE, date, 0, 'rows', JSON.stringify(items)]);
+    res.json({ ok: true, batch: Number(bt.rows[0].id), applied: items.length, total, pair,
+      items: items.map(x => ({ acct: x.acct, name: x.name, amount: x.amount })), skipped: skip });
+  } catch (e) { bad(res, 500, e.message); }
+});
+
 const MASS_IN_TITLE = 'Пополнение · USDT';
 app.post('/api/admin/mass-in', requireAdmin, async (req, res) => {
   const b = req.body || {};
