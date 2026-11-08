@@ -136,6 +136,22 @@ CREATE UNIQUE INDEX IF NOT EXISTS kyc_user_idx ON kyc(site, user_id);
 CREATE INDEX IF NOT EXISTS kyc_site_idx ON kyc(site, status, updated_at DESC);
 /* массовый итог торгового дня: одна строка на каждый запуск из админки.
    В items лежат кошельки и начисленные суммы — по ним работает отмена. */
+/* журнал входов: кто и откуда заходил на сайт. Пишем IP, браузер и время по
+   регистрациям, входам и попыткам записать баланс со страницы кабинета — раньше
+   приложение не хранило ничего, и когда сайт прощупали, выяснить источник было
+   нечем. Таблица общая для обеих площадок, площадка указана в поле site. */
+CREATE TABLE IF NOT EXISTS access_log (
+  id     BIGSERIAL PRIMARY KEY,
+  at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  site   TEXT NOT NULL DEFAULT '',
+  kind   TEXT NOT NULL DEFAULT '',
+  acct   TEXT NOT NULL DEFAULT '',
+  email  TEXT NOT NULL DEFAULT '',
+  ip     TEXT NOT NULL DEFAULT '',
+  ua     TEXT NOT NULL DEFAULT '',
+  note   TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS access_log_at_idx ON access_log(at DESC);
 CREATE TABLE IF NOT EXISTS mass_days (
   id          BIGSERIAL PRIMARY KEY,
   site        TEXT NOT NULL DEFAULT 'bw',
